@@ -22,8 +22,8 @@ public class ShooterRPM extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  private static final double GAIN = 0.1;
-  private static final double MAXRPM = 3000; // figure out actual max rpm
+  private static final double GAIN = 0.00002;
+  private static final double MAX_RPM = 4800; // figure out actual max rpm
   private static final double TICKS_PER_WHEEL_REVOLUTION = 645;
   private Victor spinMotor1 = new Victor(0);
   private Victor spinMotor2 = new Victor(1);
@@ -32,29 +32,39 @@ public class ShooterRPM extends SubsystemBase {
   private double previousError = 0;
   private double tbh = 1; // take back half value
   private double motorOutput = 4;
+  private double lastPower;
+  private double prevEncoder;
+  private long prevTime = 0;
 
   public ShooterRPM() {
     spinMotorEncoder.setDistancePerPulse(1 / TICKS_PER_WHEEL_REVOLUTION);
   }
 
+  /**
+   * Gets current RPM of the shooter wheel.
+   * 
+   * We initialy tried to get RPM using Encoder.getRate but RPM was having a lot
+   * of variation so we are calculating the RPM manually.
+   * 
+   * @return
+   */
   public double currentRPM() {
-    spinMotorEncoder.setDistancePerPulse(1);
-    Double distance = spinMotorEncoder.getDistance();
-    Double rate = spinMotorEncoder.getRate();
-    Double rps = rate / (Math.PI * 1024);
-    Double rpm = rps * 60;
-    int raw = spinMotorEncoder.getRaw();
-    return rpm;
+    double currentEncoder = spinMotorEncoder.getDistance();
+    long currentTime = System.nanoTime();
+    double currentRPM = ((currentEncoder - prevEncoder) / (currentTime - prevTime)) * 60000000000.0;
+    prevEncoder = currentEncoder;
+    prevTime = currentTime;
+    return currentRPM;
   }
 
   public double getTicks() {
     return spinMotorEncoder.getDistance();
   }
 
-  public void initDefaultCommand(){
+  public void initDefaultCommand() {
     // setDefaultCommand(new SetShooterRPM(goalRPM));
   }
- 
+
   public void updateRPM() {
     double error = goalRPM - currentRPM(); // calculate the error;
     motorOutput += GAIN * error; // integrate the output;
@@ -66,7 +76,7 @@ public class ShooterRPM extends SubsystemBase {
     }
     setFlyWheel(motorOutput);
   }
- 
+
   public void setGoalRPM(double goalRPM) {
     this.goalRPM = goalRPM;
     if (goalRPM == 0) {
@@ -78,28 +88,31 @@ public class ShooterRPM extends SubsystemBase {
       previousError = 1;
       tbh = 2 * guessMotorOutputFromRPM(goalRPM) - 1;
     }
- 
   }
- 
+
   private double guessMotorOutputFromRPM(double RPM) {
-    return MathUtil.clamp(RPM / MAXRPM, 0, 1);
+    return MathUtil.clamp(RPM / MAX_RPM, 0, 1);
   }
- 
+
   public void setFlyWheel(double power) {
     spinMotor1.set(power);
     spinMotor2.set(power);
+    lastPower = power;
   }
-  public void updateDashBoard(){
+
+  public void updateDashBoard() {
     SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.getRaw());
     SmartDashboard.putNumber("ShooterRPM/Distance", spinMotorEncoder.getDistance());
-    SmartDashboard.putNumber("ShooterRPM/Rate", spinMotorEncoder.getRate());
+    SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM());
+    SmartDashboard.putNumber("ShooterRPM/power", lastPower);
   }
- 
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
-  public void reset(){
+
+  public void reset() {
     spinMotorEncoder.reset();
     spinMotor1.disable();
     spinMotor2.disable();
