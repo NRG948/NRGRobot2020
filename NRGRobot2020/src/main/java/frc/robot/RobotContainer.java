@@ -7,12 +7,20 @@
 
 package frc.robot;
 
+import java.lang.module.ModuleDescriptor.Requires;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.commands.ManualDrive;
+import frc.robot.commands.ManualShooter;
+import frc.robot.commands.SetShooterRPM;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.ShooterRPM;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -22,20 +30,29 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final Drive m_drive = new Drive();
-
-  private final Joystick m_rightJoystick = new Joystick(0);
-  private final Joystick m_leftJoystick = new Joystick(1);
-
-  private final ManualDrive m_manualDrive = new ManualDrive(m_drive, m_leftJoystick, m_rightJoystick);
+  private final Drive drive = new Drive();
+  
+  public final ShooterRPM shooterRPM = new ShooterRPM();
 
 
+  private final Joystick rightJoystick = new Joystick(0);
+  private final Joystick leftJoystick = new Joystick(1);
+  private XboxController xboxController = new XboxController(2);
+  private JoystickButton xboxButtonA = new JoystickButton(xboxController, 1); // A Button
+  private JoystickButton xboxButtonB = new JoystickButton(xboxController, 2); // B Button
+  private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
+  private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button.
+
+  private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick);
+  private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
+  private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController); 
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    m_drive.setDefaultCommand(m_manualDrive);
+    drive.setDefaultCommand(manualDrive);
+    shooterRPM.setDefaultCommand(manualShooter);
     // Configure the button bindings
     configureButtonBindings();
   }
@@ -47,6 +64,8 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    
+  
   }
 
 
@@ -57,6 +76,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_manualDrive;
+    return manualDrive;
   }
 }

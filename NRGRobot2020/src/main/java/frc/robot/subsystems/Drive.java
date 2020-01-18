@@ -14,8 +14,8 @@ public class Drive extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  private Victor driveFrontRightMotor = new Victor(0);
-  private Victor driveMiddleRightMotor = new Victor(1);
+  private Victor driveFrontRightMotor = new Victor(9);
+  private Victor driveMiddleRightMotor = new Victor(10);
   private Victor driveBackRightMotor = new Victor(2);
   private Victor driveFrontLeftMotor = new Victor(3);
   private Victor driveMiddleLeftMotor = new Victor(4);
