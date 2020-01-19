@@ -7,29 +7,33 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
-import frc.robot.subsystems.ShooterRPM;
 
-public class SetShooterRPM extends CommandBase {
-  private final double goalRPM;
-  private final ShooterRPM shooterRPM;
-  private Timer timer = new Timer();
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.ShooterRPM;
+import edu.wpi.first.wpilibj.Timer;
+
+public class SetShooterRPMBangBang extends CommandBase {
+  private ShooterRPM shooterRPM;
+  private double goalRPM;
+  private Timer timer;
   /**
-   * Creates a new SetShooterRPM.
+   * Creates a new SetShooterRPMBangBang.
    */
-  public SetShooterRPM(double goalRPM, ShooterRPM shooterRPM) {
-    this.goalRPM = goalRPM;
+  public SetShooterRPMBangBang() {
+    // Use addRequirements() here to declare subsystem dependencies.
+  }
+  public SetShooterRPMBangBang(double goalRPM,ShooterRPM shooterRPM) {
     this.shooterRPM = shooterRPM;
+    this.goalRPM = goalRPM;
     addRequirements(shooterRPM);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    timer.reset();
+    timer = new Timer();
     timer.start();
     shooterRPM.setGoalRPM(goalRPM);
   }
@@ -37,7 +41,7 @@ public class SetShooterRPM extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterRPM.updateRPM();
+    shooterRPM.updateRPMBangBang();
   }
 
   // Called once the command ends or is interrupted.
@@ -49,7 +53,6 @@ public class SetShooterRPM extends CommandBase {
   @Override
   public boolean isFinished() {
     if(timer.get()>5){
-      timer.stop();
       return true;
     }
     return false;

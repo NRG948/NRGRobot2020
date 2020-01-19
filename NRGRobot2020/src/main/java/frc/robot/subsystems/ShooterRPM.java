@@ -22,8 +22,8 @@ public class ShooterRPM extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  private static final double GAIN = 0.00002;
-  private static final double MAX_RPM = 4800; // figure out actual max rpm
+  private static final double GAIN = 0.0001;
+  private static final double MAX_RPM = 4200; // figure out actual max rpm
   private static final double TICKS_PER_WHEEL_REVOLUTION = 645;
   private Victor spinMotor1 = new Victor(0);
   private Victor spinMotor2 = new Victor(1);
@@ -38,6 +38,8 @@ public class ShooterRPM extends SubsystemBase {
 
   public ShooterRPM() {
     spinMotorEncoder.setDistancePerPulse(1 / TICKS_PER_WHEEL_REVOLUTION);
+    spinMotor1.setInverted(true);
+    spinMotor2.setInverted(true);
   }
 
   /**
@@ -75,6 +77,16 @@ public class ShooterRPM extends SubsystemBase {
       previousError = error; // and save the previous error
     }
     setFlyWheel(motorOutput);
+    updateDashBoard();
+  }
+
+  public void updateRPMBangBang() {
+    if (currentRPM() > goalRPM) {
+      setFlyWheel(0.4);
+    } else {
+      setFlyWheel(0.6);
+    }
+    updateDashBoard();
   }
 
   public void setGoalRPM(double goalRPM) {

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.SetShooterRPM;
+import frc.robot.commands.SetShooterRPMBangBang;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.ShooterRPM;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -64,8 +65,8 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    
-  
+    xboxButtonA.whenPressed(new SetShooterRPMBangBang(2000,shooterRPM));
+    xboxButtonB.whenPressed(new SetShooterRPM(2000,shooterRPM));
   }
 
 
