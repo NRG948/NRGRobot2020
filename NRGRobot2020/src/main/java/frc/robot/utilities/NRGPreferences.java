@@ -19,8 +19,8 @@ public class NRGPreferences {
     
     public enum NumberPrefs {
         DRIVE_P_TERM("DriveP", 0.081),
-        DRIVE_I_TERM("DriveI", 0.00016),
-        DRIVE_D_TERM("DriveD", 0.0072),
+        DRIVE_I_TERM("DriveI", 0.00016 * 0.02), // Adjust for deltaT when using PIDController
+        DRIVE_D_TERM("DriveD", 0.0072 / 0.02), // Adjust for deltaT when using PIDController
         
         TURN_P_TERM("TurnP", 0.081),
         TURN_I_TERM("TurnI", 0.00016),
@@ -34,22 +34,6 @@ public class NRGPreferences {
         PATH_P_TERM("PathP", 0.1),
         PATH_I_TERM("PathI", 0.0),
         PATH_D_TERM("PathD", 0.0),
-        
-        ARM_P_TERM("ArmP", 0.01),
-        ARM_I_TERM("ArmI", 0.002),
-        ARM_D_TERM("ArmD", 0.001),
-        ARM_MAX_POWER("ArmMaxPower", 0.50),
-        HOLD_ARM_LEVEL("ArmHoldLevel", 0.2),
-        
-        ARM_STOWED_TICKS("ArmStowedTicks", 0),
-        ARM_ACQUIRE_CARGO_TICKS("ArmAcquireCargoTicks", 290),
-        ARM_CARGO_SHIP_TICKS("ArmCargoShipTicks", 970),
-        ARM_ROCKET_CARGO_LOW_TICKS("ArmRocketCargoLowTicks", 720),
-        ARM_ROCKET_CARGO_MEDIUM_TICKS("ArmRocketCargoMediumTicks", 1270),
-        ARM_MAX_ANGLE_TICKS("ArmMaxAngleTicks", 1440), //TODO : figure out latest max value
-        ARM_INVERSION_TICKS("ArmInversionTicks", 1430),
-        ARM_HATCH_MEDIUM_TICKS("ArmHatchMediumTicks", 1440), // TBD
-        ARM_LEVEL_TICKS("ArmLevelTicks", 500),
         
         DRIVE_TO_VISION_TAPE_MIN_POWER("VisionMinPower", 0.15),
         DRIVE_TO_VISION_TAPE_MAX_POWER("VisionMaxPower", 0.65 ),

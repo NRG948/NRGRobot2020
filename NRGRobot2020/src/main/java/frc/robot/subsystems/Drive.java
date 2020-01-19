@@ -10,15 +10,18 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.utilities.NRGPreferences;
 
 public class Drive extends SubsystemBase {
   /**
@@ -47,15 +50,23 @@ public class Drive extends SubsystemBase {
   private final Encoder leftEncoder =
       new Encoder(DriveConstants.kLeftEncoderPorts[0], DriveConstants.kLeftEncoderPorts[1],
       DriveConstants.kLeftEncoderReversed);
-// The right-side drive encoder
-private final Encoder rightEncoder =
-      new Encoder(DriveConstants.kRightEncoderPorts[0], DriveConstants.kRightEncoderPorts[1],
+  // The right-side drive encoder
+  private final Encoder rightEncoder =
+        new Encoder(DriveConstants.kRightEncoderPorts[0], DriveConstants.kRightEncoderPorts[1],
       DriveConstants.kRightEncoderReversed);
+
+  // Variables for DriveDistance
+  private double currentHeading = 0;
+  private PIDController drivePIDController;
   
   public Drive() {
 
   }
-  public void tankDrive(double leftPower, double rightPower){
+  public void tankDrive(double leftPower, double rightPower, boolean squareInputs){
+    drive.tankDrive(leftPower, rightPower, squareInputs);
+  }
+
+  public void tankDrive(double leftPower, double rightPower) {
     leftMotors.set(leftPower);
     rightMotors.set(rightPower);
   }
@@ -144,5 +155,54 @@ private final Encoder rightEncoder =
   */
   public double getTurnRate() {
     return Robot.navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+  /**
+   * 
+   * @param xOrigin
+   * @param yOrigin
+   * @return The distance between the current position and the original position
+   */
+
+  public double calculateDistance(double xOrigin, double yOrigin) {
+    return getPose().getTranslation().getDistance(new Translation2d(xOrigin, yOrigin));
+  }
+
+  /**
+   * We are getting our current heading and putting it into driveOnHeadingInit to adjust our current heading
+   * @param heading
+   */
+  public void driveOnHeadingInit(double currentHeading) {
+    double p = NRGPreferences.NumberPrefs.DRIVE_P_TERM.getValue();
+    double i = NRGPreferences.NumberPrefs.DRIVE_I_TERM.getValue();
+    double d = NRGPreferences.NumberPrefs.DRIVE_D_TERM.getValue();
+    this.drivePIDController = new PIDController(p, i, d);
+    this.drivePIDController.setSetpoint(getHeading());
+    this.drivePIDController.setTolerance(0);
+    setCurrentHeading(currentHeading);
+  }
+
+  public void driveOnHeadingExecute(double power) {
+    double powerDelta = this.drivePIDController.calculate(Robot.navx.getAngle());
+    if (Math.signum(powerDelta) != Math.signum(power)) {
+      this.tankDrive(power + powerDelta, power, false);
+    } else {
+      this.tankDrive(power, power - powerDelta, false);
+    }
+    SmartDashboard.putNumber("Drive/driveOnHeading/PIDOutput", powerDelta);
+    SmartDashboard.putNumber("Drive/driveOnHeading/PIDError", this.drivePIDController.getPositionError());
+    SmartDashboard.putNumber("Drive/driveOnHeading/Setpoint", this.drivePIDController.getSetpoint());
+  }
+
+  /**
+   * Stop driving
+   */
+  public void driveOnHeadingEnd() {
+    this.drive.stopMotor();
+    this.drivePIDController = null;
+  }
+
+  public void setCurrentHeading(double currentHeading) {
+    this.currentHeading = currentHeading;
   }
 }

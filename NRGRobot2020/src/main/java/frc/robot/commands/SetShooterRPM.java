@@ -48,7 +48,7 @@ public class SetShooterRPM extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(timer.get()>5){
+    if(timer.get()>10){
       timer.stop();
       return true;
     }
