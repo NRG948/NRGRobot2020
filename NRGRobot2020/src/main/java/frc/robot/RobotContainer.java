@@ -65,8 +65,8 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    xboxButtonA.whenPressed(new SetShooterRPMBangBang(2000,shooterRPM));
-    xboxButtonB.whenPressed(new SetShooterRPM(2000,shooterRPM));
+    xboxButtonA.whenPressed(new SetShooterRPMBangBang(3000,shooterRPM));
+    xboxButtonB.whenPressed(new SetShooterRPM(3900,shooterRPM));
   }
 
 

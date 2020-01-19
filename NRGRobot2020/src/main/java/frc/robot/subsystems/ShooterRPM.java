@@ -22,7 +22,7 @@ public class ShooterRPM extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  private static final double GAIN = 0.0001;
+  private static final double GAIN = 0.0008;
   private static final double MAX_RPM = 4200; // figure out actual max rpm
   private static final double TICKS_PER_WHEEL_REVOLUTION = 645;
   private Victor spinMotor1 = new Victor(0);
@@ -30,7 +30,7 @@ public class ShooterRPM extends SubsystemBase {
   private Encoder spinMotorEncoder = new Encoder(4, 5);
   private double goalRPM = 3;
   private double previousError = 0;
-  private double tbh = 1; // take back half value
+  private double tbh = 0; // take back half value
   private double motorOutput = 4;
   private double lastPower;
   private double prevEncoder;
