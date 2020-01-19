@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
     SmartDashboard.putNumber("gyro", navx.getAngle()); 
-  }
+    }
 
   /**
    * This function is called once each time the robot enters Disabled mode.
