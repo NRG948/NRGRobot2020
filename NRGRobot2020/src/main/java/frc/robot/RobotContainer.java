@@ -8,10 +8,14 @@
 package frc.robot;
 
 import java.lang.module.ModuleDescriptor.Requires;
+import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
@@ -24,20 +28,21 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
- * This class is where the bulk of the robot should be declared.  Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
- * (including subsystems, commands, and button mappings) should be declared here.
+ * This class is where the bulk of the robot should be declared. Since
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls). Instead, the structure of the robot (including subsystems,
+ * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drive drive = new Drive();
-  
-  public final ShooterRPM shooterRPM = new ShooterRPM();
 
+  public final ShooterRPM shooterRPM = new ShooterRPM();
 
   private final Joystick rightJoystick = new Joystick(0);
   private final Joystick leftJoystick = new Joystick(1);
+  private JoystickButton button = new JoystickButton(rightJoystick, 1);
   private XboxController xboxController = new XboxController(2);
   private JoystickButton xboxButtonA = new JoystickButton(xboxController, 1); // A Button
   private JoystickButton xboxButtonB = new JoystickButton(xboxController, 2); // B Button
@@ -46,10 +51,10 @@ public class RobotContainer {
 
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick);
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
-  private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController); 
+  private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
 
   /**
-   * The container for the robot.  Contains subsystems, OI devices, and commands.
+   * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
     drive.setDefaultCommand(manualDrive);
@@ -59,16 +64,19 @@ public class RobotContainer {
   }
 
   /**
-   * Use this method to define your button->command mappings.  Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a
-   * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
+   * Use this method to define your button->command mappings. Buttons can be
+   * created by instantiating a {@link GenericHID} or one of its subclasses
+   * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
+   * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    xboxButtonA.whenPressed(new SetShooterRPMBangBang(3000,shooterRPM));
-    xboxButtonB.whenPressed(new SetShooterRPM(3900,shooterRPM));
+    xboxButtonA.whenPressed(new SetShooterRPMBangBang(3900, shooterRPM));
+    xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
+    button.whenPressed(new InstantCommand(() -> {
+      Robot.navx.reset();
+      drive.resetOdometry(new Pose2d());
+    }));
   }
-
 
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
