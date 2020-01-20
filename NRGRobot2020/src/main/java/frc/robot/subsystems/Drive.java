@@ -37,17 +37,22 @@ public class Drive extends SubsystemBase {
   // The motors on the left side of the drive.
   private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(driveFrontLeftMotor, driveMiddleLeftMotor,
       driveBackLeftMotor);
+
   // The motors on the right side of the drive.
   private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(driveFrontRightMotor, driveMiddleRightMotor,
       driveBackRightMotor);
+
   // The robot's drive
   private final DifferentialDrive diffDrive = new DifferentialDrive(leftMotors, rightMotors);
+
   // The odometry (position-tracker)
   private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()),
       new Pose2d(0.0, 0.0, new Rotation2d()));
+
   // The left-side drive encoder
   private final Encoder leftEncoder = new Encoder(DriveConstants.kLeftEncoderPorts[0],
       DriveConstants.kLeftEncoderPorts[1], DriveConstants.kLeftEncoderReversed);
+
   // The right-side drive encoder
   private final Encoder rightEncoder = new Encoder(DriveConstants.kRightEncoderPorts[0],
       DriveConstants.kRightEncoderPorts[1], DriveConstants.kRightEncoderReversed);
@@ -65,10 +70,12 @@ public class Drive extends SubsystemBase {
     diffDrive.tankDrive(leftPower, rightPower, squareInputs);
   }
 
-  public void tankDrive(double leftPower, double rightPower) {
-    leftMotors.set(leftPower);
-    rightMotors.set(rightPower);
+  public void tankDriveVolts(double leftVolts, double rightVolts){
+    leftMotors.setVoltage(leftVolts);
+    rightMotors.setVoltage(-rightVolts);
+    diffDrive.feed();
   }
+
 
   @Override
   public void periodic() {
@@ -209,7 +216,9 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * Performs all initialization for performing a robot's turn using a PID controller. 
+   * Performs all initialization for performing a robot's turn using a PID
+   * controller.
+   * 
    * @param desiredHeading the desired pose the robot should be at
    * @param tolerance
    */
@@ -229,6 +238,7 @@ public class Drive extends SubsystemBase {
 
   /**
    * Executes the robot turn by updating the motor values as needed every 20 ms.
+   * 
    * @param maxPower maximum motor power used during the turn
    */
   public void turnToHeadingExecute(double maxPower) {
@@ -237,9 +247,11 @@ public class Drive extends SubsystemBase {
 
   /**
    * Executes the robot turn by updating the motor values as needed every 20 ms.
-   * @param maxPower maximum motor power used during the turn
+   * 
+   * @param maxPower     maximum motor power used during the turn
    * @param useBothSides if true, use both motors in opposite directions
-   * @param forward only used for one sided turns; if true robot pivots forward, otherwise pivots back
+   * @param forward      only used for one sided turns; if true robot pivots
+   *                     forward, otherwise pivots back
    */
   public void turnToHeadingExecute(double maxPower, boolean useBothSides, boolean forward) {
     double currentPower = this.turnPIDController.calculate(Robot.navx.getAngle()) * maxPower;
@@ -260,16 +272,18 @@ public class Drive extends SubsystemBase {
     }
   }
 
-/**
- * Determine whether the turn is finished or not.
- * @return true, if the turn is finished.
- */
+  /**
+   * Determine whether the turn is finished or not.
+   * 
+   * @return true, if the turn is finished.
+   */
   public boolean turnToHeadingOnTarget() {
     return this.turnPIDController.atSetpoint();
   }
 
   /**
-   * Ends the turn command by shutting off the motors and disabling the PID controllers.
+   * Ends the turn command by shutting off the motors and disabling the PID
+   * controllers.
    */
   public void turnToHeadingEnd() {
     this.diffDrive.stopMotor();
