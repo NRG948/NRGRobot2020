@@ -35,35 +35,34 @@ public class Drive extends SubsystemBase {
   private Victor driveBackLeftMotor = new Victor(5);
 
   // The motors on the left side of the drive.
-  private final SpeedControllerGroup leftMotors =
-    new SpeedControllerGroup(driveFrontLeftMotor, driveMiddleLeftMotor, driveBackLeftMotor);
+  private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(driveFrontLeftMotor, driveMiddleLeftMotor,
+      driveBackLeftMotor);
   // The motors on the right side of the drive.
-  private final SpeedControllerGroup rightMotors =
-    new SpeedControllerGroup(driveFrontRightMotor, driveMiddleRightMotor, driveBackRightMotor);  
+  private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(driveFrontRightMotor, driveMiddleRightMotor,
+      driveBackRightMotor);
   // The robot's drive
-  private final DifferentialDrive drive = new DifferentialDrive(leftMotors, rightMotors);
+  private final DifferentialDrive diffDrive = new DifferentialDrive(leftMotors, rightMotors);
   // The odometry (position-tracker)
-  private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(
-      Rotation2d.fromDegrees(getHeading()),
+  private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()),
       new Pose2d(0.0, 0.0, new Rotation2d()));
   // The left-side drive encoder
-  private final Encoder leftEncoder =
-      new Encoder(DriveConstants.kLeftEncoderPorts[0], DriveConstants.kLeftEncoderPorts[1],
-      DriveConstants.kLeftEncoderReversed);
+  private final Encoder leftEncoder = new Encoder(DriveConstants.kLeftEncoderPorts[0],
+      DriveConstants.kLeftEncoderPorts[1], DriveConstants.kLeftEncoderReversed);
   // The right-side drive encoder
-  private final Encoder rightEncoder =
-        new Encoder(DriveConstants.kRightEncoderPorts[0], DriveConstants.kRightEncoderPorts[1],
-      DriveConstants.kRightEncoderReversed);
+  private final Encoder rightEncoder = new Encoder(DriveConstants.kRightEncoderPorts[0],
+      DriveConstants.kRightEncoderPorts[1], DriveConstants.kRightEncoderReversed);
 
   // Variables for DriveDistance
   private double currentHeading = 0;
   private PIDController drivePIDController;
-  
-  public Drive() {
+  private PIDController turnPIDController;
+  private boolean turnSquareInputs;
 
+  public Drive() {
   }
-  public void tankDrive(double leftPower, double rightPower, boolean squareInputs){
-    drive.tankDrive(leftPower, rightPower, squareInputs);
+
+  public void tankDrive(double leftPower, double rightPower, boolean squareInputs) {
+    diffDrive.tankDrive(leftPower, rightPower, squareInputs);
   }
 
   public void tankDrive(double leftPower, double rightPower) {
@@ -84,8 +83,8 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-  * Zeroes the heading of the robot.
-  */
+   * Zeroes the heading of the robot.
+   */
   public void zeroHeading() {
     Robot.navx.reset();
   }
@@ -106,6 +105,7 @@ public class Drive extends SubsystemBase {
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(leftEncoder.getRate(), rightEncoder.getRate());
   }
+
   /**
    * Gets the left drive encoder.
    *
@@ -125,14 +125,13 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-  * Resets the odometry to the specified pose.
-  *
-  * @param pose The pose to which to set the odometry.
-  */
+   * Resets the odometry to the specified pose.
+   *
+   * @param pose The pose to which to set the odometry.
+   */
   public void resetOdometry(Pose2d pose) {
-  resetEncoders();
-  odometry.resetPosition(pose, 
-      new Rotation2d());
+    resetEncoders();
+    odometry.resetPosition(pose, new Rotation2d());
   }
 
   public void resetEncoders() {
@@ -141,18 +140,19 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-  * Returns the heading of the robot.
-  *
-  * @return the robot's heading in degrees, from 180 to 180
-  */
+   * Returns the heading of the robot.
+   *
+   * @return the robot's heading in degrees, from 180 to 180
+   */
   public double getHeading() {
     return Math.IEEEremainder(Robot.navx.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
-  }  
+  }
+
   /**
-  * Returns the turn rate of the robot.
-  *
-  * @return The turn rate of the robot, in degrees per second
-  */
+   * Returns the turn rate of the robot.
+   *
+   * @return The turn rate of the robot, in degrees per second
+   */
   public double getTurnRate() {
     return Robot.navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
@@ -169,7 +169,9 @@ public class Drive extends SubsystemBase {
   }
 
   /**
-   * We are getting our current heading and putting it into driveOnHeadingInit to adjust our current heading
+   * We are getting our current heading and putting it into driveOnHeadingInit to
+   * adjust our current heading
+   * 
    * @param heading
    */
   public void driveOnHeadingInit(double currentHeading) {
@@ -198,11 +200,79 @@ public class Drive extends SubsystemBase {
    * Stop driving
    */
   public void driveOnHeadingEnd() {
-    this.drive.stopMotor();
+    this.diffDrive.stopMotor();
     this.drivePIDController = null;
   }
 
   public void setCurrentHeading(double currentHeading) {
     this.currentHeading = currentHeading;
+  }
+
+  /**
+   * Performs all initialization for performing a robot's turn using a PID controller. 
+   * @param desiredHeading the desired pose the robot should be at
+   * @param tolerance
+   */
+  public void turnToHeadingInit(double desiredHeading, double tolerance) {
+    double p = NRGPreferences.NumberPrefs.TURN_P_TERM.getValue();
+    double i = NRGPreferences.NumberPrefs.TURN_I_TERM.getValue();
+    double d = NRGPreferences.NumberPrefs.TURN_D_TERM.getValue();
+    this.turnPIDController = new PIDController(p, i, d);
+    this.turnPIDController.setSetpoint(desiredHeading);
+    this.turnPIDController.setTolerance(tolerance);
+    this.turnSquareInputs = areTurnInputsSquared();
+  }
+
+  public boolean areTurnInputsSquared() {
+    return NRGPreferences.BooleanPrefs.TURN_SQUARE_INPUTS.getValue();
+  }
+
+  /**
+   * Executes the robot turn by updating the motor values as needed every 20 ms.
+   * @param maxPower maximum motor power used during the turn
+   */
+  public void turnToHeadingExecute(double maxPower) {
+    turnToHeadingExecute(maxPower, true, true);
+  }
+
+  /**
+   * Executes the robot turn by updating the motor values as needed every 20 ms.
+   * @param maxPower maximum motor power used during the turn
+   * @param useBothSides if true, use both motors in opposite directions
+   * @param forward only used for one sided turns; if true robot pivots forward, otherwise pivots back
+   */
+  public void turnToHeadingExecute(double maxPower, boolean useBothSides, boolean forward) {
+    double currentPower = this.turnPIDController.calculate(Robot.navx.getAngle()) * maxPower;
+    if (useBothSides) {
+      this.tankDrive(currentPower, -currentPower, this.turnSquareInputs);
+    } else {
+      double leftPower;
+      double rightPower;
+
+      if (forward) {
+        leftPower = currentPower > 0 ? currentPower : 0;
+        rightPower = currentPower < 0 ? -currentPower : 0;
+      } else {
+        leftPower = currentPower < 0 ? currentPower : 0;
+        rightPower = currentPower > 0 ? -currentPower : 0;
+      }
+      tankDrive(leftPower, rightPower, this.turnSquareInputs);
+    }
+  }
+
+/**
+ * Determine whether the turn is finished or not.
+ * @return true, if the turn is finished.
+ */
+  public boolean turnToHeadingOnTarget() {
+    return this.turnPIDController.atSetpoint();
+  }
+
+  /**
+   * Ends the turn command by shutting off the motors and disabling the PID controllers.
+   */
+  public void turnToHeadingEnd() {
+    this.diffDrive.stopMotor();
+    this.turnPIDController = null;
   }
 }
