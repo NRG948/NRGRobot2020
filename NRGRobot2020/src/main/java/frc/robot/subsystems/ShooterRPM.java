@@ -10,12 +10,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
-import frc.robot.commands.ManualShooter;
-import frc.robot.commands.SetShooterRPM;
 import frc.robot.utilities.MathUtil;
 
 public class ShooterRPM extends SubsystemBase {
