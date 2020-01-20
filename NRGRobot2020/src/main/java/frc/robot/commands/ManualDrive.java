@@ -41,7 +41,7 @@ public class ManualDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_drive.tankDrive(m_leftJoystick.getY(), m_rightJoystick.getY());
+    m_drive.tankDrive(m_leftJoystick.getY(), m_rightJoystick.getY(), true);
   }
 
   // Called once the command ends or is interrupted.

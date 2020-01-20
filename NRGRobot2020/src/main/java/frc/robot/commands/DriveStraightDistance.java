@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import static java.lang.System.out;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 
