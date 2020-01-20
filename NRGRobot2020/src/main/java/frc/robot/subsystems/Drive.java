@@ -7,6 +7,8 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Victor;
@@ -27,20 +29,20 @@ public class Drive extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  private Victor driveFrontRightMotor = new Victor(9);
-  private Victor driveMiddleRightMotor = new Victor(10);
-  private Victor driveBackRightMotor = new Victor(2);
-  private Victor driveFrontLeftMotor = new Victor(3);
-  private Victor driveMiddleLeftMotor = new Victor(4);
-  private Victor driveBackLeftMotor = new Victor(5);
+  private WPI_VictorSPX rightMotor1 = new WPI_VictorSPX(1);
+  private WPI_VictorSPX rightMotor2 = new WPI_VictorSPX(2);
+  private WPI_VictorSPX rightMotor3 = new WPI_VictorSPX(3);
+  private WPI_VictorSPX leftMotor1 = new WPI_VictorSPX(4);
+  private WPI_VictorSPX leftMotor2 = new WPI_VictorSPX(5);
+  private WPI_VictorSPX leftMotor3 = new WPI_VictorSPX(6);
 
   // The motors on the left side of the drive.
-  private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(driveFrontLeftMotor, driveMiddleLeftMotor,
-      driveBackLeftMotor);
+  private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(leftMotor1, leftMotor2,
+      leftMotor3);
 
   // The motors on the right side of the drive.
-  private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(driveFrontRightMotor, driveMiddleRightMotor,
-      driveBackRightMotor);
+  private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(rightMotor1, rightMotor2,
+      rightMotor3);
 
   // The robot's drive
   private final DifferentialDrive diffDrive = new DifferentialDrive(leftMotors, rightMotors);
