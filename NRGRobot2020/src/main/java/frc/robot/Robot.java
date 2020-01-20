@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -21,68 +20,25 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import frc.robot.subsystems.Drive;
 
 /**
- * The VM is configured to automatically run this class, and to call the
- * functions corresponding to each mode, as described in the TimedRobot
- * documentation. If you change the name of this class or the package after
- * creating this project, you must also update the build.gradle file in the
+ * The VM is configured to automatically run this class, and to call the functions corresponding to
+ * each mode, as described in the TimedRobot documentation. If you change the name of this class or
+ * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   public RobotContainer m_robotContainer;
   public static Drive drive;
-
-  public static AHRS navx = new AHRS(SPI.Port.kMXP);
-
-  ShuffleboardTab autoTab; 
   
-  ShuffleboardTab drivebaseTab;
-  ShuffleboardLayout encoders;
-
-  ShuffleboardTab acquirerTab;
-
-  ShuffleboardTab climbTab;
-
-  ShuffleboardTab driveTab;
-
-  ShuffleboardTab feederTab;
-
-  ShuffleboardTab hoodTab;
-
-  ShuffleboardTab shooterRPMTab;
-  NetworkTableEntry currentRPMEntry;
-  NetworkTableEntry ticksEntry;    
-
-  ShuffleboardTab simplePIDControllerTab;
-
-  ShuffleboardTab turretTab;
+  
+  public static AHRS navx = new AHRS(SPI.Port.kMXP);
 
   @Override
   public void robotInit() {
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our
+    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
     drive = new Drive();
-
-    //Shuffleboard Init
-    autoTab = Shuffleboard.getTab("AutonomousSettings"); 
-    drivebaseTab = Shuffleboard.getTab("Drivebase");
-    encoders = drivebaseTab.getLayout("List Layout", "Encoders").withPosition(0, 0).withSize(2, 2);
-    acquirerTab = Shuffleboard.getTab("Acquirer Subsystem");
-    climbTab = Shuffleboard.getTab("Climb Subsystem");
-    driveTab = Shuffleboard.getTab("Drive Subsystem");
-    feederTab = Shuffleboard.getTab("Feeder Subsystem");
-    hoodTab = Shuffleboard.getTab("Hood Subsystem");
-    shooterRPMTab = Shuffleboard.getTab("ShooterRPM Subsystem");
-    currentRPMEntry = shooterRPMTab.add("currentRPM", 0).getEntry();
-    ticksEntry = shooterRPMTab.add("ticks", 0).getEntry();
-    simplePIDControllerTab = Shuffleboard.getTab("SimplePIDController Subsystem");
-    turretTab = Shuffleboard.getTab("Turret Subsystem");
-
-    //Shuffleboard - Drivebase tab
-    encoders.add("Left Encoder", 0);
-    encoders.add("Right Encoder", 0);
   }
 
   /**
@@ -97,10 +53,9 @@ public class Robot extends TimedRobot {
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
-    // block in order for anything in the Command-base framework to work.
+    // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    SmartDashboard.putNumber("gyro", navx.getAngle());
-
+    SmartDashboard.putNumber("gyro", navx.getAngle()); 
   }
 
   /**
@@ -150,9 +105,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    //shooterRPMTab Entries
-    currentRPMEntry.setDouble(m_robotContainer.shooterRPM.currentRPM());
-    ticksEntry.setDouble(m_robotContainer.shooterRPM.getTicks());
   }
 
   @Override
