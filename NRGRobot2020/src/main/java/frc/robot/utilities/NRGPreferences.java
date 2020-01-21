@@ -41,6 +41,10 @@ public class NRGPreferences {
         CAMERA_DISTANCE_SCALE("CameraDistanceScale", 1.0),
         CAMERA_ANGLE_SCALE("CameraAngleScale", 0.8),
 
+        TURRET_P_TERM("TurretP", 0.081),
+        TURRET_I_TERM("TurretI", 0.00016),
+        TURRET_D_TERM("TurretD", 0.0072),
+
         CLIMBER_REAR_POWER("ClimberRearPower", 0.95),
         CLIMBER_REAR_MIN_TICKS("ClimberRearMinTicks", 800),
         CLIMBER_ARM_WHEELS_POWER("ClimberArmWheelsPower", 0.5),
