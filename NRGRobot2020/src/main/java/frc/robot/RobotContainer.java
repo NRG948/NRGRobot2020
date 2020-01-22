@@ -7,10 +7,15 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.SetShooterRPM;
@@ -36,7 +41,7 @@ public class RobotContainer {
 
   private final Joystick rightJoystick = new Joystick(0);
   private final Joystick leftJoystick = new Joystick(1);
-  private JoystickButton button = new JoystickButton(rightJoystick, 1);
+  private JoystickButton resetSensor = new JoystickButton(rightJoystick, 1);
   private XboxController xboxController = new XboxController(2);
   private JoystickButton xboxButtonA = new JoystickButton(xboxController, 1); // A Button
   private JoystickButton xboxButtonB = new JoystickButton(xboxController, 2); // B Button
@@ -46,6 +51,14 @@ public class RobotContainer {
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick);
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
+  private FollowWaypoints followWaypointsTest = new FollowWaypoints(
+    drive,   
+    new Pose2d(0, 0, new Rotation2d(0)),
+    List.of(
+      new Translation2d(1, -1),
+      new Translation2d(2, 1)
+    ),
+    new Pose2d(3,3, new Rotation2d(0)));
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -66,7 +79,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     xboxButtonA.whenPressed(new SetShooterRPMBangBang(3900, shooterRPM));
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
-    button.whenPressed(new InstantCommand(() -> {
+    resetSensor.whenPressed(new InstantCommand(() -> {
       Robot.navx.reset();
       drive.resetOdometry(new Pose2d());
     }));
@@ -79,6 +92,6 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return manualDrive;
+    return followWaypointsTest;
   }
 }

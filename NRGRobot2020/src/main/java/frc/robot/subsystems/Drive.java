@@ -29,12 +29,12 @@ public class Drive extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  private WPI_VictorSPX rightMotor1 = new WPI_VictorSPX(1);
-  private WPI_VictorSPX rightMotor2 = new WPI_VictorSPX(2);
-  private WPI_VictorSPX rightMotor3 = new WPI_VictorSPX(3);
-  private WPI_VictorSPX leftMotor1 = new WPI_VictorSPX(4);
-  private WPI_VictorSPX leftMotor2 = new WPI_VictorSPX(5);
-  private WPI_VictorSPX leftMotor3 = new WPI_VictorSPX(6);
+  private WPI_VictorSPX rightMotor1 = new WPI_VictorSPX(DriveConstants.kRightMotor1Port);
+  private WPI_VictorSPX rightMotor2 = new WPI_VictorSPX(DriveConstants.kRightMotor2Port);
+  private WPI_VictorSPX rightMotor3 = new WPI_VictorSPX(DriveConstants.kRightMotor3Port);
+  private WPI_VictorSPX leftMotor1 = new WPI_VictorSPX(DriveConstants.kLeftMotor1Port);
+  private WPI_VictorSPX leftMotor2 = new WPI_VictorSPX(DriveConstants.kLeftMotor2Port);
+  private WPI_VictorSPX leftMotor3 = new WPI_VictorSPX(DriveConstants.kLeftMotor3Port);
 
   // The motors on the left side of the drive.
   private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(leftMotor1, leftMotor2,
@@ -66,6 +66,10 @@ public class Drive extends SubsystemBase {
   private boolean turnSquareInputs;
 
   public Drive() {
+    leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+    rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+    leftMotors.setInverted(true);
+    rightMotors.setInverted(true);
   }
 
   public void tankDrive(double leftPower, double rightPower, boolean squareInputs) {
@@ -87,8 +91,13 @@ public class Drive extends SubsystemBase {
     // used by the WPILib classes.
     Rotation2d gyroAngle = Rotation2d.fromDegrees(-Robot.navx.getAngle());
     // Update the pose
-    Pose2d pose = odometry.update(gyroAngle, leftEncoder.getDistance(), rightEncoder.getDistance());
-    SmartDashboard.putString("position", pose.toString());
+    double leftDistance = leftEncoder.getDistance();
+    double rightDistance = rightEncoder.getDistance();
+    Pose2d pose = odometry.update(gyroAngle, leftDistance, rightDistance);
+    
+    SmartDashboard.putNumber("Drive/Left Distance", leftDistance);
+    SmartDashboard.putNumber("Drive/Right Distance", rightDistance);
+    SmartDashboard.putString("Drive/position", pose.toString());
   }
 
   /**

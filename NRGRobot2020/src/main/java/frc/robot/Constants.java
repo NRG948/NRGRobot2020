@@ -38,8 +38,8 @@ public final class Constants {
         public static final double kTrackwidthMeters = Units.inchesToMeters(25.0);
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
                 kTrackwidthMeters);
-        public static final int kEncoderCPR = 1;
-        public static final double kWheelDiameterMeters = 0;
+        public static final int kEncoderCPR = 2005;
+        public static final double kWheelDiameterMeters = 0.152;
         public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
 
         // TODO Robot Characterization Values
