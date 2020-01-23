@@ -80,7 +80,7 @@ public class RobotContainer {
     xboxButtonA.whenPressed(new SetShooterRPMBangBang(3900, shooterRPM));
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
     resetSensor.whenPressed(new InstantCommand(() -> {
-      ((ShooterRPM) Robot.navx).reset();
+      drive.zeroHeading();
       drive.resetOdometry(new Pose2d());
     }));
   }
