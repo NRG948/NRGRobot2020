@@ -51,14 +51,8 @@ public class RobotContainer {
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick);
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
-  private FollowWaypoints followWaypointsTest = new FollowWaypoints(
-    drive,   
-    new Pose2d(0, 0, new Rotation2d(0)),
-    List.of(
-      new Translation2d(1, -1),
-      new Translation2d(2, 1)
-    ),
-    new Pose2d(3,3, new Rotation2d(0)));
+  private FollowWaypoints followWaypointsTest = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
+      List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 3, new Rotation2d(0)));
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
