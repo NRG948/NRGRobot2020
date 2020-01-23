@@ -31,7 +31,7 @@ public class Drive extends SubsystemBase {
    * Creates a new ExampleSubsystem.
    */
 
-  public static AHRS navx = new AHRS(SPI.Port.kMXP);
+  private AHRS navx = new AHRS(SPI.Port.kMXP);
 
   private WPI_VictorSPX rightMotor1 = new WPI_VictorSPX(DriveConstants.kRightMotor1Port);
   private WPI_VictorSPX rightMotor2 = new WPI_VictorSPX(DriveConstants.kRightMotor2Port);
@@ -41,12 +41,10 @@ public class Drive extends SubsystemBase {
   private WPI_VictorSPX leftMotor3 = new WPI_VictorSPX(DriveConstants.kLeftMotor3Port);
 
   // The motors on the left side of the drive.
-  private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(leftMotor1, leftMotor2,
-      leftMotor3);
+  private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(leftMotor1, leftMotor2, leftMotor3);
 
   // The motors on the right side of the drive.
-  private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(rightMotor1, rightMotor2,
-      rightMotor3);
+  private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(rightMotor1, rightMotor2, rightMotor3);
 
   // The robot's drive
   private final DifferentialDrive diffDrive = new DifferentialDrive(leftMotors, rightMotors);
@@ -82,12 +80,11 @@ public class Drive extends SubsystemBase {
     diffDrive.tankDrive(leftPower, rightPower, squareInputs);
   }
 
-  public void tankDriveVolts(double leftVolts, double rightVolts){
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
     leftMotors.setVoltage(leftVolts);
     rightMotors.setVoltage(-rightVolts);
     diffDrive.feed();
   }
-
 
   @Override
   public void periodic() {
@@ -102,7 +99,7 @@ public class Drive extends SubsystemBase {
     double leftDistance = leftEncoder.getDistance();
     double rightDistance = rightEncoder.getDistance();
     Pose2d pose = odometry.update(gyroAngle, leftDistance, rightDistance);
-    
+
     SmartDashboard.putNumber("Drive/Left Distance", leftDistance);
     SmartDashboard.putNumber("Drive/Right Distance", rightDistance);
     SmartDashboard.putString("Drive/position", pose.toString());
@@ -168,7 +165,7 @@ public class Drive extends SubsystemBase {
   /**
    * Returns the heading of the robot.
    *
-   * @return the robot's heading in degrees, from 180 to 180
+   * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
     return Math.IEEEremainder(navx.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);

@@ -46,7 +46,7 @@ public class DriveStraightDistance extends CommandBase {
   @Override
   public void initialize() { 
     if (useRobotHeading) {
-      this.heading = (Drive.navx.getAngle());
+      this.heading = drive.getHeading();
     }
     System.out.println("DriveStraightDistance Init heading: " + heading + " distance: " + distance);
     this.xOrigin = this.drive.getPose().getTranslation().getX(); // gets our current X position from the poistion tracker command
