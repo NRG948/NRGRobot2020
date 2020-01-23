@@ -8,7 +8,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Victor;
@@ -29,6 +30,9 @@ public class Drive extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
+
+  public static AHRS navx = new AHRS(SPI.Port.kMXP);
+
   private WPI_VictorSPX rightMotor1 = new WPI_VictorSPX(DriveConstants.kRightMotor1Port);
   private WPI_VictorSPX rightMotor2 = new WPI_VictorSPX(DriveConstants.kRightMotor2Port);
   private WPI_VictorSPX rightMotor3 = new WPI_VictorSPX(DriveConstants.kRightMotor3Port);
@@ -70,6 +74,8 @@ public class Drive extends SubsystemBase {
     rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     leftMotors.setInverted(true);
     rightMotors.setInverted(true);
+    zeroHeading();
+    resetEncoders();
   }
 
   public void tankDrive(double leftPower, double rightPower, boolean squareInputs) {
@@ -89,7 +95,9 @@ public class Drive extends SubsystemBase {
     // Get my gyro angle. We are negating the value because gyros return positive
     // values as the robot turns clockwise. This is not standard convention that is
     // used by the WPILib classes.
-    Rotation2d gyroAngle = Rotation2d.fromDegrees(-Robot.navx.getAngle());
+    SmartDashboard.putNumber("gyro", navx.getAngle());
+
+    Rotation2d gyroAngle = Rotation2d.fromDegrees(-navx.getAngle());
     // Update the pose
     double leftDistance = leftEncoder.getDistance();
     double rightDistance = rightEncoder.getDistance();
@@ -104,7 +112,7 @@ public class Drive extends SubsystemBase {
    * Zeroes the heading of the robot.
    */
   public void zeroHeading() {
-    Robot.navx.reset();
+    navx.reset();
   }
 
   /**
@@ -163,7 +171,7 @@ public class Drive extends SubsystemBase {
    * @return the robot's heading in degrees, from 180 to 180
    */
   public double getHeading() {
-    return Math.IEEEremainder(Robot.navx.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    return Math.IEEEremainder(navx.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
   /**
@@ -172,7 +180,7 @@ public class Drive extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    return Robot.navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    return navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
   /**
@@ -203,7 +211,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void driveOnHeadingExecute(double power) {
-    double powerDelta = this.drivePIDController.calculate(Robot.navx.getAngle());
+    double powerDelta = this.drivePIDController.calculate(navx.getAngle());
     if (Math.signum(powerDelta) != Math.signum(power)) {
       this.tankDrive(power + powerDelta, power, false);
     } else {
@@ -265,7 +273,7 @@ public class Drive extends SubsystemBase {
    *                     forward, otherwise pivots back
    */
   public void turnToHeadingExecute(double maxPower, boolean useBothSides, boolean forward) {
-    double currentPower = this.turnPIDController.calculate(Robot.navx.getAngle()) * maxPower;
+    double currentPower = this.turnPIDController.calculate(navx.getAngle()) * maxPower;
     if (useBothSides) {
       this.tankDrive(currentPower, -currentPower, this.turnSquareInputs);
     } else {
