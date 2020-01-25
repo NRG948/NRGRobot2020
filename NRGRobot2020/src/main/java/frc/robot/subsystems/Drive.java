@@ -8,7 +8,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-
+import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.Victor;
@@ -29,20 +30,21 @@ public class Drive extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-  private WPI_VictorSPX rightMotor1 = new WPI_VictorSPX(1);
-  private WPI_VictorSPX rightMotor2 = new WPI_VictorSPX(2);
-  private WPI_VictorSPX rightMotor3 = new WPI_VictorSPX(3);
-  private WPI_VictorSPX leftMotor1 = new WPI_VictorSPX(4);
-  private WPI_VictorSPX leftMotor2 = new WPI_VictorSPX(5);
-  private WPI_VictorSPX leftMotor3 = new WPI_VictorSPX(6);
+
+  private AHRS navx = new AHRS(SPI.Port.kMXP);
+
+  private WPI_VictorSPX rightMotor1 = new WPI_VictorSPX(DriveConstants.kRightMotor1Port);
+  private WPI_VictorSPX rightMotor2 = new WPI_VictorSPX(DriveConstants.kRightMotor2Port);
+  private WPI_VictorSPX rightMotor3 = new WPI_VictorSPX(DriveConstants.kRightMotor3Port);
+  private WPI_VictorSPX leftMotor1 = new WPI_VictorSPX(DriveConstants.kLeftMotor1Port);
+  private WPI_VictorSPX leftMotor2 = new WPI_VictorSPX(DriveConstants.kLeftMotor2Port);
+  private WPI_VictorSPX leftMotor3 = new WPI_VictorSPX(DriveConstants.kLeftMotor3Port);
 
   // The motors on the left side of the drive.
-  private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(leftMotor1, leftMotor2,
-      leftMotor3);
+  private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(leftMotor1, leftMotor2, leftMotor3);
 
   // The motors on the right side of the drive.
-  private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(rightMotor1, rightMotor2,
-      rightMotor3);
+  private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(rightMotor1, rightMotor2, rightMotor3);
 
   // The robot's drive
   private final DifferentialDrive diffDrive = new DifferentialDrive(leftMotors, rightMotors);
@@ -66,18 +68,23 @@ public class Drive extends SubsystemBase {
   private boolean turnSquareInputs;
 
   public Drive() {
+    leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+    rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
+    leftMotors.setInverted(true);
+    rightMotors.setInverted(true);
+    zeroHeading();
+    resetEncoders();
   }
 
   public void tankDrive(double leftPower, double rightPower, boolean squareInputs) {
     diffDrive.tankDrive(leftPower, rightPower, squareInputs);
   }
 
-  public void tankDriveVolts(double leftVolts, double rightVolts){
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
     leftMotors.setVoltage(leftVolts);
     rightMotors.setVoltage(-rightVolts);
     diffDrive.feed();
   }
-
 
   @Override
   public void periodic() {
@@ -85,17 +92,24 @@ public class Drive extends SubsystemBase {
     // Get my gyro angle. We are negating the value because gyros return positive
     // values as the robot turns clockwise. This is not standard convention that is
     // used by the WPILib classes.
-    Rotation2d gyroAngle = Rotation2d.fromDegrees(-Robot.navx.getAngle());
+    SmartDashboard.putNumber("gyro", navx.getAngle());
+
+    Rotation2d gyroAngle = Rotation2d.fromDegrees(-navx.getAngle());
     // Update the pose
-    Pose2d pose = odometry.update(gyroAngle, leftEncoder.getDistance(), rightEncoder.getDistance());
-    SmartDashboard.putString("position", pose.toString());
+    double leftDistance = leftEncoder.getDistance();
+    double rightDistance = rightEncoder.getDistance();
+    Pose2d pose = odometry.update(gyroAngle, leftDistance, rightDistance);
+
+    SmartDashboard.putNumber("Drive/Left Distance", leftDistance);
+    SmartDashboard.putNumber("Drive/Right Distance", rightDistance);
+    SmartDashboard.putString("Drive/position", pose.toString());
   }
 
   /**
    * Zeroes the heading of the robot.
    */
   public void zeroHeading() {
-    Robot.navx.reset();
+    navx.reset();
   }
 
   /**
@@ -151,10 +165,10 @@ public class Drive extends SubsystemBase {
   /**
    * Returns the heading of the robot.
    *
-   * @return the robot's heading in degrees, from 180 to 180
+   * @return the robot's heading in degrees, from -180 to 180
    */
   public double getHeading() {
-    return Math.IEEEremainder(Robot.navx.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    return Math.IEEEremainder(navx.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
   /**
@@ -163,7 +177,7 @@ public class Drive extends SubsystemBase {
    * @return The turn rate of the robot, in degrees per second
    */
   public double getTurnRate() {
-    return Robot.navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+    return navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
 
   /**
@@ -194,7 +208,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void driveOnHeadingExecute(double power) {
-    double powerDelta = this.drivePIDController.calculate(Robot.navx.getAngle());
+    double powerDelta = this.drivePIDController.calculate(navx.getAngle());
     if (Math.signum(powerDelta) != Math.signum(power)) {
       this.tankDrive(power + powerDelta, power, false);
     } else {
@@ -256,7 +270,7 @@ public class Drive extends SubsystemBase {
    *                     forward, otherwise pivots back
    */
   public void turnToHeadingExecute(double maxPower, boolean useBothSides, boolean forward) {
-    double currentPower = this.turnPIDController.calculate(Robot.navx.getAngle()) * maxPower;
+    double currentPower = this.turnPIDController.calculate(navx.getAngle()) * maxPower;
     if (useBothSides) {
       this.tankDrive(currentPower, -currentPower, this.turnSquareInputs);
     } else {

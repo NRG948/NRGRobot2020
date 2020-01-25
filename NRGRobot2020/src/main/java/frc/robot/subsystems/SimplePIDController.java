@@ -15,14 +15,15 @@ public class SimplePIDController extends PIDSubsystem {
   public static final double BOTTOM = 4.6;
   public static final double STOW = 1.65;
   public static final double TABLE_HEIGHT = 1.58;
+
   /**
    * Creates a new Elevator.
    */
   public SimplePIDController() {
     super(new PIDController(0, 0, 0)); // The PIDController used by the subsystem
 
-      setSetpoint(STOW);
-      enable();
+    setSetpoint(STOW);
+    enable();
   }
 
   @Override
@@ -32,7 +33,7 @@ public class SimplePIDController extends PIDSubsystem {
 
   protected double returnPIDInput() {
     return 0;
- }
+  }
 
   @Override
   public double getMeasurement() {
