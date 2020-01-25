@@ -29,6 +29,7 @@ public class ShooterRPM extends SubsystemBase {
   private double motorOutput = 4;
   private double lastPower;
   private double prevEncoder;
+  private double currentRPM;
   private long prevTime = 0;
 
   public ShooterRPM() {
@@ -37,33 +38,27 @@ public class ShooterRPM extends SubsystemBase {
     spinMotor2.setInverted(true);
   }
 
+  public void initDefaultCommand() {
+    // setDefaultCommand(new SetShooterRPM(goalRPM));
+  }
+
   /**
    * Gets current RPM of the shooter wheel.
    * 
    * We initialy tried to get RPM using Encoder.getRate but RPM was having a lot
    * of variation so we are calculating the RPM manually.
-   * 
-   * @return
    */
-  public double currentRPM() {
+  public void calculateCurrentRPM() {
     double currentEncoder = spinMotorEncoder.getDistance();
     long currentTime = System.nanoTime();
-    double currentRPM = ((currentEncoder - prevEncoder) / (currentTime - prevTime)) * 60000000000.0;
+    currentRPM = ((currentEncoder - prevEncoder) / (currentTime - prevTime)) * 60000000000.0;
     prevEncoder = currentEncoder;
     prevTime = currentTime;
-    return currentRPM;
-  }
-
-  public double getTicks() {
-    return spinMotorEncoder.getDistance();
-  }
-
-  public void initDefaultCommand() {
-    // setDefaultCommand(new SetShooterRPM(goalRPM));
   }
 
   public void updateRPM() {
-    double error = goalRPM - currentRPM(); // calculate the error;
+    calculateCurrentRPM();
+    double error = goalRPM - currentRPM; // calculate the error;
     motorOutput += GAIN * error; // integrate the output;
     motorOutput = MathUtil.clamp(motorOutput, 0, 1);
     if (error * previousError < 0) { // if it crossed the goal RPM
@@ -72,15 +67,6 @@ public class ShooterRPM extends SubsystemBase {
       previousError = error; // and save the previous error
     }
     setFlyWheel(motorOutput);
-    updateDashBoard();
-  }
-
-  public void updateRPMBangBang() {
-    if (currentRPM() > goalRPM) {
-      setFlyWheel(0.4);
-    } else {
-      setFlyWheel(0.6);
-    }
     updateDashBoard();
   }
 
@@ -110,7 +96,7 @@ public class ShooterRPM extends SubsystemBase {
   public void updateDashBoard() {
     SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.getRaw());
     SmartDashboard.putNumber("ShooterRPM/Distance", spinMotorEncoder.getDistance());
-    SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM());
+    SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM);
     SmartDashboard.putNumber("ShooterRPM/power", lastPower);
   }
 
@@ -123,5 +109,6 @@ public class ShooterRPM extends SubsystemBase {
     spinMotorEncoder.reset();
     spinMotor1.disable();
     spinMotor2.disable();
+    prevTime = System.nanoTime();
   }
 }
