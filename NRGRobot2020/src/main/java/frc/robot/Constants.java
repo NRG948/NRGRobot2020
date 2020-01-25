@@ -29,6 +29,7 @@ public final class Constants {
         public static final int kRightMotor1Port = 4;
         public static final int kRightMotor2Port = 5;
         public static final int kRightMotor3Port = 6;
+        public static final int kPanelSpinnerPort = 7;
         public static final int[] kLeftEncoderPorts = new int[] { 2, 3 };
         public static final int[] kRightEncoderPorts = new int[] { 0, 1 };
         public static final boolean kLeftEncoderReversed = false;
