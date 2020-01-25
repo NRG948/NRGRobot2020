@@ -19,7 +19,6 @@ import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.SetShooterRPM;
-import frc.robot.commands.SetShooterRPMBangBang;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.ShooterRPM;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,7 +40,7 @@ public class RobotContainer {
 
   private final Joystick rightJoystick = new Joystick(0);
   private final Joystick leftJoystick = new Joystick(1);
-  private JoystickButton resetSensor = new JoystickButton(rightJoystick, 1);
+  private JoystickButton resetSensors = new JoystickButton(rightJoystick, 1);
   private XboxController xboxController = new XboxController(2);
   private JoystickButton xboxButtonA = new JoystickButton(xboxController, 1); // A Button
   private JoystickButton xboxButtonB = new JoystickButton(xboxController, 2); // B Button
@@ -71,11 +70,11 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    xboxButtonA.whenPressed(new SetShooterRPMBangBang(3900, shooterRPM));
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
-    resetSensor.whenPressed(new InstantCommand(() -> {
-      drive.zeroHeading();
+    resetSensors.whenPressed(new InstantCommand(() -> {
+      drive.resetHeading();
       drive.resetOdometry(new Pose2d());
+      shooterRPM.reset();
     }));
   }
 
