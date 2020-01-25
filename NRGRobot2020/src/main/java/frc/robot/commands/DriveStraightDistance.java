@@ -8,40 +8,44 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Robot;
-
 import frc.robot.subsystems.Drive;
+import frc.robot.utilities.NRGPreferences;
 
 public class DriveStraightDistance extends CommandBase {
   private final Drive drive;
   private double xOrigin;// a class variable
   private double yOrigin;
-  private final double distance;// this is a constant
-  private final double maxPower;
-  private final boolean stopMotors;
+  private double distance;// this is a constant
+  private double maxPower;
+  private boolean stopMotors;
 
-  private boolean useRobotHeading = true;
+  private final boolean useRobotHeading = true;
   private double heading = 0;
   /**
    * Creates a new DriveStraightDistance.
    */
-  public DriveStraightDistance(final Drive subsystem, double distance, double maxPower, boolean stopMotors) {
+  public DriveStraightDistance(final Drive subsystem) {
     this.drive = subsystem;
-    this.distance = distance; // sets the value of the distance that we want to travel
-    this.maxPower = maxPower; // sets the maximum power
-    this.stopMotors = stopMotors;
+    this.maxPower = NRGPreferences.NumberPrefs.DRIVE_STRAIGHT_MAXPOWER.getValue();
+    this.distance = 0;
+    this.heading = this.drive.getHeading();
   }
 
-  public DriveStraightDistance(final Drive subsystem, double distance, double maxPower) {
-    this(subsystem, distance, maxPower, true);
+  public DriveStraightDistance withMaxPower(double maxPower){
+    this.maxPower = maxPower;
+    return this;
   }
-      
-  public DriveStraightDistance(final Drive subsystem, double heading, double distance, double maxPower, boolean stopMotors) {
-    this(subsystem, distance, maxPower, stopMotors);
-    this.useRobotHeading = false;
+
+  public DriveStraightDistance forDistance(double distance){
+    this.distance = distance;
+    return this;
+  }
+
+  public DriveStraightDistance toHeading(double heading){
     this.heading = heading;
+    return this;
   }
-
+  
   // Called when the command
   @Override
   public void initialize() { 
@@ -66,7 +70,7 @@ public class DriveStraightDistance extends CommandBase {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
+  public void end(final boolean interrupted) {
     if (stopMotors) {
       this.drive.driveOnHeadingEnd();
     }

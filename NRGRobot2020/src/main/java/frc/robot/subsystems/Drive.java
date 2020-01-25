@@ -71,7 +71,7 @@ public class Drive extends SubsystemBase {
     rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     leftMotors.setInverted(true);
     rightMotors.setInverted(true);
-    zeroHeading();
+    resetHeading();
     resetEncoders();
   }
 
@@ -107,7 +107,7 @@ public class Drive extends SubsystemBase {
   /**
    * Zeroes the heading of the robot.
    */
-  public void zeroHeading() {
+  public void resetHeading() {
     navx.reset();
   }
 
