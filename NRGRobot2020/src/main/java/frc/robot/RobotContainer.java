@@ -20,6 +20,7 @@ import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.SetShooterRPMBangBang;
+import frc.robot.subsystems.BallTracker;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.ShooterRPM;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,6 +37,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final Drive drive = new Drive();
+  private final BallTracker ballTracker = new BallTracker();
 
   public final ShooterRPM shooterRPM = new ShooterRPM();
 
