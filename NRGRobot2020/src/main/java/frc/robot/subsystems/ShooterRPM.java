@@ -47,6 +47,8 @@ public class ShooterRPM extends SubsystemBase {
    * 
    * We initialy tried to get RPM using Encoder.getRate but RPM was having a lot
    * of variation so we are calculating the RPM manually.
+   * 
+   * Will cause innacuate results to call more than once per 20ms cycle.
    */
   public void calculateCurrentRPM() {
     double currentEncoder = spinMotorEncoder.getDistance();
