@@ -31,30 +31,21 @@ public class DriveStraightDistance extends CommandBase {
     this.heading = this.drive.getHeading();
   }
 
-  // public DriveStraightDistance(final Drive subsystem, double distance, double maxPower) {
-  //   this(subsystem, distance, maxPower, true);
-  // }
-      
-  // public DriveStraightDistance(final Drive subsystem, double heading, double distance, double maxPower, boolean stopMotors) {
-  //   this(subsystem, distance, maxPower, stopMotors);
-  //   this.useRobotHeading = false;
-  //   this.heading = heading;
-  // }
-
   public DriveStraightDistance withMaxPower(double maxPower){
     this.maxPower = maxPower;
     return this;
   }
+
   public DriveStraightDistance forDistance(double distance){
     this.distance = distance;
     return this;
   }
+
   public DriveStraightDistance toHeading(double heading){
     this.heading = heading;
     return this;
   }
-
-
+  
   // Called when the command
   @Override
   public void initialize() { 
