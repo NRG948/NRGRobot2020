@@ -41,6 +41,7 @@ public class BallTracker extends SubsystemBase {
     SmartDashboard.putBoolean("Vision/hasTargets", hasTargets);
     if (hasTargets) {
       SmartDashboard.putNumber("Vision/distanceToTarget", ballTargets.get(0).distanceToTarget());
+      SmartDashboard.putNumber("Vision/angleToTarget", ballTargets.get(0).getAngleToTarget());
     }
   }
 }
