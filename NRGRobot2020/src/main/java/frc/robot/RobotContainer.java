@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.DriveStraightDistance;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualDrive;
@@ -24,6 +25,7 @@ import frc.robot.commands.TurnToHeading;
 import frc.robot.subsystems.BallTracker;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.ShooterRPM;
+import frc.robot.utilities.NRGPreferences;
 import frc.robot.vision.BallTarget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -65,10 +67,12 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    NRGPreferences.init();
     drive.setDefaultCommand(manualDrive);
     shooterRPM.setDefaultCommand(manualShooter);
     // Configure the button bindings
     configureButtonBindings();
+    drive.addShuffleBoardTab();
   }
 
   /**
@@ -88,9 +92,9 @@ public class RobotContainer {
       BallTarget ballTarget = ballTracker.getBallTarget();
       if (ballTarget != null) {
         double distanceToTarget = ballTarget.distanceToTarget();
-        double angleToTarget = Math.toRadians(ballTarget.getAngleToTarget());
-        new TurnToHeading(this.drive).withMaxPower(1.0).toHeading(this.drive.getHeading() + angleToTarget)
-            .andThen(new DriveStraightDistance(drive).forDistance(distanceToTarget)).schedule();
+        double angleToTarget = ballTarget.getAngleToTarget();
+        new TurnToHeading(this.drive).withMaxPower(0.2).withTolerance(2).toHeading(this.drive.getHeading() + angleToTarget)
+            .andThen(new DriveStraightDistance(drive).forMeters(distanceToTarget)).schedule();
       }
     });
   }
