@@ -14,17 +14,35 @@ public class TurnToHeading extends CommandBase {
   
   private final double DEFAULT_TURN_TOLERANCE = 5.0;
 
-  private double desiredHeading; // the heading we want the robot to end at
-  private double maxPower; // gives the maximum power the robot is gonna drive when the command is executed
+  private double desiredHeading = 0; // the heading we want the robot to end at
+  private double maxPower = 0; // gives the maximum power the robot is gonna drive when the command is executed
   private Drive drive;
 /**
    * Creates a new TurnToHeading.
    */
-  public TurnToHeading(double desiredHeading, double maxPower, Drive drive) {
-    this.desiredHeading = desiredHeading; // assigns the heading
-    this.maxPower = Math.abs(maxPower); // assigns the power
+  public TurnToHeading(Drive drive) {
     this.drive = drive;
     addRequirements(drive); // requires the Drive subsystem
+  }
+
+  /**
+   * Sets the max power to turn the robot
+   * @param maxPower the max power
+   * @return returns this
+   */
+  public TurnToHeading withMaxPower(double maxPower){
+    this.maxPower = maxPower;
+    return this;
+  }
+
+/**
+ * sets the heading to desired heading
+ * @param heading the heading
+ * @return returns this
+ */
+  public TurnToHeading toHeading(double heading){
+    this.desiredHeading = heading;
+    return this;
   }
 
   // Called when the command is initially scheduled.

@@ -12,7 +12,6 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -22,7 +21,6 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.utilities.NRGPreferences;
 
@@ -72,7 +70,7 @@ public class Drive extends SubsystemBase {
     rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     leftMotors.setInverted(true);
     rightMotors.setInverted(true);
-    zeroHeading();
+    resetHeading();
     resetEncoders();
   }
 
@@ -108,7 +106,7 @@ public class Drive extends SubsystemBase {
   /**
    * Zeroes the heading of the robot.
    */
-  public void zeroHeading() {
+  public void resetHeading() {
     navx.reset();
   }
 
