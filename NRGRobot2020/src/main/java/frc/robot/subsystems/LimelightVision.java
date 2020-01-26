@@ -52,6 +52,10 @@ public class LimelightVision extends SubsystemBase {
 
   }
 
+  public double getX() {
+    return x;
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("LimelightX", x);
