@@ -15,13 +15,16 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import frc.robot.commands.DriveStraightDistance;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.SetShooterRPM;
+import frc.robot.commands.TurnToHeading;
 import frc.robot.subsystems.BallTracker;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.ShooterRPM;
+import frc.robot.vision.BallTarget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -43,11 +46,14 @@ public class RobotContainer {
   private final Joystick rightJoystick = new Joystick(0);
   private final Joystick leftJoystick = new Joystick(1);
   private JoystickButton resetSensors = new JoystickButton(rightJoystick, 1);
+  private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
+
   private XboxController xboxController = new XboxController(2);
+
   private JoystickButton xboxButtonA = new JoystickButton(xboxController, 1); // A Button
   private JoystickButton xboxButtonB = new JoystickButton(xboxController, 2); // B Button
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
-  private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button.
+  private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
 
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick);
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
@@ -78,6 +84,15 @@ public class RobotContainer {
       drive.resetOdometry(new Pose2d());
       shooterRPM.reset();
     }));
+    driveToBall.whenPressed(() -> {
+      BallTarget ballTarget = ballTracker.getBallTarget();
+      if (ballTarget != null) {
+        double distanceToTarget = ballTarget.distanceToTarget();
+        double angleToTarget = Math.toRadians(ballTarget.getAngleToTarget());
+        new TurnToHeading(this.drive).withMaxPower(1.0).toHeading(this.drive.getHeading() + angleToTarget)
+            .andThen(new DriveStraightDistance(drive).forDistance(distanceToTarget)).schedule();
+      }
+    });
   }
 
   /**

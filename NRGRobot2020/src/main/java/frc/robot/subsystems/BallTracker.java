@@ -26,6 +26,10 @@ public class BallTracker extends SubsystemBase {
 
   }
 
+  public BallTarget getBallTarget(){
+    return !ballTargets.isEmpty()?ballTargets.get(0):null;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
