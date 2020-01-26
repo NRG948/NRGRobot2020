@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import javax.crypto.Mac;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
 
