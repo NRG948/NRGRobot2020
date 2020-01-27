@@ -70,12 +70,13 @@ public class RobotContainer {
       List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 3, new Rotation2d(0)));
 
   private LimelightVision limelightVision = new LimelightVision();
-  private Turret turret = new Turret();
+  // private Turret turret = new Turret();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    System.out.println("RobotContainer");
     NRGPreferences.init();
     drive.setDefaultCommand(manualDrive);
     shooterRPM.setDefaultCommand(manualShooter);
@@ -92,7 +93,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
-    xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
+    // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
     resetSensors.whenPressed(new InstantCommand(() -> {
       drive.resetHeading();
       drive.resetOdometry(new Pose2d());

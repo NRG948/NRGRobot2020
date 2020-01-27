@@ -31,9 +31,9 @@ public class NRGPreferences {
         DISTANCE_DRIVE_D_TERM("DistanceDriveD", 0.0075),
         DISTANCE_TOLERANCE("DistanceTolerance", 0.75),
         
-        PATH_KS_TERM("PathKS", 1.73),
-        PATH_KV_TERM("PathKV", 2.21),
-        PATH_KA_TERM("PathKA", 0.0428),
+        PATH_KS_TERM("PathKS", 0.836),
+        PATH_KV_TERM("PathKV", 2.42),
+        PATH_KA_TERM("PathKA", 0.119),
 
         TRACK_WIDTH_METERS("TrackWidthMeters", Units.inchesToMeters(25.0)),
         ENCODER_CPR("EncoderPPR", 4096.0 * 34 / 32),
