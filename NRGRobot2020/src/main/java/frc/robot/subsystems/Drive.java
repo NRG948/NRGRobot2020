@@ -19,10 +19,15 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.commands.DriveStraightDistance;
 import frc.robot.utilities.NRGPreferences;
+import frc.robot.commands.TurnToHeading;
 
 public class Drive extends SubsystemBase {
   /**
@@ -82,6 +87,11 @@ public class Drive extends SubsystemBase {
     leftMotors.setVoltage(leftVolts);
     rightMotors.setVoltage(-rightVolts);
     diffDrive.feed();
+  }
+
+  public void arcadeDrive(double xPower, double rotation){
+    diffDrive.setDeadband(0);
+    diffDrive.arcadeDrive(xPower, rotation, false);
   }
 
   @Override
@@ -170,6 +180,15 @@ public class Drive extends SubsystemBase {
   }
 
   /**
+   * returns the continuous heading of the robot
+   * 
+   * @return the continuous heading of the robot
+   */
+  public double getHeadingContinuous() {
+    return navx.getAngle() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
+  }
+
+  /**
    * Returns the turn rate of the robot.
    *
    * @return The turn rate of the robot, in degrees per second
@@ -200,18 +219,22 @@ public class Drive extends SubsystemBase {
     double i = NRGPreferences.NumberPrefs.DRIVE_I_TERM.getValue();
     double d = NRGPreferences.NumberPrefs.DRIVE_D_TERM.getValue();
     this.drivePIDController = new PIDController(p, i, d);
-    this.drivePIDController.setSetpoint(getHeading());
+    this.drivePIDController.setSetpoint(currentHeading);
     this.drivePIDController.setTolerance(0);
     setCurrentHeading(currentHeading);
   }
 
   public void driveOnHeadingExecute(double power) {
-    double powerDelta = this.drivePIDController.calculate(navx.getAngle());
-    if (Math.signum(powerDelta) != Math.signum(power)) {
-      this.tankDrive(power + powerDelta, power, false);
-    } else {
-      this.tankDrive(power, power - powerDelta, false);
-    }
+    double powerDelta = this.drivePIDController.calculate(getHeadingContinuous());
+    // if (Math.signum(powerDelta) != Math.signum(power)) {
+    //   this.tankDrive(power + powerDelta, power, false);
+    // } else {
+    //   this.tankDrive(power, power - powerDelta, false);
+    // }
+    powerDelta= MathUtil.clamp(powerDelta, -Math.abs(power), Math.abs(power));
+
+    this.arcadeDrive(power, -powerDelta);
+
     SmartDashboard.putNumber("Drive/driveOnHeading/PIDOutput", powerDelta);
     SmartDashboard.putNumber("Drive/driveOnHeading/PIDError", this.drivePIDController.getPositionError());
     SmartDashboard.putNumber("Drive/driveOnHeading/Setpoint", this.drivePIDController.getSetpoint());
@@ -302,5 +325,13 @@ public class Drive extends SubsystemBase {
   public void turnToHeadingEnd() {
     this.diffDrive.stopMotor();
     this.turnPIDController = null;
+  }
+
+  public void addShuffleBoardTab() {
+    ShuffleboardTab testTab = Shuffleboard.getTab("Drive");
+    testTab.add("Turn to 90", new TurnToHeading(this).withMaxPower(0.35).toHeading(90));
+    testTab.add("Turn to -90", new TurnToHeading(this).withMaxPower(0.35).toHeading(-90));
+    testTab.add("Drive 3 feet", new DriveStraightDistance(this).withMaxPower(0.5).forFeet(3));
+    testTab.add("Drive 9 feet", new DriveStraightDistance(this).withMaxPower(0.5).forFeet(9));
   }
 }

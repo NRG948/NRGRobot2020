@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.DriveStraightDistance;
 import frc.robot.commands.FollowWaypoints;
@@ -23,9 +24,13 @@ import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualXboxDrive;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.TurnToHeading;
+import frc.robot.commands.TurnTurretToTarget;
 import frc.robot.subsystems.BallTracker;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
+import frc.robot.utilities.NRGPreferences;
+import frc.robot.subsystems.Turret;
 import frc.robot.vision.BallTarget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -63,15 +68,20 @@ public class RobotContainer {
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private FollowWaypoints followWaypointsTest = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
       List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 3, new Rotation2d(0)));
-  
+
+  private LimelightVision limelightVision = new LimelightVision();
+  private Turret turret = new Turret();
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    NRGPreferences.init();
     drive.setDefaultCommand(manualDrive);
     shooterRPM.setDefaultCommand(manualShooter);
     // Configure the button bindings
     configureButtonBindings();
+    drive.addShuffleBoardTab();
   }
 
   /**
@@ -82,6 +92,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
+    xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
     resetSensors.whenPressed(new InstantCommand(() -> {
       drive.resetHeading();
       drive.resetOdometry(new Pose2d());
@@ -93,9 +104,9 @@ public class RobotContainer {
       BallTarget ballTarget = ballTracker.getBallTarget();
       if (ballTarget != null) {
         double distanceToTarget = ballTarget.distanceToTarget();
-        double angleToTarget = Math.toRadians(ballTarget.getAngleToTarget());
-        new TurnToHeading(this.drive).withMaxPower(1.0).toHeading(this.drive.getHeading() + angleToTarget)
-            .andThen(new DriveStraightDistance(drive).forDistance(distanceToTarget)).schedule();
+        double angleToTarget = ballTarget.getAngleToTarget();
+        new TurnToHeading(this.drive).withMaxPower(0.2).withTolerance(2).toHeading(this.drive.getHeading() + angleToTarget)
+            .andThen(new DriveStraightDistance(drive).forMeters(distanceToTarget)).schedule();
       }
     });
   }
