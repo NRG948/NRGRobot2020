@@ -7,6 +7,8 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
 import frc.robot.utilities.NRGPreferences;
@@ -19,7 +21,7 @@ public class DriveStraightDistance extends CommandBase {
   private double maxPower;
   private boolean stopMotors;
 
-  private final boolean useRobotHeading = true;
+  private boolean useRobotHeading = true;
   private double heading = 0;
   /**
    * Creates a new DriveStraightDistance.
@@ -31,18 +33,54 @@ public class DriveStraightDistance extends CommandBase {
     this.heading = this.drive.getHeading();
   }
 
+  /**
+   * Sets the max power to drive the robot
+   * @param maxPower max power
+   * @return this
+   */
   public DriveStraightDistance withMaxPower(double maxPower){
     this.maxPower = maxPower;
     return this;
   }
 
-  public DriveStraightDistance forDistance(double distance){
+  /**
+   * Sets the distance to drive in meters
+   * @param distance distance
+   * @return this
+   */
+  public DriveStraightDistance forMeters(double distance){
     this.distance = distance;
     return this;
   }
 
-  public DriveStraightDistance toHeading(double heading){
+  /**
+   * Sets the distance to drive in inches
+   * @param distanceInInches distance in inches
+   * @return this
+   */
+  public DriveStraightDistance forInches(double distanceInInches){
+    this.distance = Units.inchesToMeters(distanceInInches);
+    return this;
+  }
+
+  /**
+   * Sets the distance to drive in feet
+   * @param distanceInFeet distance in feet
+   * @return this
+   */
+  public DriveStraightDistance forFeet(double distanceInFeet){
+    this.distance = Units.feetToMeters(distanceInFeet);
+    return this;
+  }
+
+  /**
+   * Sets the heading to drive on
+   * @param heading heading
+   * @return this
+   */
+  public DriveStraightDistance onHeading(double heading){
     this.heading = heading;
+    this.useRobotHeading = false;
     return this;
   }
   
@@ -50,7 +88,7 @@ public class DriveStraightDistance extends CommandBase {
   @Override
   public void initialize() { 
     if (useRobotHeading) {
-      this.heading = drive.getHeading();
+      this.heading = drive.getHeadingContinuous();
     }
     System.out.println("DriveStraightDistance Init heading: " + heading + " distance: " + distance);
     this.xOrigin = this.drive.getPose().getTranslation().getX(); // gets our current X position from the poistion tracker command

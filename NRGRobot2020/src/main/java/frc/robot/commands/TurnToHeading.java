@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import javax.crypto.Mac;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
 
@@ -18,6 +16,7 @@ public class TurnToHeading extends CommandBase {
 
   private double desiredHeading = 0; // the heading we want the robot to end at
   private double maxPower = 0; // gives the maximum power the robot is gonna drive when the command is executed
+  private double tolerance = DEFAULT_TURN_TOLERANCE;
   private Drive drive;
 /**
    * Creates a new TurnToHeading.
@@ -37,6 +36,11 @@ public class TurnToHeading extends CommandBase {
     return this;
   }
 
+  public TurnToHeading withTolerance(double tolerance){
+    this.tolerance = tolerance;
+    return this;
+  }
+
 /**
  * sets the heading to desired heading
  * @param heading the heading
@@ -52,7 +56,7 @@ public class TurnToHeading extends CommandBase {
   public void initialize() {
     // this gives in the angle into the command and intializes the command and gives
     // in the tolerance
-    drive.turnToHeadingInit(this.desiredHeading, DEFAULT_TURN_TOLERANCE);
+    drive.turnToHeadingInit(this.desiredHeading, tolerance);
 
   }
 

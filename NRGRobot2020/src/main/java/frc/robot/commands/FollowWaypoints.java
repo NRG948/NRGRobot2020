@@ -18,12 +18,13 @@ import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConst
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
+import frc.robot.utilities.NRGPreferences;
 
 public class FollowWaypoints extends FollowTrajectory {
   private static final int MAX_VOLTAGE = 10;
   private static final DifferentialDriveVoltageConstraint VOLTAGE_CONSTRAINT = new DifferentialDriveVoltageConstraint(
-      new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter,
-          DriveConstants.kaVoltSecondsSquaredPerMeter),
+      new SimpleMotorFeedforward(NRGPreferences.NumberPrefs.PATH_KS_TERM.getValue(), 
+          NRGPreferences.NumberPrefs.PATH_KV_TERM.getValue(), NRGPreferences.NumberPrefs.PATH_KA_TERM.getValue()),
       DriveConstants.kDriveKinematics, MAX_VOLTAGE);
   private static final TrajectoryConfig config = new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
       AutoConstants.kMaxAccelerationMetersPerSecondSquared).setKinematics(DriveConstants.kDriveKinematics)
