@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
+import frc.robot.utilities.NRGPreferences;
 
 public class FollowTrajectory extends RamseteCommand {
   /**
@@ -22,8 +23,8 @@ public class FollowTrajectory extends RamseteCommand {
    */
   public FollowTrajectory(Drive drive, Trajectory trajectory) {
     super(trajectory, drive::getPose, new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
-        new SimpleMotorFeedforward(DriveConstants.ksVolts, DriveConstants.kvVoltSecondsPerMeter,
-            DriveConstants.kaVoltSecondsSquaredPerMeter),
+        new SimpleMotorFeedforward(NRGPreferences.NumberPrefs.PATH_KS_TERM.getValue(), 
+        NRGPreferences.NumberPrefs.PATH_KV_TERM.getValue(), NRGPreferences.NumberPrefs.PATH_KA_TERM.getValue()),
         DriveConstants.kDriveKinematics, drive::getWheelSpeeds, new PIDController(DriveConstants.kPDriveVel, 0, 0),
         new PIDController(DriveConstants.kPDriveVel, 0, 0), drive::tankDriveVolts, drive);
   }

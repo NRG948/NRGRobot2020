@@ -10,6 +10,7 @@ package frc.robot.utilities;
 import java.util.stream.Stream;
 
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.util.Units;
 
 /**
  * Defines enums for all robot preferences.
@@ -31,9 +32,12 @@ public class NRGPreferences {
         DISTANCE_DRIVE_D_TERM("DistanceDriveD", 0.0075),
         DISTANCE_TOLERANCE("DistanceTolerance", 0.75),
         
-        PATH_P_TERM("PathP", 0.1),
-        PATH_I_TERM("PathI", 0.0),
-        PATH_D_TERM("PathD", 0.0),
+        PATH_KS_TERM("PathKS", 1.73),
+        PATH_KV_TERM("PathKV", 2.21),
+        PATH_KA_TERM("PathKA", 0.0428),
+
+        TRACK_WIDTH_METERS("TrackWidthMeters", Units.inchesToMeters(25.0)),
+        ENCODER_CPR("EncoderPPR", 4096.0 * 34 / 32),
         
         DRIVE_TO_VISION_TAPE_MIN_POWER("VisionMinPower", 0.15),
         DRIVE_TO_VISION_TAPE_MAX_POWER("VisionMaxPower", 0.65 ),

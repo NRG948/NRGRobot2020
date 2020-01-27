@@ -8,7 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
-import edu.wpi.first.wpilibj.util.Units;
+import frc.robot.utilities.NRGPreferences;
 
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide
@@ -36,17 +36,11 @@ public final class Constants {
         public static final boolean kRightEncoderReversed = true;
 
         // TODO Measurable Robot Parameters
-        public static final double kTrackwidthMeters = Units.inchesToMeters(25.0);
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
-                kTrackwidthMeters);
-        public static final int kEncoderCPR = 2005;
+               NRGPreferences.NumberPrefs.TRACK_WIDTH_METERS.getValue());
         public static final double kWheelDiameterMeters = 0.152;
-        public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / (double) kEncoderCPR;
-
-        // TODO Robot Characterization Values
-        public static final double ksVolts = 1.73;
-        public static final double kvVoltSecondsPerMeter = 2.21;
-        public static final double kaVoltSecondsSquaredPerMeter = 0.0428;
+        public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / 
+                (double) NRGPreferences.NumberPrefs.ENCODER_CPR.getValue();
 
         public static final double kPDriveVel = 8.5;
     }

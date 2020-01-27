@@ -44,7 +44,7 @@ public class Drive extends SubsystemBase {
   // The motors on the right side of the drive.
   private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(rightMotor1, rightMotor2, rightMotor3);
 
-  // The robot's drive
+  // The robot's drivez
   private final DifferentialDrive diffDrive = new DifferentialDrive(leftMotors, rightMotors);
 
   // The odometry (position-tracker)
@@ -68,8 +68,8 @@ public class Drive extends SubsystemBase {
   public Drive() {
     leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
-    leftMotors.setInverted(true);
-    rightMotors.setInverted(true);
+    leftMotors.setInverted(false);
+    rightMotors.setInverted(false);
     resetHeading();
     resetEncoders();
   }
