@@ -15,8 +15,6 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.DriveStraightDistance;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualDrive;
@@ -52,7 +50,7 @@ public class RobotContainer {
 
   private final Joystick rightJoystick = new Joystick(0);
   private final Joystick leftJoystick = new Joystick(1);
-  private JoystickButton resetSensors = new JoystickButton(rightJoystick, 1);
+  private JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
 
   private XboxController xboxController = new XboxController(2);
@@ -67,7 +65,7 @@ public class RobotContainer {
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private FollowWaypoints followWaypointsTest = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
-      List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 3, new Rotation2d(0)));
+      List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)));
 
   private LimelightVision limelightVision = new LimelightVision();
   // private Turret turret = new Turret();
@@ -93,13 +91,11 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
-    // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
-    resetSensors.whenPressed(new InstantCommand(() -> {
-      drive.resetHeading();
-      drive.resetOdometry(new Pose2d());
-
     xboxButtonY.whenPressed(followWaypointsTest);
-      shooterRPM.reset();
+    // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
+
+    resetSensorsButton.whenPressed(new InstantCommand(() -> {
+      resetSensors();
     }));
     driveToBall.whenPressed(() -> {
       BallTarget ballTarget = ballTracker.getBallTarget();
@@ -120,5 +116,11 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return followWaypointsTest;
+  }
+
+  public void resetSensors(){
+    drive.resetHeading();
+    drive.resetOdometry(new Pose2d());
+    shooterRPM.reset();
   }
 }
