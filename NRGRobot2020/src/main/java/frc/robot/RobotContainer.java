@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import java.io.IOException;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.GenericHID;
@@ -16,6 +17,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import frc.robot.commands.DriveStraightDistance;
+import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
@@ -64,9 +66,9 @@ public class RobotContainer {
   private final ManualXboxDrive manualXboxDrive = new ManualXboxDrive(drive, xboxController);
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
-  private FollowWaypoints followWaypointsTest = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
+  private FollowWaypoints followWaypointsSCurve = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
       List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)));
-
+  private FollowPathWeaverFile followPathTest;
   private LimelightVision limelightVision = new LimelightVision();
   // private Turret turret = new Turret();
 
@@ -81,6 +83,12 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     drive.addShuffleBoardTab();
+    try {
+      followPathTest = new FollowPathWeaverFile(drive, "Test.wpilib.json");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -91,7 +99,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
-    xboxButtonY.whenPressed(followWaypointsTest);
+    xboxButtonY.whenPressed(followWaypointsSCurve);
     // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
 
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
@@ -115,7 +123,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return followWaypointsTest;
+    return followPathTest;
   }
 
   public void resetSensors(){
