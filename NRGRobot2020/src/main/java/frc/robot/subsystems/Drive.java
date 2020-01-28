@@ -331,7 +331,7 @@ public class Drive extends SubsystemBase {
     ShuffleboardTab testTab = Shuffleboard.getTab("Drive");
     testTab.add("Turn to 90", new TurnToHeading(this).withMaxPower(0.35).toHeading(90));
     testTab.add("Turn to -90", new TurnToHeading(this).withMaxPower(0.35).toHeading(-90));
-    testTab.add("Drive 3 feet", new DriveStraightDistance(this).withMaxPower(0.5).forFeet(3));
-    testTab.add("Drive 9 feet", new DriveStraightDistance(this).withMaxPower(0.5).forFeet(9));
+    testTab.add("Drive 1 meter", new DriveStraightDistance(this).withMaxPower(0.5).forMeters(1));
+    testTab.add("Drive 3 meters", new DriveStraightDistance(this).withMaxPower(0.5).forMeters(3));
   }
 }
