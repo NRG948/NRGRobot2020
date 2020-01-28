@@ -36,7 +36,7 @@ public class NRGPreferences {
         PATH_KA_TERM("PathKA", 0.119),
 
         TRACK_WIDTH_METERS("TrackWidthMeters", Units.inchesToMeters(25.0)),
-        ENCODER_CPR("EncoderPPR", 4096.0 * 34 / 32),
+        ENCODER_CPR("EncoderCPR", 1050),
         
         DRIVE_TO_VISION_TAPE_MIN_POWER("VisionMinPower", 0.15),
         DRIVE_TO_VISION_TAPE_MAX_POWER("VisionMaxPower", 0.65),
