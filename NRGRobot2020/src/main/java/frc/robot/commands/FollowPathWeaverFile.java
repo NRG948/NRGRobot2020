@@ -21,6 +21,6 @@ public class FollowPathWeaverFile extends FollowTrajectory {
    * @throws IOException
    */
   public FollowPathWeaverFile(Drive drive, String fileName) throws IOException {
-    super(drive, TrajectoryUtil.fromPathweaverJson(new File(Filesystem.getDeployDirectory(), fileName).toPath()));
+    super(drive, TrajectoryUtil.fromPathweaverJson(new File(new File(Filesystem.getDeployDirectory(), "output"), fileName).toPath()));
   }
 }
