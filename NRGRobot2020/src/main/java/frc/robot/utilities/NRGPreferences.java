@@ -18,9 +18,9 @@ import edu.wpi.first.wpilibj.util.Units;
 public class NRGPreferences {
 
     public enum NumberPrefs {
-        DRIVE_P_TERM("DriveP", 0.081),
-        DRIVE_I_TERM("DriveI", 0.00016),
-        DRIVE_D_TERM("DriveD", 0.0072), 
+        DRIVE_P_TERM("DriveP", 1.11),
+        DRIVE_I_TERM("DriveI", 0),
+        DRIVE_D_TERM("DriveD", 0.0285), 
 
         TURN_P_TERM("TurnP", 0.081),
         TURN_I_TERM("TurnI", 0.00016),
@@ -31,9 +31,9 @@ public class NRGPreferences {
         DISTANCE_DRIVE_D_TERM("DistanceDriveD", 0.0075),
         DISTANCE_TOLERANCE("DistanceTolerance", 0.75),
         
-        PATH_KS_TERM("PathKS", 0.836),
-        PATH_KV_TERM("PathKV", 2.42),
-        PATH_KA_TERM("PathKA", 0.119),
+        PATH_KS_TERM("PathKS", 0.98),
+        PATH_KV_TERM("PathKV", 0.543),
+        PATH_KA_TERM("PathKA", 0.00337),
 
         TRACK_WIDTH_METERS("TrackWidthMeters", Units.inchesToMeters(25.0)),
         ENCODER_CPR("EncoderCPR", 1050),

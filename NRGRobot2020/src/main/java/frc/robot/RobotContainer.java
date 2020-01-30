@@ -128,7 +128,7 @@ public class RobotContainer {
 
   public void resetSensors(){
     drive.resetHeading();
-    drive.resetOdometry(new Pose2d());
+    drive.resetOdometry(new Pose2d(1, -3, new Rotation2d()));
     shooterRPM.reset();
   }
 }
