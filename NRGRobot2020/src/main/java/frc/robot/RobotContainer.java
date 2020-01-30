@@ -21,7 +21,6 @@ import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
-import frc.robot.commands.ManualXboxDrive;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.TurnToHeading;
 import frc.robot.commands.TurnTurretToTarget;
@@ -62,8 +61,7 @@ public class RobotContainer {
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
 
-  private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick);
-  private final ManualXboxDrive manualXboxDrive = new ManualXboxDrive(drive, xboxController);
+  private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick, xboxController);
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private FollowWaypoints followWaypointsSCurve = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
@@ -110,6 +108,7 @@ public class RobotContainer {
       if (ballTarget != null) {
         double distanceToTarget = ballTarget.distanceToTarget();
         double angleToTarget = ballTarget.getAngleToTarget();
+        
         new TurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
             .andThen(new DriveStraightDistance(drive).forMeters(distanceToTarget)).schedule();
       }

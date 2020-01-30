@@ -53,6 +53,7 @@ public class NRGPreferences {
         CLIMBER_ARM_WHEELS_POWER("ClimberArmWheelsPower", 0.5),
 
         DRIVE_STRAIGHT_MAXPOWER("DriveStraightMaxPower", .5);
+        
 
         private String key;
         private double defaultValue;
@@ -83,7 +84,8 @@ public class NRGPreferences {
 
         WRITE_DEFAULT("WriteDefault", true), USING_PRACTICE_BOT("UsingPracticeBot", false),
         PATHS_SQUARE_INPUTS("PathsSquareInputs", false), TURN_SQUARE_INPUTS("TurnSquareInputs", false),
-        TELEOP_SQUARE_INPUTS("TeleopSquareInputs", true), DRIVE_SQUARE_INPUTS("DriveSquareInputs", false);
+        TELEOP_SQUARE_INPUTS("TeleopSquareInputs", true), DRIVE_SQUARE_INPUTS("DriveSquareInputs", false),
+        DRIVE_USE_XBOX_CONTROL("DriveUseXboxControl", false);
 
         private String key;
         private boolean defaultValue;
