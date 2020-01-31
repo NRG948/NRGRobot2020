@@ -27,11 +27,11 @@ public class BallTracker extends SubsystemBase {
   }
 
   public BallTarget getBallTarget(){
+    update();
     return !ballTargets.isEmpty()?ballTargets.get(0):null;
   }
 
-  @Override
-  public void periodic() {
+  public void update() {
     // This method will be called once per scheduler run
     String[] ballTargetsJson = SmartDashboard.getStringArray("Vision/ballTargets", NO_BALL_TARGETS);
     ArrayList<BallTarget> tempBallTargets = new ArrayList<BallTarget>();
@@ -47,5 +47,9 @@ public class BallTracker extends SubsystemBase {
       SmartDashboard.putNumber("Vision/distanceToTarget", ballTargets.get(0).distanceToTarget());
       SmartDashboard.putNumber("Vision/angleToTarget", ballTargets.get(0).getAngleToTarget());
     }
+  }
+
+  @Override
+  public void periodic() {
   }
 }
