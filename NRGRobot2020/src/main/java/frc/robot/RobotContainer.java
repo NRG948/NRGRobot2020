@@ -109,7 +109,7 @@ public class RobotContainer {
         double distanceToTarget = ballTarget.distanceToTarget();
         double angleToTarget = ballTarget.getAngleToTarget();
         
-        new TurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
+        new TurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeadingContinuous() + angleToTarget)
             .andThen(new DriveStraightDistance(drive).forMeters(distanceToTarget)).schedule();
       }
     });
