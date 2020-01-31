@@ -18,6 +18,12 @@ public class Turret extends SubsystemBase {
   private Victor turretMotor = new Victor(0);
   private Encoder turretEncoder = new Encoder(5, 6);
   private PIDController turretPIDController;
+  private double maxPower;
+  /**
+   * TODO: min and max values need to be figured out; the values below are fictious values.
+   */
+  private static final double MIN_ENCODER_VALUE = 0;
+  private static final double MAX_ENCODER_VALUE = 1024;
 
   /**
    * Creates a new Turret.
@@ -31,33 +37,35 @@ public class Turret extends SubsystemBase {
    * @param desiredAngle
    * @param tolerance
    */
-  public void turretAnglePIDInit(double desiredAngle, double tolerance) {
-    double p = NRGPreferences.NumberPrefs.TURRET_P_TERM.getValue();
-    double i = NRGPreferences.NumberPrefs.TURRET_I_TERM.getValue();
-    double d = NRGPreferences.NumberPrefs.TURRET_D_TERM.getValue();
+  public void turretAnglePIDInit(double desiredAngle, double maxPower, double tolerance) {
+    double kP = NRGPreferences.NumberPrefs.TURRET_KP_TERM.getValue();
+    double kI = NRGPreferences.NumberPrefs.TURRET_KI_TERM.getValue();
+    double kD = NRGPreferences.NumberPrefs.TURRET_KD_TERM.getValue();
 
-    this.turretPIDController = new PIDController(p, i, d);
-    this.turretPIDController.setSetpoint(desiredAngle);
+    this.turretPIDController = new PIDController(kP, kI, kD);
+    this.turretPIDController.setSetpoint(0);
     this.turretPIDController.setTolerance(tolerance);
+
+    this.maxPower = maxPower;
   }
 
-  private double encoderToAngle() {
-    // TODO: Convert ticks to angle
-    return turretEncoder.get();
-  }
 
   /**
    * Updates turret motor power based on output from the PID controller.
    * 
    * @param maxPower is the largest power sent to motor controller.
    */
-  public void turretAngleToExecute(double maxPower) {
-    double currentPower = this.turretPIDController.calculate(encoderToAngle()) * maxPower;
+  public void turretAngleToExecute(double limelightAngleX) {
+    double currentPower = this.turretPIDController.calculate(limelightAngleX) * maxPower;
+    int encoderTicks = turretEncoder.get();
+    if (encoderTicks >= MAX_ENCODER_VALUE && currentPower > 0 || encoderTicks <= MIN_ENCODER_VALUE && currentPower < 0){
+      currentPower = 0;
+    }
     turretMotor.set(currentPower);
   }
 
   /**
-   * 
+   * Returns whether the turret is within the tolerance of the setpoint.
    * @return true when turret angle is on target
    */
   public boolean turretAngleOnTarget() {
@@ -72,6 +80,8 @@ public class Turret extends SubsystemBase {
     this.turretMotor.stopMotor();
     this.turretPIDController = null;
   }
+
+  public boolean 
 
   @Override
   public void periodic() {
