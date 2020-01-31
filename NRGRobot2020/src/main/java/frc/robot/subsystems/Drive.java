@@ -33,9 +33,9 @@ public class Drive extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-
+// Gyro Declaration
   private AHRS navx = new AHRS(SPI.Port.kMXP);
-
+// Motor Declaration
   private WPI_VictorSPX rightMotor1 = new WPI_VictorSPX(DriveConstants.kRightMotor1Port);
   private WPI_VictorSPX rightMotor2 = new WPI_VictorSPX(DriveConstants.kRightMotor2Port);
   private WPI_VictorSPX rightMotor3 = new WPI_VictorSPX(DriveConstants.kRightMotor3Port);
@@ -78,17 +78,38 @@ public class Drive extends SubsystemBase {
     resetHeading();
     resetEncoders();
   }
-
+  /**
+   * Basic Tank Drive method for drive subsystem, takes direct inputs for left and right sides.
+   * 
+   * @param leftPower value from -1 to 1 set to left motor group. + is forward.
+   * @param rightPower value from -1 to 1 set to right motor group. + is forward.
+   * @param squareInputs squares motor inputs if true
+   */  
   public void tankDrive(double leftPower, double rightPower, boolean squareInputs) {
     diffDrive.tankDrive(leftPower, rightPower, squareInputs);
   }
-
+  /**
+   * Tank Drive with volatge inputs instead of power inputs.
+   * 
+   * Voltage inputs allows more control over motors.
+   * 
+   * @param leftVolts Value from -12 to 12 volts set to left motor group. + is forward.
+   * @param rightVolts Value from -12 to 12 volts set to right motor group. + is forward.
+   */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     leftMotors.setVoltage(leftVolts);
     rightMotors.setVoltage(-rightVolts);
     diffDrive.feed();
   }
-
+  /**
+   * Drive method that uses 2 inputs on the x and z axis.
+   * 
+   * Allows drive with singuler joystick/controller.
+   * 
+   * @param xPower The robot's speed along the X axis [-1.0..1.0]. + is forward
+   * @param rotation The robot's rotation rate around the Z axis [-1.0..1.0]. + is
+   * Clockwise.
+   */
   public void arcadeDrive(double xPower, double rotation){
     diffDrive.setDeadband(0);
     diffDrive.arcadeDrive(xPower, rotation, false);
@@ -164,7 +185,9 @@ public class Drive extends SubsystemBase {
     resetEncoders();
     odometry.resetPosition(pose, new Rotation2d());
   }
-
+  /**
+   * Resets Encoders
+   */
   public void resetEncoders() {
     leftEncoder.reset();
     rightEncoder.reset();
@@ -212,7 +235,7 @@ public class Drive extends SubsystemBase {
    * We are getting our current heading and putting it into driveOnHeadingInit to
    * adjust our current heading
    * 
-   * @param heading
+   * @param heading Angle we wish to drive.
    */
   public void driveOnHeadingInit(double currentHeading) {
     double p = NRGPreferences.NumberPrefs.DRIVE_P_TERM.getValue();
@@ -247,7 +270,11 @@ public class Drive extends SubsystemBase {
     this.diffDrive.stopMotor();
     this.drivePIDController = null;
   }
-
+  /**
+   * Sets the current heading of the robot.
+   * 
+   * @param currentHeading Current heading of the robot.
+   */
   public void setCurrentHeading(double currentHeading) {
     this.currentHeading = currentHeading;
   }
@@ -268,7 +295,10 @@ public class Drive extends SubsystemBase {
     this.turnPIDController.setTolerance(tolerance);
     this.turnSquareInputs = areTurnInputsSquared();
   }
-
+  /**
+   * Returns if Turn inputs are squared
+   * @return boolean TURN_SQUARE_INPUTS
+   */
   public boolean areTurnInputsSquared() {
     return NRGPreferences.BooleanPrefs.TURN_SQUARE_INPUTS.getValue();
   }
