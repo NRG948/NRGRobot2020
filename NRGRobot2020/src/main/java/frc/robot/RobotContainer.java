@@ -23,13 +23,11 @@ import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.TurnToHeading;
-import frc.robot.commands.TurnTurretToTarget;
 import frc.robot.subsystems.BallTracker;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
 import frc.robot.utilities.NRGPreferences;
-import frc.robot.subsystems.Turret;
 import frc.robot.vision.BallTarget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -109,7 +107,7 @@ public class RobotContainer {
         double distanceToTarget = ballTarget.distanceToTarget();
         double angleToTarget = ballTarget.getAngleToTarget();
         
-        new TurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
+        new TurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeadingContinuous() + angleToTarget)
             .andThen(new DriveStraightDistance(drive).forMeters(distanceToTarget)).schedule();
       }
     });
