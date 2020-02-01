@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.DriveStraightDistance;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
@@ -28,6 +31,7 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
 import frc.robot.utilities.NRGPreferences;
+import frc.robot.subsystems.Turret;
 import frc.robot.vision.BallTarget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -41,6 +45,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
   // The robot's subsystems and commands are defined here...
   private final Drive drive = new Drive();
   private final BallTracker ballTracker = new BallTracker();
@@ -67,7 +72,26 @@ public class RobotContainer {
   private FollowPathWeaverFile followPathTest;
   private LimelightVision limelightVision = new LimelightVision();
   // private Turret turret = new Turret();
+  private SendableChooser<AutoPath> autoPathChooser;
 
+  private enum AutoPath {
+    BLUE_INITIATION_LINE_TO_TRENCH("BLUE_INITIATION_LINE_TO_TRENCH.wpilib.json", new Pose2d(13, -7.5, new Rotation2d(180)));
+
+    private final String fileName;
+    private final Pose2d startingPosition;
+    private AutoPath(String file, Pose2d position){
+      fileName = file;
+      startingPosition = position;
+    }
+    public String getFile(){
+      return fileName;
+    }
+    public Pose2d getStartingPosition(){
+      return startingPosition;
+    }
+    
+  }
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -85,6 +109,10 @@ public class RobotContainer {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+    // Adds AutoPath chooser to SmartDashBoard
+    autoPathChooser = new SendableChooser<AutoPath>();
+    autoPathChooser.setDefaultOption(AutoPath.BLUE_INITIATION_LINE_TO_TRENCH.name(), AutoPath.BLUE_INITIATION_LINE_TO_TRENCH);
+
   }
 
   /**
@@ -107,7 +135,7 @@ public class RobotContainer {
         double distanceToTarget = ballTarget.distanceToTarget();
         double angleToTarget = ballTarget.getAngleToTarget();
         
-        new TurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeadingContinuous() + angleToTarget)
+        new TurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
             .andThen(new DriveStraightDistance(drive).forMeters(distanceToTarget)).schedule();
       }
     });
@@ -120,9 +148,15 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return followPathTest;
+    AutoPath path = autoPathChooser.getSelected();
+    drive.resetOdometry(path.getStartingPosition());
+    try {
+      return new FollowPathWeaverFile(drive, path.getFile());
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
-
   public void resetSensors(){
     drive.resetHeading();
     drive.resetOdometry(new Pose2d(1, -3, new Rotation2d()));
