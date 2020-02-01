@@ -27,7 +27,7 @@ public class TurnTurretToTarget extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    turret.turretAnglePIDInit(limeLightVision.getX(), 0);
+    turret.turretAnglePIDInit(limeLightVision.getX(), 0, 2);
 
   }
 
