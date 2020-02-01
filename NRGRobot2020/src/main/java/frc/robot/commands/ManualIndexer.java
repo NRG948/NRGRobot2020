@@ -8,18 +8,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Acquirer;
+import frc.robot.subsystems.Indexer;
 
-public class ManualAcquirer extends CommandBase {
-  Acquirer acquirer;
+public class ManualIndexer extends CommandBase {
+  Indexer indexer;
   double power = 0;
   /**
-   * Creates a new ManualAcquirer.
+   * Creates a new ManualIndexer.
    */
-  public ManualAcquirer(Acquirer acquirer, double power) {
-    this.acquirer = acquirer;
+  public ManualIndexer(Indexer indexer, double power) {
+    this.indexer = indexer;
     this.power = power;
-    addRequirements(acquirer);    
+    addRequirements(indexer);
   }
 
   // Called when the command is initially scheduled.
@@ -30,7 +30,7 @@ public class ManualAcquirer extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    acquirer.rawAcquirer(power);
+    indexer.rawIndexer(power);
   }
 
   // Called once the command ends or is interrupted.

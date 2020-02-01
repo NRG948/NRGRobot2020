@@ -7,14 +7,21 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
+  private Victor feederVictor = new Victor(3);
+
   /**
    * Creates a new Feeder.
    */
   public Feeder() {
 
+  }
+
+  public void rawFeeder(double power){
+    feederVictor.set(power * 0.5);
   }
 
   @Override
