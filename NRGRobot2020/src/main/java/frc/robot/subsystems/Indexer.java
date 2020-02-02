@@ -10,18 +10,18 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Hood extends SubsystemBase {
-  private Victor hoodVictor = new Victor(3);
+public class Indexer extends SubsystemBase {
+  private Victor indexerVictor = new Victor(3);
   /**
-   * Creates a new Hood.
+   * Creates a new Indexer.
    */
-  public Hood() {
+  public Indexer() {
 
   }
-  
-  public void rawHood(double power){
-    hoodVictor.set(power * 0.5);
+  public void rawIndexer(double power){
+    indexerVictor.set(power * 0.5);
   }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

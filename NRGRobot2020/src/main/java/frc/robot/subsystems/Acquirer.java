@@ -7,14 +7,23 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Acquirer extends SubsystemBase {
+
+  private Victor acquirerVictor = new Victor(2);
   /**
    * Creates a new Acquirer.
    */
+
+
   public Acquirer() {
 
+  }
+
+  public void rawAcquirer(double power){
+    acquirerVictor.set(power * 0.5);
   }
 
   @Override

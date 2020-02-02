@@ -8,13 +8,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Feeder;
 
 public class ManualFeeder extends CommandBase {
+  Feeder feeder;
+  double power = 0;
   /**
    * Creates a new ManualFeeder.
    */
-  public ManualFeeder() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public ManualFeeder(Feeder feeder, double power) {
+    this.feeder = feeder;
+    this.power = power;
+    addRequirements(feeder);    
+
   }
 
   // Called when the command is initially scheduled.
@@ -25,6 +31,8 @@ public class ManualFeeder extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    feeder.rawFeeder(power);
+
   }
 
   // Called once the command ends or is interrupted.
