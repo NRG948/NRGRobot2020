@@ -76,10 +76,15 @@ public class RobotContainer {
   private LimelightVision limelightVision = new LimelightVision();
   // private Turret turret = new Turret();
   private SendableChooser<AutoPath> autoPathChooser;
-
   private enum AutoPath {
-    BLUE_INITIATION_LINE_TO_TRENCH("BLUE_INITIATION_LINE_TO_TRENCH.wpilib.json", new Pose2d(13, -7.5, new Rotation2d(180)));
-
+    BLUE_INITIATION_LINE_TO_BLUE_TRENCH("BLUE_INITIATION_LINE_TO_BLUE_TRENCH.wpilib.json",
+      new Pose2d(12.67, -7.551, new Rotation2d(Math.toRadians(180)))),
+    RED_INITIATION_LINE_TO_MIDDLE("RED_INITIATION_LINE_TO_MIDDLE.wpilib.json",
+      new Pose2d(3.362,-3.989, new Rotation2d(0))),
+    RED_INITIATION_LINE_TO_RED_TRENCH("RED_INITIATION_LINE_TO_RED_TRENCH.wpilib.json",
+      new Pose2d(3.3,-0.786 ,new Rotation2d(0))),
+    RED_INITIATION_LINE_TO_BLUE_TRENCH("RED_INITIATION_LINE_TO_BLUE_TRENCH.wpilib.json",
+      new Pose2d(3.473,-7.501,new Rotation2d(0)));
     private final String fileName;
     private final Pose2d startingPosition;
     private AutoPath(String file, Pose2d position){
@@ -92,7 +97,6 @@ public class RobotContainer {
     public Pose2d getStartingPosition(){
       return startingPosition;
     }
-    
   }
   
   /**
@@ -113,9 +117,13 @@ public class RobotContainer {
       e.printStackTrace();
     }
     // Adds AutoPath chooser to SmartDashBoard
+    ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     autoPathChooser = new SendableChooser<AutoPath>();
-    autoPathChooser.setDefaultOption(AutoPath.BLUE_INITIATION_LINE_TO_TRENCH.name(), AutoPath.BLUE_INITIATION_LINE_TO_TRENCH);
-
+    autoPathChooser.setDefaultOption(AutoPath.BLUE_INITIATION_LINE_TO_BLUE_TRENCH.name(), AutoPath.BLUE_INITIATION_LINE_TO_BLUE_TRENCH);
+    autoPathChooser.addOption(AutoPath.RED_INITIATION_LINE_TO_MIDDLE.name(), AutoPath.RED_INITIATION_LINE_TO_MIDDLE);
+    autoPathChooser.addOption(AutoPath.RED_INITIATION_LINE_TO_RED_TRENCH.name(), AutoPath.RED_INITIATION_LINE_TO_RED_TRENCH);
+    autoPathChooser.addOption(AutoPath.RED_INITIATION_LINE_TO_BLUE_TRENCH.name(), AutoPath.RED_INITIATION_LINE_TO_BLUE_TRENCH);
+    autoTab.add("autoPath",autoPathChooser);
   }
 
   /**
