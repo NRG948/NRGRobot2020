@@ -46,7 +46,7 @@ public class ManualDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (NRGPreferences.BooleanPrefs.DRIVE_USE_XBOX_CONTROL.getValue()) {
+    if (NRGPreferences.DRIVE_USE_XBOX_CONTROL.getValue()) {
       m_drive.arcadeDrive(-m_xboxController.getY(Hand.kLeft), m_xboxController.getX(Hand.kRight));
     } else {
       m_drive.tankDrive(-m_leftJoystick.getY(), -m_rightJoystick.getY(), true);

@@ -7,6 +7,7 @@
 
 package frc.robot.utilities;
 
+import java.util.LinkedList;
 import java.util.stream.Stream;
 
 import edu.wpi.first.wpilibj.Preferences;
@@ -17,62 +18,59 @@ import edu.wpi.first.wpilibj.util.Units;
  */
 public class NRGPreferences {
 
-    public enum NumberPrefs {
-        DRIVE_P_TERM("DriveP", 1.11),
-        DRIVE_I_TERM("DriveI", 0),
-        DRIVE_D_TERM("DriveD", 0.0285), 
+    private static final LinkedList<BasePrefs> allPrefValues = new LinkedList<BasePrefs>();
 
-        TURN_P_TERM("TurnP", 0.081),
-        TURN_I_TERM("TurnI", 0.00016),
-        TURN_D_TERM("TurnD", 0.0072),
+    abstract static class BasePrefs
+    {
+        protected String key;
+        protected Object defaultValue;
 
-        DISTANCE_DRIVE_P_TERM("DistanceDriveP", 0.03),
-        DISTANCE_DRIVE_I_TERM("DistanceDriveI", 0.0125),
-        DISTANCE_DRIVE_D_TERM("DistanceDriveD", 0.0075),
-        DISTANCE_TOLERANCE("DistanceTolerance", 0.75),
-        
-        PATH_KS_TERM("PathKS", 0.98),
-        PATH_KV_TERM("PathKV", 0.543),
-        PATH_KA_TERM("PathKA", 0.00337),
 
-        TRACK_WIDTH_METERS("TrackWidthMeters", Units.inchesToMeters(25.0)),
-        ENCODER_CPR("EncoderCPR", 1050),
-        
-        DRIVE_TO_VISION_TAPE_MIN_POWER("VisionMinPower", 0.15),
-        DRIVE_TO_VISION_TAPE_MAX_POWER("VisionMaxPower", 0.65),
-        CAMERA_ANGLE_SKEW("CameraAngleSkew", -1.7),
-        CAMERA_DISTANCE_SCALE("CameraDistanceScale", 1.0),
-        CAMERA_ANGLE_SCALE("CameraAngleScale", 0.8),
-
-        TURRET_P_TERM("TurretP", 0.081),
-        TURRET_I_TERM("TurretI", 0.00016),
-        TURRET_D_TERM("TurretD", 0.0072),
-
-        CLIMBER_REAR_POWER("ClimberRearPower", 0.95),
-        CLIMBER_REAR_MIN_TICKS("ClimberRearMinTicks", 800),
-        CLIMBER_ARM_WHEELS_POWER("ClimberArmWheelsPower", 0.5),
-
-        DRIVE_STRAIGHT_MAXPOWER("DriveStraightMaxPower", .5);
-        
-
-        private String key;
-        private double defaultValue;
-
-        NumberPrefs(String key, double defaultValue) {
+        protected BasePrefs(String key, Object defaultValue) {
             this.key = key;
             this.defaultValue = defaultValue;
+            allPrefValues.add(this);
         }
 
         public String getKey() {
             return key;
         }
 
+        abstract void writeDefaultValue();
+
+        abstract boolean isDefault();
+
+        // Although not explicitly abstract, each derived class MUST
+        // implement getValue(), returning the appropriate data type,
+        // and also toString() with consistent formatting. 
+
+        void printIfNotDefault()
+        {
+            if (!isDefault())
+                System.out.println(this);
+        }
+    }
+
+    public static class NumberPrefs extends BasePrefs
+    {
+        protected NumberPrefs(String key, double defaultValue) {
+            super(key, defaultValue);
+        }
+
         public double getValue() {
-            return Preferences.getInstance().getDouble(key, defaultValue);
+            return Preferences.getInstance().getDouble(key, (double)defaultValue);
+        }
+
+        public void setValue(double newValue) {
+            Preferences.getInstance().putDouble(key, newValue);
         }
 
         void writeDefaultValue() {
-            Preferences.getInstance().putDouble(key, defaultValue);
+            Preferences.getInstance().putDouble(key, (double)defaultValue);
+        }
+
+        boolean isDefault() {
+            return getValue() == (double)defaultValue;
         }
 
         public String toString() {
@@ -80,27 +78,14 @@ public class NRGPreferences {
         }
     }
 
-    public enum BooleanPrefs {
-
-        WRITE_DEFAULT("WriteDefault", true), USING_PRACTICE_BOT("UsingPracticeBot", false),
-        PATHS_SQUARE_INPUTS("PathsSquareInputs", false), TURN_SQUARE_INPUTS("TurnSquareInputs", false),
-        TELEOP_SQUARE_INPUTS("TeleopSquareInputs", true), DRIVE_SQUARE_INPUTS("DriveSquareInputs", false),
-        DRIVE_USE_XBOX_CONTROL("DriveUseXboxControl", false);
-
-        private String key;
-        private boolean defaultValue;
-
-        BooleanPrefs(String key, boolean defaultValue) {
-            this.key = key;
-            this.defaultValue = defaultValue;
-        }
-
-        public String getKey() {
-            return key;
+    public static class BooleanPrefs extends BasePrefs
+    {
+        protected BooleanPrefs(String key, boolean defaultValue) {
+            super(key, defaultValue);
         }
 
         public boolean getValue() {
-            return Preferences.getInstance().getBoolean(key, defaultValue);
+            return Preferences.getInstance().getBoolean(key, (boolean)defaultValue);
         }
 
         public void setValue(boolean newValue) {
@@ -108,7 +93,11 @@ public class NRGPreferences {
         }
 
         void writeDefaultValue() {
-            Preferences.getInstance().putBoolean(key, defaultValue);
+            Preferences.getInstance().putBoolean(key, (boolean)defaultValue);
+        }
+
+        boolean isDefault() {
+            return getValue() == (boolean)defaultValue;
         }
 
         public String toString() {
@@ -116,28 +105,26 @@ public class NRGPreferences {
         }
     }
 
-    public enum StringPrefs {
-
-        TEST_PATH_NAME("TestPathName", "LEFT_TO_CARGO_FRONT_LEFT_HATCH");
-
-        private String key;
-        private String defaultValue;
-
-        StringPrefs(String key, String defaultValue) {
-            this.key = key;
-            this.defaultValue = defaultValue;
-        }
-
-        public String getKey() {
-            return key;
+    public static class StringPrefs extends BasePrefs
+    {
+        protected StringPrefs(String key, String defaultValue) {
+            super(key, defaultValue);
         }
 
         public String getValue() {
-            return Preferences.getInstance().getString(key, defaultValue);
+            return Preferences.getInstance().getString(key, (String)defaultValue);
+        }
+
+        public void setValue(String newValue) {
+            Preferences.getInstance().putString(key, newValue);
         }
 
         void writeDefaultValue() {
-            Preferences.getInstance().putString(key, defaultValue);
+            Preferences.getInstance().putString(key, (String)defaultValue);
+        }
+
+        boolean isDefault() {
+            return getValue() == (String)defaultValue;
         }
 
         public String toString() {
@@ -145,17 +132,60 @@ public class NRGPreferences {
         }
     }
 
+    public static final NumberPrefs DRIVE_P_TERM = new NumberPrefs("DriveP", 1.11);
+    public static final NumberPrefs DRIVE_I_TERM = new NumberPrefs("DriveI", 0);
+    public static final NumberPrefs DRIVE_D_TERM = new NumberPrefs("DriveD", 0.0285); 
+
+    public static final NumberPrefs TURN_P_TERM = new NumberPrefs("TurnP", 0.081);
+    public static final NumberPrefs TURN_I_TERM = new NumberPrefs("TurnI", 0.00016);
+    public static final NumberPrefs TURN_D_TERM = new NumberPrefs("TurnD", 0.0072);
+
+    public static final NumberPrefs DISTANCE_DRIVE_P_TERM = new NumberPrefs("DistanceDriveP", 0.03);
+    public static final NumberPrefs DISTANCE_DRIVE_I_TERM = new NumberPrefs("DistanceDriveI", 0.0125);
+    public static final NumberPrefs DISTANCE_DRIVE_D_TERM = new NumberPrefs("DistanceDriveD", 0.0075);
+    public static final NumberPrefs DISTANCE_TOLERANCE = new NumberPrefs("DistanceTolerance", 0.75);
+    
+    public static final NumberPrefs PATH_KS_TERM = new NumberPrefs("PathKS", 0.98);
+    public static final NumberPrefs PATH_KV_TERM = new NumberPrefs("PathKV", 0.543);
+    public static final NumberPrefs PATH_KA_TERM = new NumberPrefs("PathKA", 0.00337);
+
+    public static final NumberPrefs TRACK_WIDTH_METERS = new NumberPrefs("TrackWidthMeters", Units.inchesToMeters(25.0));
+    public static final NumberPrefs ENCODER_CPR = new NumberPrefs("EncoderCPR", 1050);
+    
+    public static final NumberPrefs DRIVE_TO_VISION_TAPE_MIN_POWER = new NumberPrefs("VisionMinPower", 0.15);
+    public static final NumberPrefs DRIVE_TO_VISION_TAPE_MAX_POWER = new NumberPrefs("VisionMaxPower", 0.65);
+    public static final NumberPrefs CAMERA_ANGLE_SKEW = new NumberPrefs("CameraAngleSkew", -1.7);
+    public static final NumberPrefs CAMERA_DISTANCE_SCALE = new NumberPrefs("CameraDistanceScale", 1.0);
+    public static final NumberPrefs CAMERA_ANGLE_SCALE = new NumberPrefs("CameraAngleScale", 0.8);
+
+    public static final NumberPrefs TURRET_P_TERM = new NumberPrefs("TurretP", 0.081);
+    public static final NumberPrefs TURRET_I_TERM = new NumberPrefs("TurretI", 0.00016);
+    public static final NumberPrefs TURRET_D_TERM = new NumberPrefs("TurretD", 0.0072);
+
+    public static final NumberPrefs CLIMBER_REAR_POWER = new NumberPrefs("ClimberRearPower", 0.95);
+    public static final NumberPrefs CLIMBER_REAR_MIN_TICKS = new NumberPrefs("ClimberRearMinTicks", 800);
+    public static final NumberPrefs CLIMBER_ARM_WHEELS_POWER = new NumberPrefs("ClimberArmWheelsPower", 0.5);
+
+    public static final NumberPrefs DRIVE_STRAIGHT_MAXPOWER = new NumberPrefs("DriveStraightMaxPower", .5);
+    
+    public static final BooleanPrefs WRITE_DEFAULT = new BooleanPrefs("WriteDefault", true); 
+    public static final BooleanPrefs USING_PRACTICE_BOT = new BooleanPrefs("UsingPracticeBot", false);
+    public static final BooleanPrefs PATHS_SQUARE_INPUTS = new BooleanPrefs("PathsSquareInputs", false); 
+    public static final BooleanPrefs TURN_SQUARE_INPUTS = new BooleanPrefs("TurnSquareInputs", false);
+    public static final BooleanPrefs TELEOP_SQUARE_INPUTS = new BooleanPrefs("TeleopSquareInputs", true); 
+    public static final BooleanPrefs DRIVE_SQUARE_INPUTS = new BooleanPrefs("DriveSquareInputs", false);
+    public static final BooleanPrefs DRIVE_USE_XBOX_CONTROL = new BooleanPrefs("DriveUseXboxControl", false);
+    
+    public static final StringPrefs TEST_PATH_NAME = new StringPrefs("TestPathName", "LEFT_TO_CARGO_FRONT_LEFT_HATCH");
+    
+
     public static void init() {
-        if (BooleanPrefs.WRITE_DEFAULT.getValue()) {
+        if (NRGPreferences.WRITE_DEFAULT.getValue()) {
             System.out.println("WRITING DEFAULT PREFERENCES");
-            Stream.of(NumberPrefs.values()).forEach(p -> p.writeDefaultValue());
-            Stream.of(BooleanPrefs.values()).forEach(p -> p.writeDefaultValue());
-            Stream.of(StringPrefs.values()).forEach(p -> p.writeDefaultValue());
-            BooleanPrefs.WRITE_DEFAULT.setValue(false);
+            NRGPreferences.allPrefValues.forEach(p -> p.writeDefaultValue());
+            NRGPreferences.WRITE_DEFAULT.setValue(false);
         } else {
-            Stream.of(NumberPrefs.values()).filter(p -> p.getValue() != p.defaultValue).forEach(System.out::println);
-            Stream.of(BooleanPrefs.values()).filter(p -> p.getValue() != p.defaultValue).forEach(System.out::println);
-            Stream.of(StringPrefs.values()).filter(p -> p.getValue() != p.defaultValue).forEach(System.out::println);
+            NRGPreferences.allPrefValues.forEach(p -> p.printIfNotDefault());
         }
 
     }

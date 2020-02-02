@@ -238,9 +238,9 @@ public class Drive extends SubsystemBase {
    * @param heading Angle we wish to drive.
    */
   public void driveOnHeadingInit(double currentHeading) {
-    double p = NRGPreferences.NumberPrefs.DRIVE_P_TERM.getValue();
-    double i = NRGPreferences.NumberPrefs.DRIVE_I_TERM.getValue();
-    double d = NRGPreferences.NumberPrefs.DRIVE_D_TERM.getValue();
+    double p = NRGPreferences.DRIVE_P_TERM.getValue();
+    double i = NRGPreferences.DRIVE_I_TERM.getValue();
+    double d = NRGPreferences.DRIVE_D_TERM.getValue();
     this.drivePIDController = new PIDController(p, i, d);
     this.drivePIDController.setSetpoint(currentHeading);
     this.drivePIDController.setTolerance(0);
@@ -287,9 +287,9 @@ public class Drive extends SubsystemBase {
    * @param tolerance
    */
   public void turnToHeadingInit(double desiredHeading, double tolerance) {
-    double p = NRGPreferences.NumberPrefs.TURN_P_TERM.getValue();
-    double i = NRGPreferences.NumberPrefs.TURN_I_TERM.getValue();
-    double d = NRGPreferences.NumberPrefs.TURN_D_TERM.getValue();
+    double p = NRGPreferences.TURN_P_TERM.getValue();
+    double i = NRGPreferences.TURN_I_TERM.getValue();
+    double d = NRGPreferences.TURN_D_TERM.getValue();
     this.turnPIDController = new PIDController(p, i, d);
     this.turnPIDController.setSetpoint(desiredHeading);
     this.turnPIDController.setTolerance(tolerance);
@@ -300,7 +300,7 @@ public class Drive extends SubsystemBase {
    * @return boolean TURN_SQUARE_INPUTS
    */
   public boolean areTurnInputsSquared() {
-    return NRGPreferences.BooleanPrefs.TURN_SQUARE_INPUTS.getValue();
+    return NRGPreferences.TURN_SQUARE_INPUTS.getValue();
   }
 
   /**

@@ -27,7 +27,7 @@ public class DriveStraightDistance extends CommandBase {
    */
   public DriveStraightDistance(final Drive subsystem) {
     this.drive = subsystem;
-    this.maxPower = NRGPreferences.NumberPrefs.DRIVE_STRAIGHT_MAXPOWER.getValue();
+    this.maxPower = NRGPreferences.DRIVE_STRAIGHT_MAXPOWER.getValue();
     this.distance = 0;
     this.heading = this.drive.getHeading();
   }
