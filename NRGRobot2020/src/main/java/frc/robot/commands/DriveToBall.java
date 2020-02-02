@@ -27,7 +27,7 @@ public class DriveToBall extends CommandBase {
   public DriveToBall(Drive drive, BallTracker ballTracker) {
     this.drive = drive;
     this.ballTracker = ballTracker;
-    maxPower = NRGPreferences.NumberPrefs.DRIVE_TO_BALL_MAXPOWER.getValue();
+    maxPower = NRGPreferences.DRIVE_TO_BALL_MAXPOWER.getValue();
     addRequirements(drive);
   }
 
