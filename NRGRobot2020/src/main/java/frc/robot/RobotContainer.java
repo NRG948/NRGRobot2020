@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import java.io.IOException;
 import java.util.List;
 
 import edu.wpi.first.wpilibj.GenericHID;
@@ -15,14 +16,17 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.DriveStraightDistance;
+import frc.robot.commands.DriveToBall;
+import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
-import frc.robot.commands.ManualXboxDrive;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.TurnToHeading;
-import frc.robot.commands.TurnTurretToTarget;
 import frc.robot.subsystems.BallTracker;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LimelightVision;
@@ -42,6 +46,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
   // The robot's subsystems and commands are defined here...
   private final Drive drive = new Drive();
   private final BallTracker ballTracker = new BallTracker();
@@ -52,6 +57,8 @@ public class RobotContainer {
   private final Joystick leftJoystick = new Joystick(1);
   private JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
+  private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
+  
 
   private XboxController xboxController = new XboxController(2);
 
@@ -60,16 +67,34 @@ public class RobotContainer {
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
 
-  private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick);
-  private final ManualXboxDrive manualXboxDrive = new ManualXboxDrive(drive, xboxController);
+  private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick, xboxController);
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
-  private FollowWaypoints followWaypointsTest = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
+  private FollowWaypoints followWaypointsSCurve = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
       List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)));
-
+  private FollowPathWeaverFile followPathTest;
   private LimelightVision limelightVision = new LimelightVision();
   // private Turret turret = new Turret();
+  private SendableChooser<AutoPath> autoPathChooser;
 
+  private enum AutoPath {
+    BLUE_INITIATION_LINE_TO_TRENCH("BLUE_INITIATION_LINE_TO_TRENCH.wpilib.json", new Pose2d(13, -7.5, new Rotation2d(180)));
+
+    private final String fileName;
+    private final Pose2d startingPosition;
+    private AutoPath(String file, Pose2d position){
+      fileName = file;
+      startingPosition = position;
+    }
+    public String getFile(){
+      return fileName;
+    }
+    public Pose2d getStartingPosition(){
+      return startingPosition;
+    }
+    
+  }
+  
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -81,6 +106,16 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     drive.addShuffleBoardTab();
+    try {
+      followPathTest = new FollowPathWeaverFile(drive, "Test.wpilib.json");
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    // Adds AutoPath chooser to SmartDashBoard
+    autoPathChooser = new SendableChooser<AutoPath>();
+    autoPathChooser.setDefaultOption(AutoPath.BLUE_INITIATION_LINE_TO_TRENCH.name(), AutoPath.BLUE_INITIATION_LINE_TO_TRENCH);
+
   }
 
   /**
@@ -91,7 +126,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
-    xboxButtonY.whenPressed(followWaypointsTest);
+    xboxButtonY.whenPressed(followWaypointsSCurve);
     // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
 
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
@@ -102,10 +137,12 @@ public class RobotContainer {
       if (ballTarget != null) {
         double distanceToTarget = ballTarget.distanceToTarget();
         double angleToTarget = ballTarget.getAngleToTarget();
-        new TurnToHeading(this.drive).withMaxPower(0.2).withTolerance(2).toHeading(this.drive.getHeading() + angleToTarget)
+        
+        new TurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
             .andThen(new DriveStraightDistance(drive).forMeters(distanceToTarget)).schedule();
       }
     });
+    driveToBallContinuous.whenPressed(new DriveToBall(drive, ballTracker).withMaxPower(1.0));
   }
 
   /**
@@ -115,12 +152,18 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return followWaypointsTest;
+    AutoPath path = autoPathChooser.getSelected();
+    drive.resetOdometry(path.getStartingPosition());
+    try {
+      return new FollowPathWeaverFile(drive, path.getFile());
+    } catch (IOException e) {
+      e.printStackTrace();
+      return null;
+    }
   }
-
   public void resetSensors(){
     drive.resetHeading();
-    drive.resetOdometry(new Pose2d());
+    drive.resetOdometry(new Pose2d(1, -3, new Rotation2d()));
     shooterRPM.reset();
   }
 }

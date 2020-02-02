@@ -8,13 +8,18 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Acquirer;
 
 public class ManualAcquirer extends CommandBase {
+  Acquirer acquirer;
+  double power = 0;
   /**
    * Creates a new ManualAcquirer.
    */
-  public ManualAcquirer() {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public ManualAcquirer(Acquirer acquirer, double power) {
+    this.acquirer = acquirer;
+    this.power = power;
+    addRequirements(acquirer);    
   }
 
   // Called when the command is initially scheduled.
@@ -25,6 +30,7 @@ public class ManualAcquirer extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    acquirer.rawAcquirer(power);
   }
 
   // Called once the command ends or is interrupted.

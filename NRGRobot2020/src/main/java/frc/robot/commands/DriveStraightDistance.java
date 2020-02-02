@@ -7,7 +7,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
@@ -28,7 +27,7 @@ public class DriveStraightDistance extends CommandBase {
    */
   public DriveStraightDistance(final Drive subsystem) {
     this.drive = subsystem;
-    this.maxPower = NRGPreferences.NumberPrefs.DRIVE_STRAIGHT_MAXPOWER.getValue();
+    this.maxPower = NRGPreferences.DRIVE_STRAIGHT_MAXPOWER.getValue();
     this.distance = 0;
     this.heading = this.drive.getHeading();
   }

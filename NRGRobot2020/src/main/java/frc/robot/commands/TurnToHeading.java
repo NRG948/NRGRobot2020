@@ -54,6 +54,7 @@ public class TurnToHeading extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    System.out.println("TurnToHeading init Desired=" + desiredHeading + " Current=" + this.drive.getHeadingContinuous());
     // this gives in the angle into the command and intializes the command and gives
     // in the tolerance
     drive.turnToHeadingInit(this.desiredHeading, tolerance);
@@ -70,6 +71,7 @@ public class TurnToHeading extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    System.out.println("TurnToHeading end Current=" + this.drive.getHeadingContinuous());
     drive.turnToHeadingEnd(); // terminates the turn
   }
 
