@@ -77,13 +77,11 @@ public class RobotContainer {
   // private Turret turret = new Turret();
   private SendableChooser<AutoPath> autoPathChooser;
   private enum AutoPath {
-    BLUE_INITIATION_LINE_TO_BLUE_TRENCH("BLUE_INITIATION_LINE_TO_BLUE_TRENCH.wpilib.json",
-      new Pose2d(12.67, -7.551, new Rotation2d(Math.toRadians(180)))),
-    RED_INITIATION_LINE_TO_MIDDLE("RED_INITIATION_LINE_TO_MIDDLE.wpilib.json",
+    INITIATION_LINE_TO_MIDDLE("INITIATION_LINE_TO_MIDDLE.wpilib.json",
       new Pose2d(3.362,-3.989, new Rotation2d(0))),
-    RED_INITIATION_LINE_TO_RED_TRENCH("RED_INITIATION_LINE_TO_RED_TRENCH.wpilib.json",
+    INITIATION_LINE_TO_LEFT_TRENCH("INITIATION_LINE_TO_LEFT_TRENCH.wpilib.json",
       new Pose2d(3.3,-0.786 ,new Rotation2d(0))),
-    RED_INITIATION_LINE_TO_BLUE_TRENCH("RED_INITIATION_LINE_TO_BLUE_TRENCH.wpilib.json",
+    INITIATION_LINE_TO_RIGHT_TRENCH("INITIATION_LINE_TO_RIGHT_TRENCH.wpilib.json",
       new Pose2d(3.473,-7.501,new Rotation2d(0)));
     private final String fileName;
     private final Pose2d startingPosition;
@@ -119,10 +117,9 @@ public class RobotContainer {
     // Adds AutoPath chooser to SmartDashBoard
     ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     autoPathChooser = new SendableChooser<AutoPath>();
-    autoPathChooser.setDefaultOption(AutoPath.BLUE_INITIATION_LINE_TO_BLUE_TRENCH.name(), AutoPath.BLUE_INITIATION_LINE_TO_BLUE_TRENCH);
-    autoPathChooser.addOption(AutoPath.RED_INITIATION_LINE_TO_MIDDLE.name(), AutoPath.RED_INITIATION_LINE_TO_MIDDLE);
-    autoPathChooser.addOption(AutoPath.RED_INITIATION_LINE_TO_RED_TRENCH.name(), AutoPath.RED_INITIATION_LINE_TO_RED_TRENCH);
-    autoPathChooser.addOption(AutoPath.RED_INITIATION_LINE_TO_BLUE_TRENCH.name(), AutoPath.RED_INITIATION_LINE_TO_BLUE_TRENCH);
+    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_MIDDLE.name(), AutoPath.INITIATION_LINE_TO_MIDDLE);
+    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
+    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoTab.add("autoPath",autoPathChooser);
   }
 
