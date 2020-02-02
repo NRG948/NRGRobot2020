@@ -81,8 +81,6 @@ public class Turret extends SubsystemBase {
     this.turretPIDController = null;
   }
 
-  public boolean 
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
