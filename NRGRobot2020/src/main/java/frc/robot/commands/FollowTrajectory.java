@@ -23,8 +23,8 @@ public class FollowTrajectory extends RamseteCommand {
    */
   public FollowTrajectory(Drive drive, Trajectory trajectory) {
     super(trajectory, drive::getPose, new RamseteController(AutoConstants.kRamseteB, AutoConstants.kRamseteZeta),
-        new SimpleMotorFeedforward(NRGPreferences.NumberPrefs.PATH_KS_TERM.getValue(), 
-        NRGPreferences.NumberPrefs.PATH_KV_TERM.getValue(), NRGPreferences.NumberPrefs.PATH_KA_TERM.getValue()),
+        new SimpleMotorFeedforward(NRGPreferences.PATH_KS_TERM.getValue(), 
+        NRGPreferences.PATH_KV_TERM.getValue(), NRGPreferences.PATH_KA_TERM.getValue()),
         DriveConstants.kDriveKinematics, drive::getWheelSpeeds, new PIDController(DriveConstants.kPDriveVel, 0, 0),
         new PIDController(DriveConstants.kPDriveVel, 0, 0), drive::tankDriveVolts, drive);
   }

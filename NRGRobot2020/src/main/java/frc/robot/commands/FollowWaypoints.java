@@ -23,8 +23,8 @@ import frc.robot.utilities.NRGPreferences;
 public class FollowWaypoints extends FollowTrajectory {
   private static final int MAX_VOLTAGE = 10;
   private static final DifferentialDriveVoltageConstraint VOLTAGE_CONSTRAINT = new DifferentialDriveVoltageConstraint(
-      new SimpleMotorFeedforward(NRGPreferences.NumberPrefs.PATH_KS_TERM.getValue(), 
-          NRGPreferences.NumberPrefs.PATH_KV_TERM.getValue(), NRGPreferences.NumberPrefs.PATH_KA_TERM.getValue()),
+      new SimpleMotorFeedforward(NRGPreferences.PATH_KS_TERM.getValue(), 
+          NRGPreferences.PATH_KV_TERM.getValue(), NRGPreferences.PATH_KA_TERM.getValue()),
       DriveConstants.kDriveKinematics, MAX_VOLTAGE);
   private static final TrajectoryConfig config = new TrajectoryConfig(AutoConstants.kMaxSpeedMetersPerSecond,
       AutoConstants.kMaxAccelerationMetersPerSecondSquared).setKinematics(DriveConstants.kDriveKinematics)

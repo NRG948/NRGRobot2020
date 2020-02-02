@@ -38,9 +38,9 @@ public class Turret extends SubsystemBase {
    * @param tolerance
    */
   public void turretAnglePIDInit(double desiredAngle, double maxPower, double tolerance) {
-    double kP = NRGPreferences.NumberPrefs.TURRET_P_TERM.getValue();
-    double kI = NRGPreferences.NumberPrefs.TURRET_I_TERM.getValue();
-    double kD = NRGPreferences.NumberPrefs.TURRET_D_TERM.getValue();
+    double kP = NRGPreferences.TURRET_P_TERM.getValue();
+    double kI = NRGPreferences.TURRET_I_TERM.getValue();
+    double kD = NRGPreferences.TURRET_D_TERM.getValue();
 
     this.turretPIDController = new PIDController(kP, kI, kD);
     this.turretPIDController.setSetpoint(0);
