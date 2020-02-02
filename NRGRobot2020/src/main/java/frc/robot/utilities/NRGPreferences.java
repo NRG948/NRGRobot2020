@@ -52,7 +52,8 @@ public class NRGPreferences {
         CLIMBER_REAR_MIN_TICKS("ClimberRearMinTicks", 800),
         CLIMBER_ARM_WHEELS_POWER("ClimberArmWheelsPower", 0.5),
 
-        DRIVE_STRAIGHT_MAXPOWER("DriveStraightMaxPower", .5);
+        DRIVE_STRAIGHT_MAXPOWER("DriveStraightMaxPower", .5),
+        DRIVE_TO_BALL_MAXPOWER("DriveToBallMaxPower", 0.5);
         
 
         private String key;

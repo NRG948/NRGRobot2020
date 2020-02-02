@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import frc.robot.commands.DriveStraightDistance;
+import frc.robot.commands.DriveToBall;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualDrive;
@@ -51,6 +52,8 @@ public class RobotContainer {
   private final Joystick leftJoystick = new Joystick(1);
   private JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
+  private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
+  
 
   private XboxController xboxController = new XboxController(2);
 
@@ -111,6 +114,7 @@ public class RobotContainer {
             .andThen(new DriveStraightDistance(drive).forMeters(distanceToTarget)).schedule();
       }
     });
+    driveToBallContinuous.whenPressed(new DriveToBall(drive, ballTracker).withMaxPower(1.0));
   }
 
   /**
