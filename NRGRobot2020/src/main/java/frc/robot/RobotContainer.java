@@ -135,7 +135,7 @@ public class RobotContainer {
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
     xboxButtonY.whenPressed(followWaypointsSCurve);
     // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
-    DriveStraight.whenActive(new DriveStraight(drive, leftJoystick));
+    DriveStraight.whenHeld(new DriveStraight(drive, leftJoystick));
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
       resetSensors();
     }));
