@@ -19,15 +19,15 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import frc.robot.commands.DriveStraight;
-import frc.robot.commands.DriveStraightDistance;
+import frc.robot.commands.ManualDriveStraight;
+import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToBall;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.SetShooterRPM;
-import frc.robot.commands.TurnToHeading;
+import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.subsystems.BallTracker;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.LimelightVision;
@@ -135,7 +135,7 @@ public class RobotContainer {
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
     xboxButtonY.whenPressed(followWaypointsSCurve);
     // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
-    DriveStraight.whenHeld(new DriveStraight(drive, leftJoystick));
+    DriveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
       resetSensors();
     }));
@@ -145,8 +145,8 @@ public class RobotContainer {
         double distanceToTarget = ballTarget.distanceToTarget();
         double angleToTarget = ballTarget.getAngleToTarget();
         
-        new TurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
-            .andThen(new DriveStraightDistance(drive).forMeters(distanceToTarget)).schedule();
+        new AutoTurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
+            .andThen(new AutoDriveOnHeading(drive).forMeters(distanceToTarget)).schedule();
       }
     });
     driveToBallContinuous.whenPressed(new DriveToBall(drive, ballTracker).withMaxPower(1.0));

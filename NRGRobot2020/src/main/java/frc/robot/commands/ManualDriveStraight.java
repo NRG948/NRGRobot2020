@@ -12,14 +12,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.Drive;
 
-public class DriveStraight extends CommandBase {
+public class ManualDriveStraight extends CommandBase {
   private final Drive drive;
   private final Joystick m_leftJoystick;
 
   /**
    * Creates a new DriveStraight.
    */
-  public DriveStraight(final Drive drive,  final Joystick leftJoystick) {
+  public ManualDriveStraight(final Drive drive,  final Joystick leftJoystick) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.drive = drive;
     this.m_leftJoystick = leftJoystick;
