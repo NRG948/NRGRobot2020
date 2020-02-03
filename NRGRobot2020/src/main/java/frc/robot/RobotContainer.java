@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import frc.robot.commands.DriveStraight;
 import frc.robot.commands.DriveStraightDistance;
 import frc.robot.commands.DriveToBall;
 import frc.robot.commands.FollowPathWeaverFile;
@@ -58,6 +59,7 @@ public class RobotContainer {
   private JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
   private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
+  private JoystickButton DriveStraight = new JoystickButton(leftJoystick, 1);
   
 
   private XboxController xboxController = new XboxController(2);
@@ -133,7 +135,7 @@ public class RobotContainer {
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
     xboxButtonY.whenPressed(followWaypointsSCurve);
     // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
-
+    DriveStraight.whenActive(new DriveStraight(drive, leftJoystick));
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
       resetSensors();
     }));
