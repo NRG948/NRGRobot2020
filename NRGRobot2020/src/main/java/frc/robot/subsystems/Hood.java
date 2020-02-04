@@ -18,7 +18,7 @@ public class Hood extends SubsystemBase {
   public Hood() {
 
   }
-  
+  //TODO: Add encoders for hard limit
   public void rawHood(double power){
     hoodVictor.set(power * 0.5);
   }

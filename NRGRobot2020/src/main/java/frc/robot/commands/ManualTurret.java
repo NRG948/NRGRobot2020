@@ -38,10 +38,10 @@ public class ManualTurret extends CommandBase {
   @Override
   public void execute() {
     if(m_xboxController.getPOV() == 90){
-      power += 0.05;
+      power = 0.2;
     }
     else if(m_xboxController.getPOV() == 270){
-      power -= 0.05;
+      power = -0.2;
     }
     m_turret.rawTurret(power);
   }
