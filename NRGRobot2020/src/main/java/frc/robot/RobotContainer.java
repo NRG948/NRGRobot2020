@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.ManualDriveStraight;
+import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualIndexer;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToBall;
@@ -33,6 +34,7 @@ import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.BallTracker;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
@@ -56,6 +58,7 @@ public class RobotContainer {
   private final Drive drive = new Drive();
   private final Acquirer acquirer = new Acquirer();
   private final Indexer indexer = new Indexer();
+  private final Feeder feeder = new Feeder();
   private final BallTracker ballTracker = new BallTracker();
   public final ShooterRPM shooterRPM = new ShooterRPM();
   private LimelightVision limelightVision = new LimelightVision();
@@ -80,6 +83,7 @@ public class RobotContainer {
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
   private final ManualAcquirer manualAcquirer = new ManualAcquirer(acquirer, xboxController);
   private final ManualIndexer manualIndexer = new ManualIndexer(indexer, xboxController);
+  private final ManualFeeder manualFeeder = new ManualFeeder(feeder, xboxController);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private FollowWaypoints followWaypointsSCurve = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
       List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)));
@@ -120,6 +124,7 @@ public class RobotContainer {
     shooterRPM.setDefaultCommand(manualShooter);
     acquirer.setDefaultCommand(manualAcquirer);
     indexer.setDefaultCommand(manualIndexer);
+    feeder.setDefaultCommand(manualFeeder);
 
     // Configure the button bindings
     configureButtonBindings();

@@ -15,13 +15,14 @@ import frc.robot.subsystems.Acquirer;
 public class ManualAcquirer extends CommandBase {
   Acquirer acquirer;
   final XboxController m_xboxController;
+
   /**
    * Creates a new ManualAcquirer.
    */
   public ManualAcquirer(Acquirer acquirer, final XboxController xboxController) {
     this.acquirer = acquirer;
     this.m_xboxController = xboxController;
-    addRequirements(acquirer);    
+    addRequirements(acquirer);
   }
 
   // Called when the command is initially scheduled.
@@ -32,7 +33,9 @@ public class ManualAcquirer extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    acquirer.rawAcquirer(m_xboxController.getY(Hand.kRight));
+    if (!m_xboxController.getBackButton()) {
+      acquirer.rawAcquirer(m_xboxController.getY(Hand.kRight));
+    }
   }
 
   // Called once the command ends or is interrupted.
