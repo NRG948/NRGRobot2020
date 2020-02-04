@@ -7,18 +7,20 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Indexer;
 
 public class ManualIndexer extends CommandBase {
   Indexer indexer;
-  double power = 0;
+  final XboxController m_xboxController;
   /**
    * Creates a new ManualIndexer.
    */
-  public ManualIndexer(Indexer indexer, double power) {
+  public ManualIndexer(Indexer indexer, final XboxController xboxController) {
     this.indexer = indexer;
-    this.power = power;
+    this.m_xboxController = xboxController;
     addRequirements(indexer);
   }
 
@@ -30,7 +32,7 @@ public class ManualIndexer extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    indexer.rawIndexer(power);
+    indexer.rawIndexer(m_xboxController.getY(Hand.kLeft));
   }
 
   // Called once the command ends or is interrupted.

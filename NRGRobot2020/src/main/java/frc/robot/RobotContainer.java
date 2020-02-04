@@ -20,16 +20,20 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.ManualDriveStraight;
+import frc.robot.commands.ManualIndexer;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToBall;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
+import frc.robot.commands.ManualAcquirer;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.AutoTurnToHeading;
+import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.BallTracker;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
 import frc.robot.utilities.NRGPreferences;
@@ -48,35 +52,40 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
 
-  // The robot's subsystems and commands are defined here...
+  //subsystems
   private final Drive drive = new Drive();
+  private final Acquirer acquirer = new Acquirer();
+  private final Indexer indexer = new Indexer();
   private final BallTracker ballTracker = new BallTracker();
-
   public final ShooterRPM shooterRPM = new ShooterRPM();
+  private LimelightVision limelightVision = new LimelightVision();
 
+  //Joystick and JoystickButtons
   private final Joystick rightJoystick = new Joystick(0);
   private final Joystick leftJoystick = new Joystick(1);
   private JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
   private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
   private JoystickButton DriveStraight = new JoystickButton(leftJoystick, 1);
-  
 
+  //XboxController and Xbox buttons
   private XboxController xboxController = new XboxController(2);
-
   private JoystickButton xboxButtonA = new JoystickButton(xboxController, 1); // A Button
   private JoystickButton xboxButtonB = new JoystickButton(xboxController, 2); // B Button
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
-
+ 
+  //commands
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick, xboxController);
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
+  private final ManualAcquirer manualAcquirer = new ManualAcquirer(acquirer, xboxController);
+  private final ManualIndexer manualIndexer = new ManualIndexer(indexer, xboxController);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private FollowWaypoints followWaypointsSCurve = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
       List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)));
   private FollowPathWeaverFile followPathTest;
-  private LimelightVision limelightVision = new LimelightVision();
-  // private Turret turret = new Turret();
+ 
+  //autonomous chooser
   private SendableChooser<AutoPath> autoPathChooser;
   private enum AutoPath {
     INITIATION_LINE_TO_MIDDLE("INITIATION_LINE_TO_MIDDLE.wpilib.json",
@@ -105,8 +114,13 @@ public class RobotContainer {
   public RobotContainer() {
     System.out.println("RobotContainer");
     NRGPreferences.init();
+
+    //subsystem default commands
     drive.setDefaultCommand(manualDrive);
     shooterRPM.setDefaultCommand(manualShooter);
+    acquirer.setDefaultCommand(manualAcquirer);
+    indexer.setDefaultCommand(manualIndexer);
+
     // Configure the button bindings
     configureButtonBindings();
     drive.addShuffleBoardTab();

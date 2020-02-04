@@ -7,18 +7,20 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Acquirer;
 
 public class ManualAcquirer extends CommandBase {
   Acquirer acquirer;
-  double power = 0;
+  final XboxController m_xboxController;
   /**
    * Creates a new ManualAcquirer.
    */
-  public ManualAcquirer(Acquirer acquirer, double power) {
+  public ManualAcquirer(Acquirer acquirer, final XboxController xboxController) {
     this.acquirer = acquirer;
-    this.power = power;
+    this.m_xboxController = xboxController;
     addRequirements(acquirer);    
   }
 
@@ -30,7 +32,7 @@ public class ManualAcquirer extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    acquirer.rawAcquirer(power);
+    acquirer.rawAcquirer(m_xboxController.getY(Hand.kRight));
   }
 
   // Called once the command ends or is interrupted.
