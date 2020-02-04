@@ -78,6 +78,7 @@ public class RobotContainer {
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
  
+  //left right dpad turret, hood up dpad, hood down dpad, indexer up down left stick, hold back while moving right stick for feeder, right trigger for shooter rpm
   //commands
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick, xboxController);
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
