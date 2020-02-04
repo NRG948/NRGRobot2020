@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.ManualDriveStraight;
 import frc.robot.commands.ManualFeeder;
+import frc.robot.commands.ManualHood;
 import frc.robot.commands.ManualIndexer;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToBall;
@@ -29,12 +30,14 @@ import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualAcquirer;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
+import frc.robot.commands.ManualTurret;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.BallTracker;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
@@ -60,6 +63,8 @@ public class RobotContainer {
   private final Indexer indexer = new Indexer();
   private final Feeder feeder = new Feeder();
   private final BallTracker ballTracker = new BallTracker();
+  private final Turret turret = new Turret();
+  private final Hood hood = new Hood();
   public final ShooterRPM shooterRPM = new ShooterRPM();
   private LimelightVision limelightVision = new LimelightVision();
 
@@ -78,13 +83,15 @@ public class RobotContainer {
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
  
-  //left right dpad turret, hood up dpad, hood down dpad, indexer up down left stick, hold back while moving right stick for feeder, right trigger for shooter rpm
+  //left/right dpad - turret, up/down dpad - hood, left stick up/down - indexer, right stick up/down - acquirer, back button + right stick up/down - feeder, right trigger - shooter rpm
   //commands
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick, xboxController);
-  private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
   private final ManualAcquirer manualAcquirer = new ManualAcquirer(acquirer, xboxController);
   private final ManualIndexer manualIndexer = new ManualIndexer(indexer, xboxController);
   private final ManualFeeder manualFeeder = new ManualFeeder(feeder, xboxController);
+  private final ManualTurret manualTurret = new ManualTurret(turret, xboxController);
+  private final ManualHood manualHood = new ManualHood(hood, xboxController);
+  private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private FollowWaypoints followWaypointsSCurve = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
       List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)));
@@ -126,6 +133,8 @@ public class RobotContainer {
     acquirer.setDefaultCommand(manualAcquirer);
     indexer.setDefaultCommand(manualIndexer);
     feeder.setDefaultCommand(manualFeeder);
+    turret.setDefaultCommand(manualTurret);
+    hood.setDefaultCommand(manualHood);
 
     // Configure the button bindings
     configureButtonBindings();

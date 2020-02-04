@@ -31,7 +31,7 @@ public class ManualShooter extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterRPM.setFlyWheel(xboxController.getY(Hand.kLeft));
+    shooterRPM.setFlyWheel(xboxController.getTriggerAxis(Hand.kRight));
     shooterRPM.updateDashBoard();
   }
 
