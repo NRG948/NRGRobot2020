@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
 import frc.robot.utilities.NRGPreferences;
 
-public class DriveStraightDistance extends CommandBase {
+public class AutoDriveOnHeading extends CommandBase {
   private final Drive drive;
   private double xOrigin;// a class variable
   private double yOrigin;
@@ -25,7 +25,7 @@ public class DriveStraightDistance extends CommandBase {
   /**
    * Creates a new DriveStraightDistance.
    */
-  public DriveStraightDistance(final Drive subsystem) {
+  public AutoDriveOnHeading(final Drive subsystem) {
     this.drive = subsystem;
     this.maxPower = NRGPreferences.DRIVE_STRAIGHT_MAXPOWER.getValue();
     this.distance = 0;
@@ -37,7 +37,7 @@ public class DriveStraightDistance extends CommandBase {
    * @param maxPower max power
    * @return this
    */
-  public DriveStraightDistance withMaxPower(double maxPower){
+  public AutoDriveOnHeading withMaxPower(double maxPower){
     this.maxPower = maxPower;
     return this;
   }
@@ -47,7 +47,7 @@ public class DriveStraightDistance extends CommandBase {
    * @param distance distance
    * @return this
    */
-  public DriveStraightDistance forMeters(double distance){
+  public AutoDriveOnHeading forMeters(double distance){
     this.distance = distance;
     return this;
   }
@@ -57,7 +57,7 @@ public class DriveStraightDistance extends CommandBase {
    * @param distanceInInches distance in inches
    * @return this
    */
-  public DriveStraightDistance forInches(double distanceInInches){
+  public AutoDriveOnHeading forInches(double distanceInInches){
     this.distance = Units.inchesToMeters(distanceInInches);
     return this;
   }
@@ -67,7 +67,7 @@ public class DriveStraightDistance extends CommandBase {
    * @param distanceInFeet distance in feet
    * @return this
    */
-  public DriveStraightDistance forFeet(double distanceInFeet){
+  public AutoDriveOnHeading forFeet(double distanceInFeet){
     this.distance = Units.feetToMeters(distanceInFeet);
     return this;
   }
@@ -77,7 +77,7 @@ public class DriveStraightDistance extends CommandBase {
    * @param heading heading
    * @return this
    */
-  public DriveStraightDistance onHeading(double heading){
+  public AutoDriveOnHeading onHeading(double heading){
     this.heading = heading;
     this.useRobotHeading = false;
     return this;

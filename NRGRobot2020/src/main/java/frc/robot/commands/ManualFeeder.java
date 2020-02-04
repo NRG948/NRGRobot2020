@@ -7,18 +7,19 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Feeder;
 
 public class ManualFeeder extends CommandBase {
   Feeder feeder;
-  double power = 0;
-  /**
+  final XboxController m_xboxController;  /**
    * Creates a new ManualFeeder.
    */
-  public ManualFeeder(Feeder feeder, double power) {
+  public ManualFeeder(Feeder feeder, final XboxController xboxController) {
     this.feeder = feeder;
-    this.power = power;
+    this.m_xboxController = xboxController;
     addRequirements(feeder);    
 
   }
@@ -31,7 +32,7 @@ public class ManualFeeder extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    feeder.rawFeeder(power);
+    if(m_xboxController.getBackButton()) feeder.rawFeeder(m_xboxController.getY(Hand.kRight));
 
   }
 

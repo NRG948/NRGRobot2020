@@ -53,15 +53,24 @@ public class Turret extends SubsystemBase {
   /**
    * Updates turret motor power based on output from the PID controller.
    * 
-   * @param maxPower is the largest power sent to motor controller.
+   * @param limelightAngleX from limelight is used to calculate power
    */
   public void turretAngleToExecute(double limelightAngleX) {
     double currentPower = this.turretPIDController.calculate(limelightAngleX) * maxPower;
+    rawTurret(currentPower);
+  }
+
+  /**
+   * Passes power to turret with hard stop protection
+   * @param power
+   */
+  public void rawTurret(double power){
     int encoderTicks = turretEncoder.get();
-    if (encoderTicks >= MAX_ENCODER_VALUE && currentPower > 0 || encoderTicks <= MIN_ENCODER_VALUE && currentPower < 0){
-      currentPower = 0;
+    //Prevent turret from turning past hard stop
+    if (encoderTicks >= MAX_ENCODER_VALUE && power > 0 || encoderTicks <= MIN_ENCODER_VALUE && power < 0){
+      power = 0;
     }
-    turretMotor.set(currentPower);
+    turretMotor.set(power);
   }
 
   /**
