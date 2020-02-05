@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.NRGPreferences;
-import frc.robot.Constants;
+import frc.robot.Constants.TurretConstants;
 
 public class Turret extends SubsystemBase {
 
@@ -20,13 +20,13 @@ public class Turret extends SubsystemBase {
   private static final double MIN_ENCODER_VALUE = 0;
   private static final double MAX_ENCODER_VALUE = 1024;
 
-  private final Victor turretMotor = new Victor(0);
-  private final Encoder turretEncoder = new Encoder(Constants.DriveConstants.turretEncoderPorts[1], Constants.DriveConstants.turretEncoderPorts[2]);
+  private final Victor turretMotor = new Victor(TurretConstants.kTurretMotorPort);
+  private final Encoder turretEncoder = new Encoder(TurretConstants.kTurretEncoderPorts[0], TurretConstants.kTurretEncoderPorts[1]);
   private PIDController turretPIDController;
   private double maxPower;
 
   /**
-   * Creates a new Turret.
+   * Creates a new Turret subsystem.
    */
   public Turret() {
   }
