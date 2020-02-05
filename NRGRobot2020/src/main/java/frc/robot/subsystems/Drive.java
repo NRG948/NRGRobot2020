@@ -25,9 +25,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commands.DriveStraightDistance;
+import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.utilities.NRGPreferences;
-import frc.robot.commands.TurnToHeading;
+import frc.robot.commands.AutoTurnToHeading;
 
 public class Drive extends SubsystemBase {
   /**
@@ -359,9 +359,9 @@ public class Drive extends SubsystemBase {
 
   public void addShuffleBoardTab() {
     ShuffleboardTab testTab = Shuffleboard.getTab("Drive");
-    testTab.add("Turn to 90", new TurnToHeading(this).withMaxPower(0.35).toHeading(90));
-    testTab.add("Turn to -90", new TurnToHeading(this).withMaxPower(0.35).toHeading(-90));
-    testTab.add("Drive 1 meter", new DriveStraightDistance(this).withMaxPower(0.5).forMeters(1));
-    testTab.add("Drive 3 meters", new DriveStraightDistance(this).withMaxPower(0.5).forMeters(3));
+    testTab.add("Turn to 90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(90));
+    testTab.add("Turn to -90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(-90));
+    testTab.add("Drive 1 meter", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(1));
+    testTab.add("Drive 3 meters", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(3));
   }
 }

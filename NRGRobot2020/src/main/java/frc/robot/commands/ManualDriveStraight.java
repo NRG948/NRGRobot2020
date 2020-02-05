@@ -7,48 +7,42 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Turret;
+import frc.robot.RobotContainer;
+import frc.robot.subsystems.Drive;
 
-public class ManualTurret extends CommandBase {
+public class ManualDriveStraight extends CommandBase {
+  private final Drive drive;
+  private final Joystick m_leftJoystick;
+
   /**
-   * Creates a new ManualTurret.
+   * Creates a new DriveStraight.
    */
-  final XboxController m_xboxController;
-  final Turret m_turret;
-  private double power;
-
-  ; 
-
-  public ManualTurret(Turret turret, XboxController xboxController) {
+  public ManualDriveStraight(final Drive drive,  final Joystick leftJoystick) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.m_xboxController = xboxController;
-    this.m_turret = turret;
-    addRequirements(m_turret);
+    this.drive = drive;
+    this.m_leftJoystick = leftJoystick;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    power = 0;
+    double heading = drive.getHeading();
+    drive.driveOnHeadingInit(heading);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_xboxController.getPOV() == 90){
-      power = 0.2;
-    }
-    else if(m_xboxController.getPOV() == 270){
-      power = -0.2;
-    }
-    m_turret.rawTurret(power);
+    drive.driveOnHeadingExecute(-m_leftJoystick.getY());
+
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    drive.driveOnHeadingEnd();
   }
 
   // Returns true when the command should end.

@@ -10,7 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
 
-public class TurnToHeading extends CommandBase {
+public class AutoTurnToHeading extends CommandBase {
   
   private final double DEFAULT_TURN_TOLERANCE = 5.0;
 
@@ -21,7 +21,7 @@ public class TurnToHeading extends CommandBase {
 /**
    * Creates a new TurnToHeading.
    */
-  public TurnToHeading(Drive drive) {
+  public AutoTurnToHeading(Drive drive) {
     this.drive = drive;
     addRequirements(drive); // requires the Drive subsystem
   }
@@ -31,12 +31,12 @@ public class TurnToHeading extends CommandBase {
    * @param maxPower the max power
    * @return returns this
    */
-  public TurnToHeading withMaxPower(double maxPower){
+  public AutoTurnToHeading withMaxPower(double maxPower){
     this.maxPower = maxPower;
     return this;
   }
 
-  public TurnToHeading withTolerance(double tolerance){
+  public AutoTurnToHeading withTolerance(double tolerance){
     this.tolerance = tolerance;
     return this;
   }
@@ -46,7 +46,7 @@ public class TurnToHeading extends CommandBase {
  * @param heading the heading
  * @return returns this
  */
-  public TurnToHeading toHeading(double heading){
+  public AutoTurnToHeading toHeading(double heading){
     this.desiredHeading = heading;
     return this;
   }
