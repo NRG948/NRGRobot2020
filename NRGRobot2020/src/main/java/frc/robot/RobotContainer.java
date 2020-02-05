@@ -12,6 +12,8 @@ import java.util.List;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -67,6 +69,8 @@ public class RobotContainer {
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
 
+  private Relay cameraLights;
+  
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick, xboxController);
   private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
@@ -121,6 +125,8 @@ public class RobotContainer {
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoTab.add("autoPath",autoPathChooser);
+
+    cameraLights = new Relay(0);
   }
 
   /**
@@ -130,6 +136,9 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    xboxButtonA.whenPressed(new InstantCommand(()-> {
+      cameraLights.set(Relay.Value.kForward);
+    }));
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
     xboxButtonY.whenPressed(followWaypointsSCurve);
     // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
