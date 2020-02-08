@@ -13,7 +13,6 @@ import java.util.List;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Relay;
-import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -59,7 +58,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
 
-  //subsystems
+  private static final int lightRelayPort = 0;
+  // subsystems
   private final Drive drive = new Drive();
   private final Acquirer acquirer = new Acquirer();
   private final Indexer indexer = new Indexer();
@@ -157,7 +157,7 @@ public class RobotContainer {
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoTab.add("autoPath",autoPathChooser);
 
-    cameraLights = new Relay(0);
+    cameraLights = new Relay(lightRelayPort);
   }
 
   /**
