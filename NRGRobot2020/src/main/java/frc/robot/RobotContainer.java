@@ -12,6 +12,7 @@ import java.util.List;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
@@ -57,7 +58,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
 
-  //subsystems
+  private static final int lightRelayPort = 0;
+  // subsystems
   private final Drive drive = new Drive();
   private final Acquirer acquirer = new Acquirer();
   private final Indexer indexer = new Indexer();
@@ -82,6 +84,8 @@ public class RobotContainer {
   private JoystickButton xboxButtonB = new JoystickButton(xboxController, 2); // B Button
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
+
+  private Relay cameraLights;
  
   //left/right dpad - turret, up/down dpad - hood, left stick up/down - indexer, right stick up/down - acquirer, back button + right stick up/down - feeder, right trigger - shooter rpm
   //commands
@@ -152,6 +156,8 @@ public class RobotContainer {
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoTab.add("autoPath",autoPathChooser);
+
+    cameraLights = new Relay(lightRelayPort);
   }
 
   /**
@@ -161,6 +167,9 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    xboxButtonA.whenPressed(new InstantCommand(()-> {
+      cameraLights.set(Relay.Value.kForward);
+    }));
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
     xboxButtonY.whenPressed(followWaypointsSCurve);
     // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));

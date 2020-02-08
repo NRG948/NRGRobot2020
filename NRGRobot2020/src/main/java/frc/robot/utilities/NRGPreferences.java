@@ -8,7 +8,6 @@
 package frc.robot.utilities;
 
 import java.util.LinkedList;
-import java.util.stream.Stream;
 
 import edu.wpi.first.wpilibj.Preferences;
 import edu.wpi.first.wpilibj.util.Units;
