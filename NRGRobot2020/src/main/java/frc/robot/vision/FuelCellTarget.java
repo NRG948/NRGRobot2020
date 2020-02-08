@@ -11,13 +11,13 @@ import org.opencv.core.Point;
 
 import edu.wpi.first.wpilibj.util.Units;
 
-public class BallTarget {
+public class FuelCellTarget {
     private static final double TARGET_WIDTH_INCHES = 7.1;
     private static final double HALF_IMAGE_FOV = (Math.atan(36.0 / 57.125));
     private Point center;
     private double diameterInPixels;
     private static final double IMAGE_CENTER_X = 640/2;
-    public BallTarget(Point center, double diameterInPixels) {
+    public FuelCellTarget(Point center, double diameterInPixels) {
         this.center = center;
         this.diameterInPixels = diameterInPixels;
     }

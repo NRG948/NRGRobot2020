@@ -35,7 +35,7 @@ import frc.robot.commands.ManualTurret;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.subsystems.Acquirer;
-import frc.robot.subsystems.BallTracker;
+import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hood;
@@ -44,7 +44,7 @@ import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.subsystems.Turret;
-import frc.robot.vision.BallTarget;
+import frc.robot.vision.FuelCellTarget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -64,7 +64,7 @@ public class RobotContainer {
   private final Acquirer acquirer = new Acquirer();
   private final Indexer indexer = new Indexer();
   private final Feeder feeder = new Feeder();
-  private final BallTracker ballTracker = new BallTracker();
+  private final RaspberryPiVision ballTracker = new RaspberryPiVision();
   private final Turret turret = new Turret();
   private final Hood hood = new Hood();
   public final ShooterRPM shooterRPM = new ShooterRPM();
@@ -178,7 +178,7 @@ public class RobotContainer {
       resetSensors();
     }));
     driveToBall.whenPressed(() -> {
-      BallTarget ballTarget = ballTracker.getBallTarget();
+      FuelCellTarget ballTarget = ballTracker.getBallTarget();
       if (ballTarget != null) {
         double distanceToTarget = ballTarget.distanceToTarget();
         double angleToTarget = ballTarget.getAngleToTarget();
