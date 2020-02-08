@@ -15,6 +15,20 @@ import frc.robot.vision.FuelCellTarget;
 import java.util.*;
 
 public class RaspberryPiVision extends SubsystemBase {
+  public enum PipelineRunner {
+    FUEL_CELL("FuelCellTrackingRunner"), LOADING_STATION("LoadingStationRunner");
+
+    private final String name;
+
+    PipelineRunner(String name) {
+      this.name = name;
+    }
+
+    public String getName() {
+      return this.name;
+    }
+  }
+
   private static final String[] NO_BALL_TARGETS = new String[0];
   private Gson gson = new Gson();
   private ArrayList<FuelCellTarget> ballTargets = new ArrayList<FuelCellTarget>();
@@ -23,12 +37,16 @@ public class RaspberryPiVision extends SubsystemBase {
    * Creates a new BallTracker.
    */
   public RaspberryPiVision() {
-
+    setPipelineRunner(PipelineRunner.FUEL_CELL);
   }
 
-  public FuelCellTarget getBallTarget(){
+  public void setPipelineRunner(PipelineRunner runner) {
+    SmartDashboard.putString("Vision/runnerName", runner.getName());
+  }
+
+  public FuelCellTarget getBallTarget() {
     update();
-    return !ballTargets.isEmpty()?ballTargets.get(0):null;
+    return !ballTargets.isEmpty() ? ballTargets.get(0) : null;
   }
 
   public void update() {
