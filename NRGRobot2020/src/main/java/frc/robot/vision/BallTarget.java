@@ -23,7 +23,7 @@ public class BallTarget {
     }
     public double distanceToTarget(){
         double distance = (TARGET_WIDTH_INCHES * IMAGE_CENTER_X / (diameterInPixels * Math.tan(HALF_IMAGE_FOV)));
-        return Units.inchesToMeters(distance / Math.cos(Math.toRadians(this.getAngleToTarget())));
+        return Units.inchesToMeters(distance);
     }
     public double getAngleToTarget() {
         double deltaX = center.x - IMAGE_CENTER_X;

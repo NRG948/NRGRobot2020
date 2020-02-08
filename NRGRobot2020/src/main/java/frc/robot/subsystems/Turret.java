@@ -14,12 +14,26 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.Constants;
 
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+
+
+
+
 public class Turret extends SubsystemBase {
 
   private Victor turretMotor = new Victor(0);
   private Encoder turretEncoder = new Encoder(Constants.DriveConstants.turretEncoderPorts[1], Constants.DriveConstants.turretEncoderPorts[2]);
   private PIDController turretPIDController;
   private double maxPower;
+
+  private SimpleWidget turretPidErrorWidget;
+  private SimpleWidget turretRawOutputWidget;
+
+  
   /**
    * TODO: min and max values need to be figured out; the values below are fictious values.
    */
@@ -57,6 +71,7 @@ public class Turret extends SubsystemBase {
    * @param limelightAngleX from limelight is used to calculate power
    */
   public void turretAngleToExecute(double limelightAngleX) {
+    turretPidErrorWidget.getEntry().setDouble(turretPIDController.getPositionError());
     double currentPower = this.turretPIDController.calculate(limelightAngleX) * maxPower;
     rawTurret(currentPower);
   }
@@ -67,6 +82,7 @@ public class Turret extends SubsystemBase {
    */
   public void rawTurret(double power){
     int encoderTicks = turretEncoder.get();
+    turretRawOutputWidget.getEntry().setDouble(power);
     //Prevent turret from turning past hard stop
     if (encoderTicks >= MAX_ENCODER_VALUE && power > 0 || encoderTicks <= MIN_ENCODER_VALUE && power < 0){
       power = 0;
@@ -95,4 +111,14 @@ public class Turret extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
+  public void initShuffleboard(){
+    ShuffleboardTab turretTab = Shuffleboard.getTab("Turret");
+
+    ShuffleboardLayout turretLayout = turretTab.getLayout("Turret", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
+    turretLayout.add("Encoder", turretEncoder);
+    turretPidErrorWidget = turretLayout.add("PID Position Error", 0.0);
+    turretRawOutputWidget = turretLayout.add("Raw Output", 0.0);
+  }
+
 }

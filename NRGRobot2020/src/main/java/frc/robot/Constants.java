@@ -32,9 +32,10 @@ public final class Constants {
         public static final int kPanelSpinnerPort = 7;
         public static final int[] kLeftEncoderPorts = new int[] { 2, 3 };
         public static final int[] kRightEncoderPorts = new int[] { 0, 1 };
+        public static final int[] turretEncoderPorts = new int[] { 5, 6 };
         public static final boolean kLeftEncoderReversed = false;
         public static final boolean kRightEncoderReversed = true;
-
+         
         // TODO Measurable Robot Parameters
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
                NRGPreferences.TRACK_WIDTH_METERS.getValue());

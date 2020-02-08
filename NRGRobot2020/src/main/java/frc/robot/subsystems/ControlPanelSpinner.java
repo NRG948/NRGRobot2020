@@ -18,6 +18,11 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 /**
  * Add your docs here.
  */
@@ -30,7 +35,7 @@ public class ControlPanelSpinner extends SubsystemBase {
   private String color = "Unknown";
 
   /**
-   * These nuber values currently work for blue, green, red, and yellow,
+   * These number values currently work for blue, green, red, and yellow,
    * but will probably need to be calibrated at competitions.
    */
   private final Color kBlueTarget = ColorMatch.makeColor(0.143, 0.427, 0.429);
@@ -101,5 +106,10 @@ public class ControlPanelSpinner extends SubsystemBase {
       color = "Unknown";
       return 'U';
     }
+  }
+  public void initShuffleboard(){
+    ShuffleboardTab controlPanelSpinnerTab = Shuffleboard.getTab("Control Panel Spinner");
+
+    ShuffleboardLayout controlPanelSpinnerLayout = controlPanelSpinnerTab.getLayout("Control Panel Spinner", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
   }
 }
