@@ -9,22 +9,22 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.BallTracker;
+import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.Drive;
 import frc.robot.utilities.MathUtil;
 import frc.robot.utilities.NRGPreferences;
-import frc.robot.vision.BallTarget;
+import frc.robot.vision.FuelCellTarget;
 
 public class DriveToBall extends CommandBase {
   private final Drive drive;
-  private final BallTracker ballTracker;
+  private final RaspberryPiVision ballTracker;
   private double maxPower;
   private boolean ballNotFound;
   private static final double IMAGE_FOV_DEGREES = 64.4;
   private static final double INCHES_TO_SLOW = 20;
   private int ballNotFoundCounter = 0;
 
-  public DriveToBall(Drive drive, BallTracker ballTracker) {
+  public DriveToBall(Drive drive, RaspberryPiVision ballTracker) {
     this.drive = drive;
     this.ballTracker = ballTracker;
     maxPower = NRGPreferences.DRIVE_TO_BALL_MAXPOWER.getValue();
@@ -46,7 +46,7 @@ public class DriveToBall extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    BallTarget ballTarget = ballTracker.getBallTarget();
+    FuelCellTarget ballTarget = ballTracker.getBallTarget();
     if (ballTarget != null) {
       ballNotFoundCounter = 0;
       double distanceToTarget = ballTarget.distanceToTarget();

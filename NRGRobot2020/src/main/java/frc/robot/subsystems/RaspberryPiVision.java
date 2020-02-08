@@ -11,32 +11,50 @@ import com.google.gson.Gson;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.vision.BallTarget;
+import frc.robot.vision.FuelCellTarget;
 import java.util.*;
 
-public class BallTracker extends SubsystemBase {
+public class RaspberryPiVision extends SubsystemBase {
+  public enum PipelineRunner {
+    FUEL_CELL("FuelCellTrackingRunner"), LOADING_STATION("LoadingStationRunner");
+
+    private final String name;
+
+    PipelineRunner(String name) {
+      this.name = name;
+    }
+
+    public String getName() {
+      return this.name;
+    }
+  }
+
   private static final String[] NO_BALL_TARGETS = new String[0];
   private Gson gson = new Gson();
-  private ArrayList<BallTarget> ballTargets = new ArrayList<BallTarget>();
+  private ArrayList<FuelCellTarget> ballTargets = new ArrayList<FuelCellTarget>();
 
   /**
    * Creates a new BallTracker.
    */
-  public BallTracker() {
-
+  public RaspberryPiVision() {
+    setPipelineRunner(PipelineRunner.FUEL_CELL);
   }
 
-  public BallTarget getBallTarget(){
+  public void setPipelineRunner(PipelineRunner runner) {
+    SmartDashboard.putString("Vision/runnerName", runner.getName());
+  }
+
+  public FuelCellTarget getBallTarget() {
     update();
-    return !ballTargets.isEmpty()?ballTargets.get(0):null;
+    return !ballTargets.isEmpty() ? ballTargets.get(0) : null;
   }
 
   public void update() {
     // This method will be called once per scheduler run
     String[] ballTargetsJson = SmartDashboard.getStringArray("Vision/ballTargets", NO_BALL_TARGETS);
-    ArrayList<BallTarget> tempBallTargets = new ArrayList<BallTarget>();
+    ArrayList<FuelCellTarget> tempBallTargets = new ArrayList<FuelCellTarget>();
     for (String ballTargetJson : ballTargetsJson) {
-      tempBallTargets.add(gson.fromJson(ballTargetJson, BallTarget.class));
+      tempBallTargets.add(gson.fromJson(ballTargetJson, FuelCellTarget.class));
     }
 
     ballTargets = tempBallTargets;
