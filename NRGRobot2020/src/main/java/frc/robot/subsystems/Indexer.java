@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Indexer extends SubsystemBase {
-  private Victor indexerVictor = new Victor(3);
+  private Victor indexerVictor = new Victor(7);
   /**
    * Creates a new Indexer.
    */

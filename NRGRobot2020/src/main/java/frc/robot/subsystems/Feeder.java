@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
-  private Victor feederVictor = new Victor(3);
+  private Victor feederVictor = new Victor(6);
 
   /**
    * Creates a new Feeder.

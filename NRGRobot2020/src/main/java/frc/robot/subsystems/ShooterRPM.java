@@ -26,7 +26,7 @@ public class ShooterRPM extends SubsystemBase {
   
   private final Victor spinMotor1 = new Victor(0);
   private final Victor spinMotor2 = new Victor(1);
-  private final Counter spinMotorEncoder = new Counter(4);
+  private final Counter spinMotorEncoder = new Counter(6);
 
   private double goalRPM = 0;
   private double error = 0;

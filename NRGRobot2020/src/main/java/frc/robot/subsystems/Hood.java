@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Hood extends SubsystemBase {
-  private Victor hoodVictor = new Victor(3);
+  private Victor hoodVictor = new Victor(5);
   /**
    * Creates a new Hood.
    */
