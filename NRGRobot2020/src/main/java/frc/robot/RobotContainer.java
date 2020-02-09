@@ -42,6 +42,7 @@ import frc.robot.subsystems.ShooterRPM;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.subsystems.Turret;
 import frc.robot.vision.FuelCellTarget;
+import frc.robot.vision.LoadingStationTarget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -75,6 +76,7 @@ public class RobotContainer {
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
   private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
   private JoystickButton DriveStraight = new JoystickButton(leftJoystick, 1);
+  private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 5);
   private JoystickButton activateAcquirerPiston = new JoystickButton(rightJoystick, 10);
 
   //XboxController and Xbox buttons
@@ -187,7 +189,16 @@ public class RobotContainer {
         double angleToTarget = ballTarget.getAngleToTarget();
         
         new AutoTurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
-            .andThen(new AutoDriveOnHeading(drive).forMeters(distanceToTarget)).schedule();
+            .andThen(new AutoDriveOnHeading(this.drive).forMeters(distanceToTarget)).schedule();
+      }
+    });
+    driveToLoadingStation.whenPressed(() -> {
+      LoadingStationTarget target = raspPi.getLoadingTarget();
+      if (target != null) {
+        double angleToTarget = target.getAngleToTarget();
+        double distanceToTarget = target.getDistance();
+        new AutoTurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
+            .andThen(new AutoDriveOnHeading(this.drive).forInches(distanceToTarget)).schedule();
       }
     });
     driveToBallContinuous.whenPressed(new DriveToBall(drive, raspPi).withMaxPower(1.0));
