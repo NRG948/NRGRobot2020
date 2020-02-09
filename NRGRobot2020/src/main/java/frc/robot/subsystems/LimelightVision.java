@@ -45,11 +45,27 @@ public class LimelightVision extends SubsystemBase {
   double average = (distanceUsingTshort + distance) / 2;
   double distanceMax = 0;
 
+  private boolean ledToggle = false;
   /**
    * Creates a new LimelightVision.
    */
   public LimelightVision() {
+    table.getEntry("ledMode").setNumber(1); // sets defualt led mode to off;
 
+  }
+  // Turns off Led
+  public void turnOffLed(){
+    table.getEntry("ledMode").setNumber(1);
+  }
+  
+  // Turns on Led
+  public void turnOnLed(){
+    table.getEntry("ledMode").setNumber(3);
+  }
+
+  public void toggleLed(){
+    ledToggle = !ledToggle;
+    table.getEntry("ledMode").setNumber(ledToggle ? 3 : 1);
   }
 
   public double getX() {

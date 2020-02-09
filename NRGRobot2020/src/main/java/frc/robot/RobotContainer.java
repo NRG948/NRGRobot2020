@@ -77,6 +77,7 @@ public class RobotContainer {
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
   private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
   private JoystickButton DriveStraight = new JoystickButton(leftJoystick, 1);
+  private JoystickButton ledModeButton = new JoystickButton(leftJoystick, 8);
 
   //XboxController and Xbox buttons
   private XboxController xboxController = new XboxController(2);
@@ -176,6 +177,9 @@ public class RobotContainer {
     DriveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
       resetSensors();
+    }));
+    ledModeButton.whenPressed(new InstantCommand(()-> {
+      limelightVision.toggleLed();
     }));
     driveToBall.whenPressed(() -> {
       BallTarget ballTarget = ballTracker.getBallTarget();
