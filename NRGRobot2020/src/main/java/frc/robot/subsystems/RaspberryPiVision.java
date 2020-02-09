@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.RaspberryPiPipelines;
 import frc.robot.vision.FuelCellTarget;
+import frc.robot.vision.LoadingStationTarget;
+
 import java.util.*;
 
 public class RaspberryPiVision extends SubsystemBase {
@@ -54,10 +56,11 @@ public class RaspberryPiVision extends SubsystemBase {
   private Gson gson = new Gson();
   private ArrayList<FuelCellTarget> ballTargets = new ArrayList<FuelCellTarget>();
 
+  private double distance;
+  private double offsetX;
+  private double skew;
   private final AddressableLED led = new AddressableLED(8);
-  private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(20);
-
-
+  private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(12);
 
   /**
    * Creates a new RaspberryPiVision.
@@ -78,6 +81,7 @@ public class RaspberryPiVision extends SubsystemBase {
       ledBuffer.setLED(i, runner.getColor());
     }
     led.setData(ledBuffer);
+    led.start();
   }
 
   
@@ -86,25 +90,60 @@ public class RaspberryPiVision extends SubsystemBase {
    * @return The fuel cell target, or null if none.
    */
   public FuelCellTarget getFuelCellTarget() {
-    update();
+    updateFuelCell();
     return !ballTargets.isEmpty() ? ballTargets.get(0) : null;
   }
 
-  public void update() {
+  public LoadingStationTarget getLoadingTarget() {
+    updateLoadingStation();
+    return SmartDashboard.getNumber("Vision/LoadingStationCount", 0.0) > 0 ? new LoadingStationTarget(this) : null;
+  }
+
+  public void updateFuelCell() {
     String[] ballTargetsJson = SmartDashboard.getStringArray("Vision/ballTargets", NO_BALL_TARGETS);
     ArrayList<FuelCellTarget> tempBallTargets = new ArrayList<FuelCellTarget>();
+
     for (String ballTargetJson : ballTargetsJson) {
       tempBallTargets.add(gson.fromJson(ballTargetJson, FuelCellTarget.class));
     }
 
     ballTargets = tempBallTargets;
-
     boolean hasTargets = !ballTargets.isEmpty();
     SmartDashboard.putBoolean("Vision/hasTargets", hasTargets);
+
     if (hasTargets) {
       SmartDashboard.putNumber("Vision/distanceToTarget", ballTargets.get(0).distanceToTarget());
       SmartDashboard.putNumber("Vision/angleToTarget", ballTargets.get(0).getAngleToTarget());
     }
+  }
+
+  public void updateLoadingStation() {
+    distance = SmartDashboard.getNumber("Vision/LoadingStation/DistanceInches", 0.0);
+    offsetX =  SmartDashboard.getNumber("Vision/LoadingStation/OffsetX", 0.0);
+    skew =  SmartDashboard.getNumber("Vision/LoadingStation/Skew", 0.0);
+  }
+
+  /**
+   * 
+   * @return skew from -1.0 to 1.0 (not linear); taking the inverse cosine of skew returns angle
+   */
+  public double getLoadingSkew() {
+    return skew;
+  }
+
+  /**
+   * 
+   * @return offsetX: the x-distance, from -1.0 to 1.0, from center of robot vision to center of target
+   */
+  public double getLoadingOffsetX() {
+    return offsetX;
+  }
+  /**
+   * 
+   * @return distance from robot to Loading Station Target in inches
+   */
+  public double getLoadingDistance() {
+    return distance;
   }
 
   public void addShuffleBoardTab() {
