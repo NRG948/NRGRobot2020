@@ -5,13 +5,15 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 
 /**
- * Subsystem which controls the vectoring ball intake that extends beyond the bumper.
+ * Subsystem which controls the vectoring ball intake rollers that extends beyond the bumper.
+ * 
+ * The pistons that extend/retract the acquirer are a separate subsystem.
  */
 public class Acquirer extends SubsystemBase {
 
   private static final double MAX_ACQUIRER_POWER = 0.5;
 
-  private Victor acquirerVictor = new Victor(2);
+  private Victor acquirerMotor = new Victor(2);
 
   /** Creates a new Acquirer. */
   public Acquirer() {
@@ -19,7 +21,7 @@ public class Acquirer extends SubsystemBase {
 
   public void rawAcquirer(double power){
     power = MathUtil.clamp(power, -MAX_ACQUIRER_POWER, MAX_ACQUIRER_POWER);
-    acquirerVictor.set(power);
+    acquirerMotor.set(power);
   }
 
   @Override
