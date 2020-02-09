@@ -20,7 +20,7 @@ import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualHood;
 import frc.robot.commands.ManualIndexer;
 import frc.robot.commands.AutoDriveOnHeading;
-import frc.robot.commands.DriveToBall;
+import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.ManualAcquirer;
@@ -181,7 +181,7 @@ public class RobotContainer {
       resetSensors();
     }));
     driveToBall.whenPressed(() -> {
-      FuelCellTarget ballTarget = raspPi.getBallTarget();
+      FuelCellTarget ballTarget = raspPi.getFuelCellTarget();
       if (ballTarget != null) {
         double distanceToTarget = ballTarget.distanceToTarget();
         double angleToTarget = ballTarget.getAngleToTarget();
@@ -190,7 +190,7 @@ public class RobotContainer {
             .andThen(new AutoDriveOnHeading(drive).forMeters(distanceToTarget)).schedule();
       }
     });
-    driveToBallContinuous.whenPressed(new DriveToBall(drive, raspPi).withMaxPower(1.0));
+    driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi).withMaxPower(1.0));
   }
 
   /**

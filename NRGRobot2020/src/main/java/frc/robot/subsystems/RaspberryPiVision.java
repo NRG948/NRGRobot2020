@@ -81,8 +81,11 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   
-
-  public FuelCellTarget getBallTarget() {
+  /**
+   * Gets the current fuel cell target.
+   * @return The fuel cell target, or null if none.
+   */
+  public FuelCellTarget getFuelCellTarget() {
     update();
     return !ballTargets.isEmpty() ? ballTargets.get(0) : null;
   }
