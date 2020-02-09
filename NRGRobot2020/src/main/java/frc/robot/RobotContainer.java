@@ -61,13 +61,12 @@ public class RobotContainer {
   private final Acquirer acquirer = new Acquirer();
   private final Indexer indexer = new Indexer();
   private final Feeder feeder = new Feeder();
-  private final RaspberryPiVision ballTracker = new RaspberryPiVision();
   private final Turret turret = new Turret();
   private final Hood hood = new Hood();
   public final ShooterRPM shooterRPM = new ShooterRPM();
-  private LimelightVision limelightVision = new LimelightVision();
-  private RaspberryPiVision raspPi = new RaspberryPiVision();
-  private AcquirerPiston acquirerPiston = new AcquirerPiston();
+  private final LimelightVision limelightVision = new LimelightVision();
+  private final RaspberryPiVision raspPi = new RaspberryPiVision();
+  private final AcquirerPiston acquirerPiston = new AcquirerPiston();
 
   //Joystick and JoystickButtons
   private final Joystick rightJoystick = new Joystick(0);
@@ -182,7 +181,7 @@ public class RobotContainer {
       resetSensors();
     }));
     driveToBall.whenPressed(() -> {
-      FuelCellTarget ballTarget = ballTracker.getBallTarget();
+      FuelCellTarget ballTarget = raspPi.getBallTarget();
       if (ballTarget != null) {
         double distanceToTarget = ballTarget.distanceToTarget();
         double angleToTarget = ballTarget.getAngleToTarget();
@@ -191,7 +190,7 @@ public class RobotContainer {
             .andThen(new AutoDriveOnHeading(drive).forMeters(distanceToTarget)).schedule();
       }
     });
-    driveToBallContinuous.whenPressed(new DriveToBall(drive, ballTracker).withMaxPower(1.0));
+    driveToBallContinuous.whenPressed(new DriveToBall(drive, raspPi).withMaxPower(1.0));
   }
 
   /**
