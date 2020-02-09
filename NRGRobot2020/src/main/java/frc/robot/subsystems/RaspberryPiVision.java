@@ -55,9 +55,7 @@ public class RaspberryPiVision extends SubsystemBase {
   private ArrayList<FuelCellTarget> ballTargets = new ArrayList<FuelCellTarget>();
 
   private final AddressableLED led = new AddressableLED(8);
-  private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(20);
-
-
+  private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(12);
 
   /**
    * Creates a new RaspberryPiVision.
@@ -78,6 +76,7 @@ public class RaspberryPiVision extends SubsystemBase {
       ledBuffer.setLED(i, runner.getColor());
     }
     led.setData(ledBuffer);
+    led.start();
   }
 
   
