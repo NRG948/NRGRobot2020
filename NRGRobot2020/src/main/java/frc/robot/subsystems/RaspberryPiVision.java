@@ -9,8 +9,11 @@ package frc.robot.subsystems;
 
 import com.google.gson.Gson;
 
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.commands.RaspberryPiPipelines;
 import frc.robot.vision.FuelCellTarget;
 import java.util.*;
 
@@ -34,7 +37,7 @@ public class RaspberryPiVision extends SubsystemBase {
   private ArrayList<FuelCellTarget> ballTargets = new ArrayList<FuelCellTarget>();
 
   /**
-   * Creates a new BallTracker.
+   * Creates a new RaspberryPiVision.
    */
   public RaspberryPiVision() {
     setPipelineRunner(PipelineRunner.FUEL_CELL);
@@ -50,7 +53,6 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   public void update() {
-    // This method will be called once per scheduler run
     String[] ballTargetsJson = SmartDashboard.getStringArray("Vision/ballTargets", NO_BALL_TARGETS);
     ArrayList<FuelCellTarget> tempBallTargets = new ArrayList<FuelCellTarget>();
     for (String ballTargetJson : ballTargetsJson) {
@@ -65,6 +67,12 @@ public class RaspberryPiVision extends SubsystemBase {
       SmartDashboard.putNumber("Vision/distanceToTarget", ballTargets.get(0).distanceToTarget());
       SmartDashboard.putNumber("Vision/angleToTarget", ballTargets.get(0).getAngleToTarget());
     }
+  }
+
+  public void addShuffleBoardTab() {
+    ShuffleboardTab piTab = Shuffleboard.getTab("RaspberryPi");
+    piTab.add("LoadingBayTarget", new RaspberryPiPipelines(this, PipelineRunner.LOADING_STATION));
+    piTab.add("FuelCellTrackerTarget", new RaspberryPiPipelines(this, PipelineRunner.FUEL_CELL));
   }
 
   @Override

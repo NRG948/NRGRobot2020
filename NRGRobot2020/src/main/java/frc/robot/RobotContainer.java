@@ -69,6 +69,7 @@ public class RobotContainer {
   private final Hood hood = new Hood();
   public final ShooterRPM shooterRPM = new ShooterRPM();
   private LimelightVision limelightVision = new LimelightVision();
+  private RaspberryPiVision raspPi = new RaspberryPiVision();
 
   //Joystick and JoystickButtons
   private final Joystick rightJoystick = new Joystick(0);
@@ -143,6 +144,7 @@ public class RobotContainer {
     // Configure the button bindings
     configureButtonBindings();
     drive.addShuffleBoardTab();
+    raspPi.addShuffleBoardTab();
     try {
       followPathTest = new FollowPathWeaverFile(drive, "Test.wpilib.json");
     } catch (IOException e) {
