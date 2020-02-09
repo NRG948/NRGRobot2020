@@ -16,7 +16,6 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utilities.NRGPreferences;
-import frc.robot.Constants;
 import frc.robot.Constants.TurretConstants;
 
 /**
@@ -34,7 +33,7 @@ public class Turret extends SubsystemBase {
   private double maxPower;
 
   /**
-   * Creates a new Turret subsystem.
+   * Creates the Turret subsystem.
    */
   public Turret() {
   }
@@ -53,7 +52,7 @@ public class Turret extends SubsystemBase {
     this.turretPIDController = new PIDController(kP, kI, kD);
     this.turretPIDController.setSetpoint(desiredAngleX);
     this.turretPIDController.setTolerance(tolerance);
-
+    
     this.maxPower = maxPower;
   }
 
@@ -74,7 +73,7 @@ public class Turret extends SubsystemBase {
   public void rawTurret(double power){
     int encoderTicks = turretEncoder.get();
     //Prevent the turret from turning past hard stops
-    // if (encoderTicks >= MAX_ENCODER_VALUE && power > 0 || encoderTicks <= MIN_ENCODER_VALUE && power < 0){
+    // if (encoderTicks >= MAX_ENCODER_VALUE && power > 0 || encoderTicks < MIN_ENCODER_VALUE && power < 0){
     //   power = 0;
     // }
     turretMotor.set(ControlMode.PercentOutput, power);
