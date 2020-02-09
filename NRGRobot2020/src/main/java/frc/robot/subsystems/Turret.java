@@ -19,14 +19,17 @@ import frc.robot.utilities.NRGPreferences;
 import frc.robot.Constants;
 import frc.robot.Constants.TurretConstants;
 
+/**
+ * Robot subsystem that controls the rotation of the shooter turret.
+ */
 public class Turret extends SubsystemBase {
 
   // TODO: min and max values need to be figured out; the values below are fictious values.
   private static final double MIN_ENCODER_VALUE = 0;
   private static final double MAX_ENCODER_VALUE = 1024;
 
-  private final VictorSPX turretMotor = new VictorSPX(Constants.TurretConstants.kTurretMotorPort); // Change back to victor when we get the actual robot
-  private final Encoder turretEncoder = new Encoder(Constants.TurretConstants.kTurretEncoderPorts[0], Constants.TurretConstants.kTurretEncoderPorts[1]);
+  private final VictorSPX turretMotor = new VictorSPX(TurretConstants.kTurretMotorPort); // Change back to victor when we get the actual robot
+  private final Encoder turretEncoder = new Encoder(TurretConstants.kTurretEncoderPorts[0], TurretConstants.kTurretEncoderPorts[1]);
   private PIDController turretPIDController;
   private double maxPower;
 
