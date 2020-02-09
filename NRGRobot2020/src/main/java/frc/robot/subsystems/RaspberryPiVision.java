@@ -1,17 +1,13 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.subsystems;
 
 import com.google.gson.Gson;
 
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.RaspberryPiPipelines;
 import frc.robot.vision.FuelCellTarget;
@@ -20,17 +16,39 @@ import frc.robot.vision.LoadingStationTarget;
 import java.util.*;
 
 public class RaspberryPiVision extends SubsystemBase {
+  /**
+   * Enumeration representing pipeline to run
+   */
   public enum PipelineRunner {
-    FUEL_CELL("FuelCellTrackingRunner"), LOADING_STATION("LoadingStationRunner");
+    FUEL_CELL("FuelCellTrackingRunner", new Color8Bit (255, 255, 255)), 
+    LOADING_STATION("LoadingStationRunner", new Color8Bit (0, 255, 0));
 
     private final String name;
-
-    PipelineRunner(String name) {
+    private final Color8Bit color;
+/**
+ * constructs the enumeration
+ * @param name name of the pipeline
+ * @param color color of the leds
+ */
+    PipelineRunner(String name, Color8Bit color) {
       this.name = name;
+      this.color = color;
     }
 
+/**
+ * 
+ * @return returns the name of the pipeline
+ */
     public String getName() {
       return this.name;
+    }
+
+    /**
+     * 
+     * @return returns the color of the led
+     */
+    public Color8Bit getColor() {
+      return this.color;
     }
   }
 
@@ -41,17 +59,33 @@ public class RaspberryPiVision extends SubsystemBase {
   private double distance;
   private double offsetX;
   private double skew;
+  private final AddressableLED led = new AddressableLED(8);
+  private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(20);
+
+
 
   /**
    * Creates a new RaspberryPiVision.
    */
   public RaspberryPiVision() {
+    led.setLength(ledBuffer.getLength());
+    led.setData(ledBuffer);
     setPipelineRunner(PipelineRunner.FUEL_CELL);
   }
 
+  /**
+   * sets the pipeline to run on the rasberry pi
+   * @param runner value from the pipeline enumeration
+   */
   public void setPipelineRunner(PipelineRunner runner) {
     SmartDashboard.putString("Vision/runnerName", runner.getName());
+    for (int i = 0; i < ledBuffer.getLength(); ++i) {
+      ledBuffer.setLED(i, runner.getColor());
+    }
+    led.setData(ledBuffer);
   }
+
+  
 
   public FuelCellTarget getBallTarget() {
     updateFuelCell();
