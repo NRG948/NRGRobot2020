@@ -1,29 +1,27 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 
+/**
+ * Subsystem which controls the vectoring ball intake rollers that extends beyond the bumper.
+ * 
+ * The pistons that extend/retract the acquirer are a separate subsystem.
+ */
 public class Acquirer extends SubsystemBase {
 
-  private Victor acquirerVictor = new Victor(2);
-  /**
-   * Creates a new Acquirer.
-   */
+  private static final double MAX_ACQUIRER_POWER = 0.5;
 
+  private Victor acquirerMotor = new Victor(2);
 
+  /** Creates a new Acquirer. */
   public Acquirer() {
-
   }
 
   public void rawAcquirer(double power){
-    acquirerVictor.set(power * 0.5);
+    power = MathUtil.clamp(power, -MAX_ACQUIRER_POWER, MAX_ACQUIRER_POWER);
+    acquirerMotor.set(power);
   }
 
   @Override

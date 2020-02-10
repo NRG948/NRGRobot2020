@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -30,6 +23,8 @@ public class LimelightVision extends SubsystemBase {
   NetworkTableEntry ts = table.getEntry("ts");
   NetworkTableEntry tshort = table.getEntry("tshort");
   NetworkTableEntry tlong = table.getEntry("tlong");
+  NetworkTableEntry thor = table.getEntry("thor");
+  NetworkTableEntry tvert = table.getEntry("tver");
   // read values periodically
   boolean averageDistancebool = false;
   double x = tx.getDouble(0.0);
@@ -38,6 +33,8 @@ public class LimelightVision extends SubsystemBase {
   double skew = ts.getDouble(0.0);
   double z = tshort.getDouble(0.0);
   double tLong = tlong.getDouble(0.0);
+  double width = thor.getDouble(0.0);
+  double height = tvert.getDouble(0.0);
   double distanceUsingTshort = (4822 / z) - 5.0664;
   double distanceTLong = (-0.024 + Math.sqrt(-0.0148 * tLong + 1.2543432)) / 0.0074;
   double AngledDistance = Math.sqrt(Math.pow(distanceUsingTshort, 2) + Math.pow(distanceTLong, 2));
@@ -72,12 +69,28 @@ public class LimelightVision extends SubsystemBase {
     return x;
   }
 
+  public double getDistance() {
+    return distance;
+  }
+
+  public double getWidth() {
+    return width;
+  }
+
+  public double getHeight() {
+    return height;
+  }
+
+  public double getSkew() {
+    return skew;
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("LimelightX", x);
     SmartDashboard.putNumber("LimelightY", y);
     SmartDashboard.putNumber("LimelightArea", area);
-    SmartDashboard.putNumber("LimeLIghtSkew", skew);
+    SmartDashboard.putNumber("LimelightSkew", skew);
     SmartDashboard.putNumber("Tshort", z);
     SmartDashboard.putNumber("DistanceUsingTshort", distanceUsingTshort);
     SmartDashboard.putNumber("AverageDistance", average);
