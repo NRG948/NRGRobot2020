@@ -1,11 +1,24 @@
 package frc.robot.subsystems;
 
+<<<<<<< HEAD
+=======
+import com.google.gson.Gson;
+
+import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.cameraserver.CameraServer;
+>>>>>>> Cleanup layout of the shuffleboard tab and add the processed video stream.
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+<<<<<<< HEAD
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+=======
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+>>>>>>> Cleanup layout of the shuffleboard tab and add the processed video stream.
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
@@ -61,6 +74,7 @@ public class RaspberryPiVision extends SubsystemBase {
 
   private FuelCellTarget fuelCellTarget;
   private LoadingStationTarget loadingStationTarget;
+  private PipelineRunner currentRunner;
 
   private final AddressableLED led = new AddressableLED(8);
   private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(12);
@@ -86,6 +100,7 @@ public class RaspberryPiVision extends SubsystemBase {
     }
     led.setData(ledBuffer);
     led.start();
+    currentRunner = runner;
   }
 
   /**
@@ -144,13 +159,36 @@ public class RaspberryPiVision extends SubsystemBase {
     return new Translation2d((distance * Math.cos(angle)) - Units.inchesToMeters(12), distance * Math.sin(angle));
   }
 
+  /**
+   * Adds a Shuffleboard tab for the Raspberry Pi subsystem.
+   */
   public void addShuffleBoardTab() {
     ShuffleboardTab piTab = Shuffleboard.getTab("RaspberryPi");
-    piTab.add("LoadingBayTarget", new RaspberryPiPipelines(this, PipelineRunner.LOADING_STATION));
-    piTab.add("FuelCellTrackerTarget", new RaspberryPiPipelines(this, PipelineRunner.FUEL_CELL));
+
+    // Create a list layout and add the buttons to change the pipeline.
+    ShuffleboardLayout pipelineLayout = piTab.getLayout("Pipeline", BuiltInLayouts.kList).
+      withPosition(0, 0).
+      withSize(2, 2);
+
+    pipelineLayout.addString("Pipeline Runner", () -> currentRunner.getName());
+    pipelineLayout.add("LoadingBayTarget", new RaspberryPiPipelines(this, PipelineRunner.LOADING_STATION));
+    pipelineLayout.add("FuelCellTrackerTarget", new RaspberryPiPipelines(this, PipelineRunner.FUEL_CELL));
+
+    // Add the processed video to the tab.
+    //
+    // When running on the real robot, we'll get the "Processed" video stream from the Raspberry Pi.
+    // When running in the simulator, we'll use the default USB camera.
+    VideoSource processedVideo = RobotBase.isReal()
+      ? CameraServer.getInstance().getServer("Processed").getSource()
+      : CameraServer.getInstance().startAutomaticCapture();
+
+    if (processedVideo != null) {
+      piTab.add("Processed Video", processedVideo).withPosition(2, 0).withSize(4, 3);
+    }
   }
 
   @Override
   public void periodic() {
+
   }
 }
