@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
@@ -25,17 +18,13 @@ public final class Constants {
         public static final boolean kGyroReversed = true;
         public static final int kLeftMotor1Port = 1;
         public static final int kLeftMotor2Port = 2;
-        public static final int kLeftMotor3Port = 3;
         public static final int kRightMotor1Port = 4;
         public static final int kRightMotor2Port = 5;
-        public static final int kRightMotor3Port = 6;
-        public static final int kPanelSpinnerPort = 7;
         public static final int[] kLeftEncoderPorts = new int[] { 2, 3 };
         public static final int[] kRightEncoderPorts = new int[] { 0, 1 };
-        public static final int[] turretEncoderPorts = new int[] { 5, 6 };
         public static final boolean kLeftEncoderReversed = false;
         public static final boolean kRightEncoderReversed = true;
-         
+
         // TODO Measurable Robot Parameters
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
                NRGPreferences.TRACK_WIDTH_METERS.getValue());
@@ -53,5 +42,14 @@ public final class Constants {
 
         public static final double kRamseteB = 2;
         public static final double kRamseteZeta = 0.7;
+    }
+
+    public static final class TurretConstants {
+        public static final int kTurretMotorPort = 3;
+        public static final int[] kTurretEncoderPorts = new int[] { 4, 5 };
+    }
+
+    public static final class ControlPanelConstants {
+        public static final int kPanelSpinnerMotorPort = 7;
     }
 }

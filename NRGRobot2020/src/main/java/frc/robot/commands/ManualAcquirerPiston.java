@@ -1,40 +1,38 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Drive;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.subsystems.AcquirerPiston;
+import frc.robot.subsystems.AcquirerPiston.State;
 
-public class ManualDriveStraight extends CommandBase {
-  private final Drive drive;
-  private final Joystick m_leftJoystick;
-
+public class ManualAcquirerPiston extends CommandBase {
+  private State state;
+  private AcquirerPiston acquirerPiston;
   /**
-   * Creates a new DriveStraight.
+   * Creates a new ManualAcquirerPiston.
    */
-  public ManualDriveStraight(final Drive drive,  final Joystick leftJoystick) {
+  public ManualAcquirerPiston(AcquirerPiston acquirerPiston, JoystickButton joystickButton) {
+    this.acquirerPiston = acquirerPiston;
+    
     // Use addRequirements() here to declare subsystem dependencies.
-    this.drive = drive;
-    this.m_leftJoystick = leftJoystick;
+    addRequirements(acquirerPiston);
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    double heading = drive.getHeading();
-    drive.driveOnHeadingInit(heading);
+  public void initialize() { 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    drive.driveOnHeadingExecute(-m_leftJoystick.getY());
-
+    acquirerPiston.setState();
+    
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drive.driveOnHeadingEnd();
   }
 
   // Returns true when the command should end.
