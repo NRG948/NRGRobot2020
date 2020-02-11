@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.RaspberryPiPipelines;
 import frc.robot.vision.FuelCellTarget;
 import frc.robot.vision.LoadingStationTarget;
+import frc.robot.Constants.RaspberryPiConstants;
 
 import java.util.*;
 
@@ -20,8 +21,8 @@ public class RaspberryPiVision extends SubsystemBase {
    * Enumeration representing pipeline to run
    */
   public enum PipelineRunner {
-    FUEL_CELL("FuelCellTrackingRunner", new Color8Bit (255, 255, 255)), 
-    LOADING_STATION("LoadingStationRunner", new Color8Bit (0, 255, 0));
+    FUEL_CELL("FuelCellTrackingRunner", RaspberryPiConstants.kWhite), 
+    LOADING_STATION("LoadingStationRunner", RaspberryPiConstants.kGreen);
 
     private final String name;
     private final Color8Bit color;

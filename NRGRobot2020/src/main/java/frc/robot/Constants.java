@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.utilities.NRGPreferences;
 
 /**
@@ -55,6 +56,11 @@ public final class Constants {
         public static final int[] kTurretEncoderPorts = new int[] { 6, 7 };
         public static final int kHoodMotorPort = 2;
 
+    }
+
+    public static final class RaspberryPiConstants {
+        public static final Color8Bit kWhite = new Color8Bit(255, 255, 255);
+        public static final Color8Bit kGreen = new Color8Bit(0, 255, 0);
     }
 
     public static final class ControlPanelConstants {
