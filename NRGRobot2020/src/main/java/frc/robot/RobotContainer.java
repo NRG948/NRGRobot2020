@@ -29,6 +29,7 @@ import frc.robot.commands.ManualAcquirerPiston;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
+import frc.robot.commands.RaspberryPiPipelines;
 import frc.robot.commands.SetShooterRPM;
 import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.subsystems.Acquirer;
@@ -42,6 +43,7 @@ import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
 import frc.robot.vision.FuelCellTarget;
 import frc.robot.vision.LoadingStationTarget;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -173,9 +175,8 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    xboxButtonA.whenPressed(new InstantCommand(()-> {
-      cameraLights.set(Relay.Value.kForward);
-    }));
+    xboxButtonA.whenPressed(new RaspberryPiPipelines(raspPi, PipelineRunner.LOADING_STATION));
+    xboxButtonX.whenPressed(new RaspberryPiPipelines(raspPi, PipelineRunner.FUEL_CELL));
     xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
     xboxButtonY.whenPressed(followWaypointsSCurve);
     // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
