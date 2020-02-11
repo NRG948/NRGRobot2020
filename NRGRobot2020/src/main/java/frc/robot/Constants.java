@@ -28,10 +28,10 @@ public final class Constants {
 
         // TODO Measurable Robot Parameters
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
-               NRGPreferences.TRACK_WIDTH_METERS.getValue());
+                NRGPreferences.TRACK_WIDTH_METERS.getValue());
         public static final double kWheelDiameterMeters = 0.152;
-        public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / 
-                (double) NRGPreferences.ENCODER_CPR.getValue();
+        public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI)
+                / (double) NRGPreferences.ENCODER_CPR.getValue();
 
         public static final double kPDriveVel = 8.5;
     }

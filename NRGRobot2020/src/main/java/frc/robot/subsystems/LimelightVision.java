@@ -7,7 +7,6 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-
 public class LimelightVision extends SubsystemBase {
   public static final String kDefaultAuto = "Default";
   public static final String kCustomAuto = "My Auto";
