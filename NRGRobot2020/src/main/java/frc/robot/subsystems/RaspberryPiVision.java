@@ -96,7 +96,7 @@ public class RaspberryPiVision extends SubsystemBase {
 
   public LoadingStationTarget getLoadingTarget() {
     updateLoadingStation();
-    return SmartDashboard.getNumber("Vision/LoadingStationCount", 0.0) > 0 ? new LoadingStationTarget(this) : null;
+    return SmartDashboard.getNumber("Vision/LoadingStationCount", 0) > 0 ? new LoadingStationTarget(this) : null;
   }
 
   public void updateFuelCell() {

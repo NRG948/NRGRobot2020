@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ManualDriveStraight;
 import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualHood;
@@ -194,12 +195,13 @@ public class RobotContainer {
     });
     driveToLoadingStation.whenPressed(() -> {
       LoadingStationTarget target = raspPi.getLoadingTarget();
-      if (target != null) {
+      SmartDashboard.putBoolean("Is Target Null?", target == null);
+      // if (target != null) {
         double angleToTarget = target.getAngleToTarget();
         double distanceToTarget = target.getDistance();
         new AutoTurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
             .andThen(new AutoDriveOnHeading(this.drive).forInches(distanceToTarget)).schedule();
-      }
+      // }
     });
     driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi).withMaxPower(1.0));
   }
