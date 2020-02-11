@@ -20,8 +20,8 @@ public final class Constants {
         public static final int kLeftMotor2Port = 4;
         public static final int kRightMotor1Port = 1;
         public static final int kRightMotor2Port = 2;
-        public static final int[] kLeftEncoderPorts = new int[] { 2, 3 };
-        public static final int[] kRightEncoderPorts = new int[] { 0, 1 };
+        public static final int[] kLeftEncoderPorts = new int[] { 0, 1 };
+        public static final int[] kRightEncoderPorts = new int[] { 2, 3 };
         public static final boolean kLeftEncoderReversed = false;
         public static final boolean kRightEncoderReversed = true;
 
@@ -35,6 +35,12 @@ public final class Constants {
         public static final double kPDriveVel = 8.5;
     }
 
+    public static final class ShooterConstants {
+        public static final int kSpinMotor1Port = 0;
+        public static final int kSpinMotor2Port = 1;
+        public static final int kSpinEncoderPort = 4;
+    }
+
     // TODO Robot Characterization Values
     public static final class AutoConstants {
         public static final double kMaxSpeedMetersPerSecond = 3;
@@ -46,7 +52,9 @@ public final class Constants {
 
     public static final class TurretConstants {
         public static final int kTurretMotorPort = 3;
-        public static final int[] kTurretEncoderPorts = new int[] { 4, 5 };
+        public static final int[] kTurretEncoderPorts = new int[] { 6, 7 };
+        public static final int kHoodMotorPort = 2;
+
     }
 
     public static final class ControlPanelConstants {

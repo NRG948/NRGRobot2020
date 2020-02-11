@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * with the shooter flywheel.
  */
 public class Feeder extends SubsystemBase {
-  private Victor feederMotor = new Victor(6);
+  private Victor feederMotor = new Victor(5);
 
   /**
    * Creates the Feeder subsystem.
