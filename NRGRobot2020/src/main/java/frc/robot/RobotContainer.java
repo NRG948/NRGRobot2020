@@ -187,7 +187,7 @@ public class RobotContainer {
     driveToBall.whenPressed(() -> {
       FuelCellTarget ballTarget = raspPi.getFuelCellTarget();
       if (ballTarget != null) {
-        double distanceToTarget = ballTarget.distanceToTarget();
+        double distanceToTarget = ballTarget.getDistanceToTarget();
         double angleToTarget = ballTarget.getAngleToTarget();
         
         new AutoTurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)

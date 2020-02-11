@@ -1,7 +1,5 @@
 package frc.robot.subsystems;
 
-import com.google.gson.Gson;
-
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -56,8 +54,7 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   private static final String[] NO_BALL_TARGETS = new String[0];
-  private Gson gson = new Gson();
-  private ArrayList<FuelCellTarget> ballTargets = new ArrayList<FuelCellTarget>();
+  private FuelCellTarget fuelCellTarget;
 
   private double distance;
   private double offsetX;
@@ -95,7 +92,7 @@ public class RaspberryPiVision extends SubsystemBase {
    */
   public FuelCellTarget getFuelCellTarget() {
     updateFuelCell();
-    return !ballTargets.isEmpty() ? ballTargets.get(0) : null;
+    return this.fuelCellTarget;
   }
 
   public LoadingStationTarget getLoadingTarget() {
@@ -103,25 +100,18 @@ public class RaspberryPiVision extends SubsystemBase {
     return SmartDashboard.getNumber("Vision/LoadingStationCount", 0) > 0 ? new LoadingStationTarget(this) : null;
   }
 
-  public void updateFuelCell() {
-    String[] ballTargetsJson = SmartDashboard.getStringArray("Vision/ballTargets", NO_BALL_TARGETS);
-    ArrayList<FuelCellTarget> tempBallTargets = new ArrayList<FuelCellTarget>();
-
-    for (String ballTargetJson : ballTargetsJson) {
-      tempBallTargets.add(gson.fromJson(ballTargetJson, FuelCellTarget.class));
-    }
-
-    ballTargets = tempBallTargets;
-    boolean hasTargets = !ballTargets.isEmpty();
-    SmartDashboard.putBoolean("Vision/hasTargets", hasTargets);
-
-    if (hasTargets) {
-      SmartDashboard.putNumber("Vision/distanceToTarget", ballTargets.get(0).distanceToTarget());
-      SmartDashboard.putNumber("Vision/angleToTarget", ballTargets.get(0).getAngleToTarget());
+  private void updateFuelCell() {
+    boolean hasTarget = SmartDashboard.getBoolean("Vision/fuelCell/hasTarget", false);
+    if (hasTarget) {
+      double distance = SmartDashboard.getNumber("Vision/fuelCell/distance", 0);
+      double angle = SmartDashboard.getNumber("Vision/fuelCell/angle", 0);
+      this.fuelCellTarget = new FuelCellTarget(distance, angle);
+    } else {
+      this.fuelCellTarget = null;
     }
   }
 
-  public void updateLoadingStation() {
+  private void updateLoadingStation() {
     distance = SmartDashboard.getNumber("Vision/LoadingStation/DistanceInches", 0.0);
     offsetX = SmartDashboard.getNumber("Vision/LoadingStation/OffsetX", 0.0);
     skew = SmartDashboard.getNumber("Vision/LoadingStation/Skew", 0.0);
