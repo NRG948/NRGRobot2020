@@ -56,7 +56,7 @@ public class DriveToFuelCell extends CommandBase {
     FuelCellTarget ballTarget = raspPi.getFuelCellTarget();
     if (ballTarget != null) {
       ballNotFoundCounter = 0;
-      double distanceToTarget = ballTarget.distanceToTarget();
+      double distanceToTarget = ballTarget.getDistanceToTarget();
       double angleToTarget = ballTarget.getAngleToTarget();
       double turnPower = angleToTarget / IMAGE_FOV_DEGREES;
       double drivePower = MathUtil.clamp((distanceToTarget / INCHES_TO_SLOW), 0.4, maxPower);

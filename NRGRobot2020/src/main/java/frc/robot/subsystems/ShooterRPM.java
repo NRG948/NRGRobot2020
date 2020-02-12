@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.utilities.MathUtil;
 
 /**
@@ -24,9 +25,9 @@ public class ShooterRPM extends SubsystemBase {
   private static final double TICKS_PER_FLYWHEEL_REVOLUTION = 645;
   private static final double NANOSECS_PER_MINUTE = 60 * 1000000000.0;
   
-  private final Victor spinMotor1 = new Victor(0);
-  private final Victor spinMotor2 = new Victor(1);
-  private final Counter spinMotorEncoder = new Counter(6);
+  private final Victor spinMotor1 = new Victor(ShooterConstants.kSpinMotor1Port);
+  private final Victor spinMotor2 = new Victor(ShooterConstants.kSpinMotor2Port);
+  private final Counter spinMotorEncoder = new Counter(ShooterConstants.kSpinEncoderPort);
 
   private double goalRPM = 0;
   private double error = 0;

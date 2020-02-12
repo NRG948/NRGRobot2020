@@ -1,6 +1,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import frc.robot.utilities.NRGPreferences;
 
 /**
@@ -16,23 +17,29 @@ import frc.robot.utilities.NRGPreferences;
 public final class Constants {
     public static final class DriveConstants {
         public static final boolean kGyroReversed = true;
-        public static final int kLeftMotor1Port = 1;
-        public static final int kLeftMotor2Port = 2;
-        public static final int kRightMotor1Port = 4;
-        public static final int kRightMotor2Port = 5;
-        public static final int[] kLeftEncoderPorts = new int[] { 2, 3 };
-        public static final int[] kRightEncoderPorts = new int[] { 0, 1 };
+        public static final int kLeftMotor1Port = 3;
+        public static final int kLeftMotor2Port = 4;
+        public static final int kRightMotor1Port = 1;
+        public static final int kRightMotor2Port = 2;
+        public static final int[] kLeftEncoderPorts = new int[] { 0, 1 };
+        public static final int[] kRightEncoderPorts = new int[] { 2, 3 };
         public static final boolean kLeftEncoderReversed = false;
         public static final boolean kRightEncoderReversed = true;
 
         // TODO Measurable Robot Parameters
         public static final DifferentialDriveKinematics kDriveKinematics = new DifferentialDriveKinematics(
-               NRGPreferences.TRACK_WIDTH_METERS.getValue());
+                NRGPreferences.TRACK_WIDTH_METERS.getValue());
         public static final double kWheelDiameterMeters = 0.152;
-        public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI) / 
-                (double) NRGPreferences.ENCODER_CPR.getValue();
+        public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI)
+                / (double) NRGPreferences.ENCODER_CPR.getValue();
 
         public static final double kPDriveVel = 8.5;
+    }
+
+    public static final class ShooterConstants {
+        public static final int kSpinMotor1Port = 0;
+        public static final int kSpinMotor2Port = 1;
+        public static final int kSpinEncoderPort = 4;
     }
 
     // TODO Robot Characterization Values
@@ -46,7 +53,14 @@ public final class Constants {
 
     public static final class TurretConstants {
         public static final int kTurretMotorPort = 3;
-        public static final int[] kTurretEncoderPorts = new int[] { 4, 5 };
+        public static final int[] kTurretEncoderPorts = new int[] { 6, 7 };
+        public static final int kHoodMotorPort = 2;
+
+    }
+
+    public static final class RaspberryPiConstants {
+        public static final Color8Bit kWhite = new Color8Bit(255, 255, 255);
+        public static final Color8Bit kGreen = new Color8Bit(0, 255, 0);
     }
 
     public static final class ControlPanelConstants {
