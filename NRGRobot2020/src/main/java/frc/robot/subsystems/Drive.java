@@ -312,9 +312,9 @@ public class Drive extends SubsystemBase {
    *                     forward, otherwise pivots back
    */
   public void turnToHeadingExecute(double maxPower, boolean useBothSides, boolean forward) {
-    double currentPower = this.turnPIDController.calculate(navx.getAngle()) * maxPower;
+    double currentPower = this.turnPIDController.calculate(getHeadingContinuous()) * maxPower;
     if (useBothSides) {
-      this.tankDrive(currentPower, -currentPower, this.turnSquareInputs);
+      this.arcadeDrive(0, -currentPower);
     } else {
       double leftPower;
       double rightPower;
