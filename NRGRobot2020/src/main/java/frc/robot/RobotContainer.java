@@ -80,6 +80,7 @@ public class RobotContainer {
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
   private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
   private JoystickButton DriveStraight = new JoystickButton(leftJoystick, 1);
+  private JoystickButton ledModeButton = new JoystickButton(leftJoystick, 8);
   private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 5);
   private JoystickButton activateAcquirerPiston = new JoystickButton(rightJoystick, 10);
 
@@ -190,6 +191,9 @@ public class RobotContainer {
     DriveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
       resetSensors();
+    }));
+    ledModeButton.whenPressed(new InstantCommand(()-> {
+      limelightVision.toggleLed();
     }));
     driveToBall.whenPressed(() -> {
       FuelCellTarget ballTarget = raspPi.getFuelCellTarget();
