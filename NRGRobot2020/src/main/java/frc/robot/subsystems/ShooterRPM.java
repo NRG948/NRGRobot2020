@@ -65,6 +65,10 @@ public class ShooterRPM extends SubsystemBase {
     prevEncoder = currentEncoder;
     prevTime = currentTime;
   }
+  
+  public double getActualRPM(){
+    return currentRPM;
+  }
 
   /** Updates the flywheel motor controllers using Take-Back-Half closed-loop control. */
   public void updateRPM() {
@@ -103,7 +107,7 @@ public class ShooterRPM extends SubsystemBase {
   }
 
   /** Estimates the flywheel motor power needed to maintain a given RPM rate. */
-  private double guessMotorOutputForRPM(double RPM) {
+  public double guessMotorOutputForRPM(double RPM) {
     // TODO: replace this dumb linear estimate with something more accurate.
     return MathUtil.clamp(RPM / MAX_RPM, 0, 1);
   }
@@ -115,6 +119,14 @@ public class ShooterRPM extends SubsystemBase {
     lastMotorPower = power;
   }
 
+  /** Sets the flywheel spin motor controllers to the given voltage. */
+  public void setFlyWheelVoltage(double power) {
+    spinMotor1.setVoltage(power * 12);
+    spinMotor2.setVoltage(power * 12);
+    lastMotorPower = power;
+  }
+
+
   /** Sends important subsystem data to the SmartDashboard for monitoring and deubgging. */
   public void updateDashBoard() {
     SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.get());
@@ -122,6 +134,9 @@ public class ShooterRPM extends SubsystemBase {
     SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM);
     SmartDashboard.putNumber("ShooterRPM/error", error);
     SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
+  }
+  public void enabled(boolean state){
+    
   }
 
   // This method will be called once per scheduler run

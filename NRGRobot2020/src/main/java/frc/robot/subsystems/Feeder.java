@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -16,6 +17,8 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
  * with the shooter flywheel.
  */
 public class Feeder extends SubsystemBase {
+
+  private DigitalInput beamBreak = new DigitalInput(8);
   private Victor feederMotor = new Victor(5);
   
   private double sentPower;
@@ -31,6 +34,10 @@ public class Feeder extends SubsystemBase {
     sentPower = power * 0.5;
     feederRawOutputWidget.getEntry().setDouble(sentPower);
     feederMotor.set(sentPower);
+  }
+
+  public boolean isBallInShootingPosition(){
+    return beamBreak.get();
   }
 
   @Override

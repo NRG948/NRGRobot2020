@@ -13,25 +13,24 @@ import frc.robot.subsystems.RaspberryPiVision;
  * Add your docs here.
  */
 public class LoadingStationTarget {
-    private final double IMAGE_CENTER_X = 640.0 / 2;
-    private final double HALF_IMAGE_FOV = Math.atan(36.0 / 57.125);
 
     private double distance;
-    private double offsetX;
     private double skew;
-    public LoadingStationTarget(final RaspberryPiVision raspPi) {
-        distance = raspPi.getLoadingDistance();
-        offsetX = raspPi.getLoadingOffsetX();
-        skew = raspPi.getLoadingSkew();
+    private double angle;
+
+    public LoadingStationTarget(double distance, double angle, double skew){
+        this.distance = distance;
+        this.angle = angle;
+        this.skew = skew;
     }
+
 
     public double getDistance() {
         return distance;
     }
     
     public double getAngleToTarget() {
-        double deltaX = offsetX;
-        return Math.toDegrees(Math.atan2(deltaX, IMAGE_CENTER_X / Math.tan(HALF_IMAGE_FOV)));
+        return angle;
     }
     
     public double getSkew() {

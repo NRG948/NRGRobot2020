@@ -5,7 +5,7 @@ import frc.robot.subsystems.Drive;
 
 public class AutoTurnToHeading extends CommandBase {
   
-  private final double DEFAULT_TURN_TOLERANCE = 5.0;
+  private final double DEFAULT_TURN_TOLERANCE = 3.0;
 
   private double desiredHeading = 0; // the heading we want the robot to end at
   private double maxPower = 0; // gives the maximum power the robot is gonna drive when the command is executed

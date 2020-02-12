@@ -87,7 +87,7 @@ public class AutoDriveOnHeading extends CommandBase {
     this.yOrigin = this.drive.getPose().getTranslation().getY(); // gets our current Y position from the poistion tracker command
     this.drive.driveOnHeadingInit(this.heading); // We are getting our current heading and putting it into
                                             // driveOnHeadingInit to adjust our current heading
-
+    System.out.println("AutoDriveOnHeading init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -108,6 +108,7 @@ public class AutoDriveOnHeading extends CommandBase {
         this.drive.getPose().getTranslation().getY()));
     // terminated the command as the robot has reached the distance that needs to be
     // traveled or if it needs to be interrupted
+    System.out.println("AutoDriveOnHeading end");
   }
 
   // Returns true when the command should end.

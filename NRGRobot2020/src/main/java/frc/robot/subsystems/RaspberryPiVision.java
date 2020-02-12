@@ -53,12 +53,9 @@ public class RaspberryPiVision extends SubsystemBase {
     }
   }
 
-  private static final String[] NO_BALL_TARGETS = new String[0];
   private FuelCellTarget fuelCellTarget;
+  private LoadingStationTarget loadingStationTarget;
 
-  private double distance;
-  private double offsetX;
-  private double skew;
   private final AddressableLED led = new AddressableLED(8);
   private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(12);
 
@@ -97,7 +94,7 @@ public class RaspberryPiVision extends SubsystemBase {
 
   public LoadingStationTarget getLoadingTarget() {
     updateLoadingStation();
-    return SmartDashboard.getNumber("Vision/LoadingStationCount", 0) > 0 ? new LoadingStationTarget(this) : null;
+    return this.loadingStationTarget;
   }
 
   private void updateFuelCell() {
@@ -112,35 +109,16 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   private void updateLoadingStation() {
-    distance = SmartDashboard.getNumber("Vision/LoadingStation/DistanceInches", 0.0);
-    offsetX = SmartDashboard.getNumber("Vision/LoadingStation/OffsetX", 0.0);
-    skew = SmartDashboard.getNumber("Vision/LoadingStation/Skew", 0.0);
-  }
+    boolean hasTarget = SmartDashboard.getBoolean("Vision/LoadingStation/HasTarget", false);
+    if (hasTarget) {
+      double distance = SmartDashboard.getNumber("Vision/LoadingStation/DistanceInches", 0.0);
+      double angle = SmartDashboard.getNumber("Vision/LoadingStation/Angle", 0.0);
+      double skew = SmartDashboard.getNumber("Vision/LoadingStation/Skew", 0.0);
+      this.loadingStationTarget = new LoadingStationTarget(distance, angle, skew);
+    } else {
+      this.loadingStationTarget = null;
+    }
 
-  /**
-   * 
-   * @return skew from -1.0 to 1.0 (not linear); taking the inverse cosine of skew
-   *         returns angle
-   */
-  public double getLoadingSkew() {
-    return skew;
-  }
-
-  /**
-   * 
-   * @return offsetX: the x-distance, from -1.0 to 1.0, from center of robot
-   *         vision to center of target
-   */
-  public double getLoadingOffsetX() {
-    return offsetX;
-  }
-
-  /**
-   * 
-   * @return distance from robot to Loading Station Target in inches
-   */
-  public double getLoadingDistance() {
-    return distance;
   }
 
   public void addShuffleBoardTab() {
