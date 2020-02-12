@@ -3,6 +3,12 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+
 /**
  * Subsystem which commands the ball feeder.
  * 
@@ -11,6 +17,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class Feeder extends SubsystemBase {
   private Victor feederMotor = new Victor(5);
+  
+  private double sentPower;
+  private SimpleWidget feederRawOutputWidget;  
 
   /**
    * Creates the Feeder subsystem.
@@ -19,11 +28,19 @@ public class Feeder extends SubsystemBase {
   }
 
   public void rawFeeder(double power){
-    feederMotor.set(power);
+    sentPower = power * 0.5;
+    feederRawOutputWidget.getEntry().setDouble(sentPower);
+    feederMotor.set(sentPower);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+  public void initShuffleboard(){
+    ShuffleboardTab feederTab = Shuffleboard.getTab("Feeder");
+
+    ShuffleboardLayout feederLayout = feederTab.getLayout("Feeder", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
+    feederRawOutputWidget = feederLayout.add("Raw Output", 0.0);
   }
 }

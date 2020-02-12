@@ -152,6 +152,12 @@ public class RobotContainer {
     configureButtonBindings();
     drive.addShuffleBoardTab();
     raspPi.addShuffleBoardTab();
+    acquirer.initShuffleboard();
+    indexer.initShuffleboard();
+    feeder.initShuffleboard();
+    turret.initShuffleboard();
+    hood.initShuffleboard();
+    
     try {
       followPathTest = new FollowPathWeaverFile(drive, "Test.wpilib.json");
     } catch (IOException e) {
