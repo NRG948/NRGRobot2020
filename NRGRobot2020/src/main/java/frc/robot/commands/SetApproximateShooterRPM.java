@@ -1,34 +1,31 @@
+
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ShooterRPM;
 
-public class SetShooterRPM extends CommandBase {
-  private final double goalRPM;
-  private final ShooterRPM shooterRPM;
-  private Timer timer = new Timer();
+public class SetApproximateShooterRPM extends CommandBase {
+  ShooterRPM shooterRPM;
+  double rpm;
   /**
-   * Creates a new SetShooterRPM.
+   * Creates a new SetShooterApproximateRPM.
    */
-  public SetShooterRPM(double goalRPM, ShooterRPM shooterRPM) {
-    this.goalRPM = goalRPM;
+  public SetApproximateShooterRPM(double rpm, ShooterRPM shooterRpm) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(shooterRpm);
+    this.rpm = rpm;
     this.shooterRPM = shooterRPM;
-    addRequirements(shooterRPM);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    timer.reset();
-    timer.start();
-    shooterRPM.setGoalRPM(goalRPM);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterRPM.updateRPM();
+    shooterRPM.setFlyWheel(shooterRPM.guessMotorOutputForRPM(rpm));
   }
 
   // Called once the command ends or is interrupted.
@@ -39,10 +36,6 @@ public class SetShooterRPM extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(timer.get()>10){
-      timer.stop();
-      return true;
-    }
-    return false;
+    return true;
   }
 }

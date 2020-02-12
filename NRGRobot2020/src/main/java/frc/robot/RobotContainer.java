@@ -30,7 +30,7 @@ import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
 import frc.robot.commands.RaspberryPiPipelines;
-import frc.robot.commands.SetShooterRPM;
+import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.AcquirerPiston;
@@ -102,7 +102,7 @@ public class RobotContainer {
   private final ManualTurret manualTurret = new ManualTurret(turret, xboxController);
   private final ManualHood manualHood = new ManualHood(hood, xboxController);
   private final ManualAcquirerPiston manualAcquirerPiston = new ManualAcquirerPiston(acquirerPiston, activateAcquirerPiston);
-  private SetShooterRPM SetShooterRPM = new SetShooterRPM(1000.0, shooterRPM);
+  private MaintainShooterRPM SetShooterRPM = new MaintainShooterRPM(1000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private FollowWaypoints followWaypointsSCurve = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
       List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)));
@@ -178,7 +178,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     xboxButtonA.whenPressed(new RaspberryPiPipelines(raspPi, PipelineRunner.LOADING_STATION));
     xboxButtonX.whenPressed(new RaspberryPiPipelines(raspPi, PipelineRunner.FUEL_CELL));
-    xboxButtonB.whenPressed(new SetShooterRPM(3900, shooterRPM));
+    xboxButtonB.whenPressed(new MaintainShooterRPM(3900, shooterRPM));
     xboxButtonY.whenPressed(followWaypointsSCurve);
     // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
     DriveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
