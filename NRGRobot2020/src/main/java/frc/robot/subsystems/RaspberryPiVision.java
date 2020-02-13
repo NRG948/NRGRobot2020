@@ -2,10 +2,14 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.RaspberryPiPipelines;
 import frc.robot.vision.FuelCellTarget;
@@ -13,6 +17,8 @@ import frc.robot.vision.LoadingStationTarget;
 import frc.robot.Constants.RaspberryPiConstants;
 
 import java.util.*;
+
+import org.opencv.core.Point;
 
 public class RaspberryPiVision extends SubsystemBase {
   /**
@@ -118,7 +124,24 @@ public class RaspberryPiVision extends SubsystemBase {
     } else {
       this.loadingStationTarget = null;
     }
+  }
+  
+  /**
+   * @return the change in inches for x, y value from starting odometry value to final point. 
+   */
+  public Translation2d getFinalPoint() {
+    double distance = Units.inchesToMeters(this.loadingStationTarget.getDistance());
+    double angle = this.loadingStationTarget.getAngleToTarget();
+    return new Translation2d(distance * Math.sin(angle), distance * Math.cos(angle));
+  }
 
+  /**
+   * @return the change in inches for x, y value from starting odometry value to the waypoint.
+   */
+  public Translation2d getWaypoint() {
+    double distance = Units.inchesToMeters(this.loadingStationTarget.getDistance());
+    double angle = this.loadingStationTarget.getAngleToTarget();
+    return new Translation2d(distance * Math.sin(angle), distance * Math.cos(angle) - 12);
   }
 
   public void addShuffleBoardTab() {

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Transform2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -79,7 +80,8 @@ public class RobotContainer {
   private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
   private JoystickButton DriveStraight = new JoystickButton(leftJoystick, 1);
   private JoystickButton ledModeButton = new JoystickButton(leftJoystick, 8);
-  private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 5);
+  private JoystickButton driveStraightToLoadingStation = new JoystickButton(rightJoystick, 5);
+  private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 6);
   private JoystickButton activateAcquirerPiston = new JoystickButton(rightJoystick, 10);
 
   // XboxController and Xbox buttons
@@ -211,7 +213,7 @@ public class RobotContainer {
             .andThen(new AutoDriveOnHeading(this.drive).forMeters(distanceToTarget)).schedule();
       }
     });
-    driveToLoadingStation.whenPressed(() -> {
+    driveStraightToLoadingStation.whenPressed(() -> {
       LoadingStationTarget target = raspPi.getLoadingTarget();
       if (target != null) {
         double angleToTarget = target.getAngleToTarget();
@@ -219,6 +221,14 @@ public class RobotContainer {
         new AutoTurnToHeading(this.drive).withMaxPower(0.75)
             .toHeading(this.drive.getHeadingContinuous() + angleToTarget)
             .andThen(new AutoDriveOnHeading(this.drive).withMaxPower(0.5).forInches(distanceToTarget)).schedule();
+      }
+    });
+    driveToLoadingStation.whenPressed(() -> {
+      LoadingStationTarget target = raspPi.getLoadingTarget();
+      if (target != null) {
+        Pose2d end = this.drive.getPose();
+        end.plus(new Transform2d(raspPi.getFinalPoint(), new Rotation2d()));
+        new FollowWaypoints(this.drive, this.drive.getPose(), List.of(raspPi.getWaypoint()), end);
       }
     });
     driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi).withMaxPower(1.0));
