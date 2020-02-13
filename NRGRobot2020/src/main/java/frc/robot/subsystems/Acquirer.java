@@ -22,7 +22,7 @@ public class Acquirer extends SubsystemBase {
 
   private static final double MAX_ACQUIRER_POWER = 0.5;
 
-  private Victor acquirerMotor = new Victor(2);
+  private Victor acquirerMotor = new Victor(4);
 
   /** Creates a new Acquirer. */
   public Acquirer() {

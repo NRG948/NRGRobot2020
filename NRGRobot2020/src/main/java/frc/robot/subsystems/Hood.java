@@ -39,4 +39,7 @@ public class Hood extends SubsystemBase {
     ShuffleboardLayout hoodLayout = hoodTab.getLayout("Hood", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
     rawHoodOutputWidget = hoodLayout.add("Raw Output", 0.0);
   }
+  public void hoodEnd() {
+    this.hoodMotor.set(0);
+  }
 }

@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 
 public class Indexer extends SubsystemBase {
-  private Victor indexerVictor = new Victor(4);
+  private Victor indexerVictor = new Victor(9);
   private double sentPower;
   private SimpleWidget indexerRawOutputWidget;
   /**

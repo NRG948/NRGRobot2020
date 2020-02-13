@@ -38,6 +38,7 @@ public class ManualHood extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    hood.hoodEnd();
   }
 
   // Returns true when the command should end.

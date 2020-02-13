@@ -26,7 +26,7 @@ public class Turret extends SubsystemBase {
   private static final double MIN_ENCODER_VALUE = 0;
   private static final double MAX_ENCODER_VALUE = 1024;
 
-  private final VictorSPX turretMotor = new VictorSPX(TurretConstants.kTurretMotorPort); // Change back to victor when we get the actual robot
+  private final Victor turretMotor = new Victor(TurretConstants.kTurretMotorPort); // Change back to victor when we get the actual robot
   private final Encoder turretEncoder = new Encoder(TurretConstants.kTurretEncoderPorts[0], TurretConstants.kTurretEncoderPorts[1]);
   private PIDController turretPIDController;
   private double maxPower;
@@ -80,7 +80,7 @@ public class Turret extends SubsystemBase {
     // if (encoderTicks >= MAX_ENCODER_VALUE && power > 0 || encoderTicks <= MIN_ENCODER_VALUE && power < 0){
     //   power = 0;
     // }
-    turretMotor.set(ControlMode.PercentOutput, power);
+    turretMotor.set(power);
   }
 
   /**
@@ -96,7 +96,7 @@ public class Turret extends SubsystemBase {
    * Stops the turretMotor at the end of a turret command.
    */
   public void turretAngleEnd() {
-    this.turretMotor.set(ControlMode.PercentOutput, 0);
+    this.turretMotor.set(0);
     this.turretPIDController = null;
   }
 
