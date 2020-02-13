@@ -73,7 +73,7 @@ public class RobotContainer {
   private final RaspberryPiVision raspPi = new RaspberryPiVision();
   private final AcquirerPiston acquirerPiston = new AcquirerPiston();
 
-  //Joystick and JoystickButtons
+  // Joystick and JoystickButtons
   private final Joystick leftJoystick = new Joystick(0);
   private final Joystick rightJoystick = new Joystick(1);
   private JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
@@ -84,54 +84,58 @@ public class RobotContainer {
   private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 5);
   private JoystickButton activateAcquirerPiston = new JoystickButton(rightJoystick, 10);
 
-  //XboxController and Xbox buttons
+  // XboxController and Xbox buttons
   private XboxController xboxController = new XboxController(2);
   private JoystickButton xboxButtonA = new JoystickButton(xboxController, 1); // A Button
   private JoystickButton xboxButtonB = new JoystickButton(xboxController, 2); // B Button
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
 
-  private Relay cameraLights;
-
- 
-  //left/right dpad - turret, up/down dpad - hood, left stick up/down - indexer, right stick up/down - acquirer, back button + right stick up/down - feeder, right trigger - shooter rpm
-  //commands
+  // left/right dpad - turret, up/down dpad - hood, left stick up/down - indexer,
+  // right stick up/down - acquirer, back button + right stick up/down - feeder,
+  // right trigger - shooter rpm
+  // commands
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick, xboxController);
   private final ManualAcquirer manualAcquirer = new ManualAcquirer(acquirer, xboxController);
   private final ManualIndexer manualIndexer = new ManualIndexer(indexer, xboxController);
   private final ManualFeeder manualFeeder = new ManualFeeder(feeder, xboxController);
   private final ManualTurret manualTurret = new ManualTurret(turret, xboxController);
   private final ManualHood manualHood = new ManualHood(hood, xboxController);
-  private final ManualAcquirerPiston manualAcquirerPiston = new ManualAcquirerPiston(acquirerPiston, activateAcquirerPiston);
+  private final ManualAcquirerPiston manualAcquirerPiston = new ManualAcquirerPiston(acquirerPiston,
+      activateAcquirerPiston);
   private MaintainShooterRPM SetShooterRPM = new MaintainShooterRPM(1000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private FollowWaypoints followWaypointsSCurve = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
       List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)));
   private FollowPathWeaverFile followPathTest;
- 
-  //autonomous chooser
+
+  // autonomous chooser
   private SendableChooser<AutoPath> autoPathChooser;
+
   private enum AutoPath {
-    INITIATION_LINE_TO_MIDDLE("INITIATION_LINE_TO_MIDDLE.wpilib.json",
-      new Pose2d(3.362,-3.989, new Rotation2d(0))),
+    INITIATION_LINE_TO_MIDDLE("INITIATION_LINE_TO_MIDDLE.wpilib.json", new Pose2d(3.362, -3.989, new Rotation2d(0))),
     INITIATION_LINE_TO_LEFT_TRENCH("INITIATION_LINE_TO_LEFT_TRENCH.wpilib.json",
-      new Pose2d(3.3,-0.786 ,new Rotation2d(0))),
+        new Pose2d(3.3, -0.786, new Rotation2d(0))),
     INITIATION_LINE_TO_RIGHT_TRENCH("INITIATION_LINE_TO_RIGHT_TRENCH.wpilib.json",
-      new Pose2d(3.473,-7.501,new Rotation2d(0)));
+        new Pose2d(3.473, -7.501, new Rotation2d(0)));
+
     private final String fileName;
     private final Pose2d startingPosition;
-    private AutoPath(String file, Pose2d position){
+
+    private AutoPath(String file, Pose2d position) {
       fileName = file;
       startingPosition = position;
     }
-    public String getFile(){
+
+    public String getFile() {
       return fileName;
     }
-    public Pose2d getStartingPosition(){
+
+    public Pose2d getStartingPosition() {
       return startingPosition;
     }
   }
-  
+
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -139,7 +143,7 @@ public class RobotContainer {
     System.out.println("RobotContainer");
     NRGPreferences.init();
 
-    //subsystem default commands
+    // subsystem default commands
     drive.setDefaultCommand(manualDrive);
     shooterRPM.setDefaultCommand(manualShooter);
     acquirer.setDefaultCommand(manualAcquirer);
@@ -158,7 +162,7 @@ public class RobotContainer {
     feeder.initShuffleboard();
     turret.initShuffleboard();
     hood.initShuffleboard();
-    
+
     try {
       followPathTest = new FollowPathWeaverFile(drive, "Test.wpilib.json");
     } catch (IOException e) {
@@ -170,16 +174,14 @@ public class RobotContainer {
     autoPathChooser = new SendableChooser<AutoPath>();
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_MIDDLE.name(), AutoPath.INITIATION_LINE_TO_MIDDLE);
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
-    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
-    autoTab.add("autoPath",autoPathChooser);
-
-    cameraLights = new Relay(lightRelayPort);
+    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(),
+        AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
+    autoTab.add("autoPath", autoPathChooser);
 
     CommandScheduler scheduler = CommandScheduler.getInstance();
-    scheduler.onCommandInitialize(command -> System.out.println(command.getName()+ " init"));
-    scheduler.onCommandFinish(command -> System.out.println(command.getName()+ " finished"));
+    scheduler.onCommandInitialize(command -> System.out.println(command.getName() + " init"));
+    scheduler.onCommandFinish(command -> System.out.println(command.getName() + " finished"));
 
-    
   }
 
   /**
@@ -198,7 +200,7 @@ public class RobotContainer {
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
       resetSensors();
     }));
-    ledModeButton.whenPressed(new InstantCommand(()-> {
+    ledModeButton.whenPressed(new InstantCommand(() -> {
       limelightVision.toggleLed();
     }));
     driveToBall.whenPressed(() -> {
@@ -206,7 +208,7 @@ public class RobotContainer {
       if (ballTarget != null) {
         double distanceToTarget = ballTarget.getDistanceToTarget();
         double angleToTarget = ballTarget.getAngleToTarget();
-        
+
         new AutoTurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
             .andThen(new AutoDriveOnHeading(this.drive).forMeters(distanceToTarget)).schedule();
       }
@@ -216,7 +218,8 @@ public class RobotContainer {
       if (target != null) {
         double angleToTarget = target.getAngleToTarget();
         double distanceToTarget = target.getDistance();
-        new AutoTurnToHeading(this.drive).withMaxPower(0.75).toHeading(this.drive.getHeadingContinuous() + angleToTarget)
+        new AutoTurnToHeading(this.drive).withMaxPower(0.75)
+            .toHeading(this.drive.getHeadingContinuous() + angleToTarget)
             .andThen(new AutoDriveOnHeading(this.drive).withMaxPower(0.5).forInches(distanceToTarget)).schedule();
       }
     });
@@ -239,7 +242,8 @@ public class RobotContainer {
       return null;
     }
   }
-  public void resetSensors(){
+
+  public void resetSensors() {
     drive.resetHeading();
     drive.resetOdometry(new Pose2d(1, -3, new Rotation2d()));
     shooterRPM.reset();
