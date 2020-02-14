@@ -38,6 +38,7 @@ public class ShooterRPM extends SubsystemBase {
   private double prevEncoder = 0;
   private double currentRPM = 0;
   private long prevTime = 0;
+  private boolean isTakeBackHalfEnabled = false;
 
   public ShooterRPM() {
     spinMotorEncoder.setDistancePerPulse(1 / TICKS_PER_FLYWHEEL_REVOLUTION);
@@ -58,7 +59,7 @@ public class ShooterRPM extends SubsystemBase {
    * 
    * WARNING: will cause innacurate results if called more than once per 20ms cycle.
    */
-  public void calculateCurrentRPM() {
+  private void calculateCurrentRPM() {
     double currentEncoder = spinMotorEncoder.getDistance();
     long currentTime = System.nanoTime();
     currentRPM = (currentEncoder - prevEncoder) / (currentTime - prevTime) * NANOSECS_PER_MINUTE;
@@ -91,6 +92,7 @@ public class ShooterRPM extends SubsystemBase {
       previousError = 0;
       tbh = 0;
     } else {
+      isTakeBackHalfEnabled = true;
       // If we're going from stopped to a positive goal RPM, use full power
       // to spin up the flywheel as quickly as possible, and initialize TBH
       // so that our best-guess-power is used after the first crossover.
@@ -143,10 +145,14 @@ public class ShooterRPM extends SubsystemBase {
   @Override
   public void periodic() {
     calculateCurrentRPM();
+    if(isTakeBackHalfEnabled){
+      updateRPM();
+    }
   }
 
   /** Resets the ShooterRPM subsystem to its initial state. */
   public void reset() {
+    disableTakeBackHalf();
     spinMotorEncoder.reset();
     spinMotor1.disable();
     spinMotor2.disable();
@@ -154,5 +160,9 @@ public class ShooterRPM extends SubsystemBase {
     lastMotorPower = 0;
     prevEncoder = 0;
     prevTime = System.nanoTime();
+  }
+
+  public void disableTakeBackHalf(){
+    isTakeBackHalfEnabled = false;
   }
 }
