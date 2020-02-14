@@ -220,9 +220,15 @@ public class RobotContainer {
     driveToLoadingStation.whenPressed(() -> {
       LoadingStationTarget target = raspPi.getLoadingTarget();
       if (target != null) {
+        System.out.println("Start " + this.drive.getPose());
+        System.out.println("Final " + raspPi.getFinalPoint());
+        System.out.println("Waypoint " + raspPi.getWaypoint());
         Pose2d end = this.drive.getPose();
         end.plus(new Transform2d(raspPi.getFinalPoint(), new Rotation2d()));
-        new FollowWaypoints(this.drive, this.drive.getPose(), List.of(raspPi.getWaypoint()), end);
+        //new FollowWaypoints(this.drive, this.drive.getPose(), List.of(raspPi.getWaypoint()), end).schedule();
+        System.out.println("End " + end);
+        
+
       }
     });
     driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi).withMaxPower(1.0));
