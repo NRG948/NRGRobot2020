@@ -8,6 +8,8 @@ public class MaintainShooterRPM extends CommandBase {
   private final double goalRPM;
   private final ShooterRPM shooterRPM;
   private Timer timer = new Timer();
+  private double seconds = 20;
+  private boolean setAndExit;
 
   /**
    * Creates a new SetShooterRPM.
@@ -16,6 +18,16 @@ public class MaintainShooterRPM extends CommandBase {
     this.goalRPM = goalRPM;
     this.shooterRPM = shooterRPM;
     addRequirements(shooterRPM);
+  }
+
+  public MaintainShooterRPM forSeconds(double seconds) {
+    this.seconds = seconds;
+    return this;
+  }
+
+  public MaintainShooterRPM setAndExit() {
+    this.setAndExit = true;
+    return this;
   }
 
   // Called when the command is initially scheduled.
@@ -34,7 +46,7 @@ public class MaintainShooterRPM extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (timer.get() > 10) {
+    if (setAndExit || timer.get() > seconds) {
       timer.stop();
       return true;
     }
@@ -44,6 +56,8 @@ public class MaintainShooterRPM extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    shooterRPM.disableTakeBackHalf();
+    if (!setAndExit) {
+      shooterRPM.disableTakeBackHalf();
+    }
   }
 }
