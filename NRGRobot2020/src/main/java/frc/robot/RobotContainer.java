@@ -19,7 +19,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ManualDriveStraight;
 import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualHood;
-import frc.robot.commands.ManualIndexer;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
@@ -38,7 +37,6 @@ import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
 import frc.robot.utilities.NRGPreferences;
@@ -63,7 +61,6 @@ public class RobotContainer {
   // subsystems
   private final Drive drive = new Drive();
   private final Acquirer acquirer = new Acquirer();
-  private final Indexer indexer = new Indexer();
   private final Feeder feeder = new Feeder();
   private final Turret turret = new Turret();
   private final Hood hood = new Hood();
@@ -91,13 +88,12 @@ public class RobotContainer {
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
 
-  // left/right dpad - turret, up/down dpad - hood, left stick up/down - indexer,
+  // left/right dpad - turret, up/down dpad - hood, right trigger - shooter rpm,
   // right stick up/down - acquirer, back button + right stick up/down - feeder,
-  // right trigger - shooter rpm
+  
   // commands
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick, xboxController);
   private final ManualAcquirer manualAcquirer = new ManualAcquirer(acquirer, xboxController);
-  private final ManualIndexer manualIndexer = new ManualIndexer(indexer, xboxController);
   private final ManualFeeder manualFeeder = new ManualFeeder(feeder, xboxController);
   private final ManualTurret manualTurret = new ManualTurret(turret, xboxController);
   private final ManualHood manualHood = new ManualHood(hood, xboxController);
@@ -147,7 +143,6 @@ public class RobotContainer {
     drive.setDefaultCommand(manualDrive);
     shooterRPM.setDefaultCommand(manualShooter);
     acquirer.setDefaultCommand(manualAcquirer);
-    indexer.setDefaultCommand(manualIndexer);
     feeder.setDefaultCommand(manualFeeder);
     turret.setDefaultCommand(manualTurret);
     hood.setDefaultCommand(manualHood);
@@ -158,7 +153,6 @@ public class RobotContainer {
     drive.addShuffleBoardTab();
     raspPi.addShuffleBoardTab();
     acquirer.initShuffleboard();
-    indexer.initShuffleboard();
     feeder.initShuffleboard();
     turret.initShuffleboard();
     hood.initShuffleboard();

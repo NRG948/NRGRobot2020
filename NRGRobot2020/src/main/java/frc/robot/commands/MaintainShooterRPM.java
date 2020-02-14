@@ -8,6 +8,7 @@ public class MaintainShooterRPM extends CommandBase {
   private final double goalRPM;
   private final ShooterRPM shooterRPM;
   private Timer timer = new Timer();
+
   /**
    * Creates a new SetShooterRPM.
    */
@@ -28,21 +29,21 @@ public class MaintainShooterRPM extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterRPM.updateRPM();
-  }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(timer.get()>10){
+    if (timer.get() > 10) {
       timer.stop();
       return true;
     }
     return false;
+  }
+
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    shooterRPM.disableTakeBackHalf();
   }
 }
