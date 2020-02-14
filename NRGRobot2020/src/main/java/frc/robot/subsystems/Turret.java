@@ -38,6 +38,7 @@ public class Turret extends SubsystemBase {
    * Creates a new Turret subsystem.
    */
   public Turret() {
+    turretMotor.setInverted(true);
   }
 
   /**

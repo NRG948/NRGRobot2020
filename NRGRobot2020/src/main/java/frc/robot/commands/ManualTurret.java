@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
+import frc.robot.utilities.NRGPreferences;
 
 public class ManualTurret extends CommandBase {
   /**
@@ -31,10 +32,10 @@ public class ManualTurret extends CommandBase {
   @Override
   public void execute() {
     if(m_xboxController.getPOV() == 90){
-      power = 0.2;
+      power = NRGPreferences.TURRET_MANUAL_MOTOR_POWER.getValue();
     }
     else if(m_xboxController.getPOV() == 270){
-      power = -0.2;
+      power = -NRGPreferences.TURRET_MANUAL_MOTOR_POWER.getValue();
     } else {
       power = 0;
     }
