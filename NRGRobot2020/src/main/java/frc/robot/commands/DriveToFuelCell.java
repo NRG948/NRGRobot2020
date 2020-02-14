@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -15,23 +8,37 @@ import frc.robot.utilities.MathUtil;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.vision.FuelCellTarget;
 
-public class DriveToBall extends CommandBase {
+/**
+ * Drives the robot toward the nearest fuel cell using the Raspberry Pi for vision processing.
+ */
+public class DriveToFuelCell extends CommandBase {
   private final Drive drive;
-  private final RaspberryPiVision ballTracker;
+  private final RaspberryPiVision raspPi;
   private double maxPower;
   private boolean ballNotFound;
   private static final double IMAGE_FOV_DEGREES = 64.4;
   private static final double INCHES_TO_SLOW = 20;
   private int ballNotFoundCounter = 0;
 
-  public DriveToBall(Drive drive, RaspberryPiVision ballTracker) {
+  /**
+   * Constructs an instance of this class.
+   * 
+   * @param drive The drive subsystem.
+   * @param raspPi The Raspberry Pi vision subsystem.
+   */
+  public DriveToFuelCell(Drive drive, RaspberryPiVision raspPi) {
     this.drive = drive;
-    this.ballTracker = ballTracker;
+    this.raspPi = raspPi;
     maxPower = NRGPreferences.DRIVE_TO_BALL_MAXPOWER.getValue();
     addRequirements(drive);
   }
 
-  public DriveToBall withMaxPower(double maxPower) {
+  /**
+   * Sets the maximum power at which to drive the robot.
+   * @param maxPower The maximum power.
+   * @return Returns this to allow a fluent-style
+   */
+  public DriveToFuelCell withMaxPower(double maxPower) {
     this.maxPower = maxPower;
     return this;
   }
@@ -46,10 +53,10 @@ public class DriveToBall extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    FuelCellTarget ballTarget = ballTracker.getBallTarget();
+    FuelCellTarget ballTarget = raspPi.getFuelCellTarget();
     if (ballTarget != null) {
       ballNotFoundCounter = 0;
-      double distanceToTarget = ballTarget.distanceToTarget();
+      double distanceToTarget = ballTarget.getDistanceToTarget();
       double angleToTarget = ballTarget.getAngleToTarget();
       double turnPower = angleToTarget / IMAGE_FOV_DEGREES;
       double drivePower = MathUtil.clamp((distanceToTarget / INCHES_TO_SLOW), 0.4, maxPower);

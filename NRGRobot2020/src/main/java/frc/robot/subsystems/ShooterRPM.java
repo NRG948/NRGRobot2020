@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.utilities.MathUtil;
 
 /**
@@ -24,9 +25,9 @@ public class ShooterRPM extends SubsystemBase {
   private static final double TICKS_PER_FLYWHEEL_REVOLUTION = 645;
   private static final double NANOSECS_PER_MINUTE = 60 * 1000000000.0;
   
-  private final Victor spinMotor1 = new Victor(0);
-  private final Victor spinMotor2 = new Victor(1);
-  private final Counter spinMotorEncoder = new Counter(6);
+  private final Victor spinMotor1 = new Victor(ShooterConstants.kSpinMotor1Port);
+  private final Victor spinMotor2 = new Victor(ShooterConstants.kSpinMotor2Port);
+  private final Counter spinMotorEncoder = new Counter(ShooterConstants.kSpinEncoderPort);
 
   private double goalRPM = 0;
   private double error = 0;
@@ -63,6 +64,10 @@ public class ShooterRPM extends SubsystemBase {
     currentRPM = (currentEncoder - prevEncoder) / (currentTime - prevTime) * NANOSECS_PER_MINUTE;
     prevEncoder = currentEncoder;
     prevTime = currentTime;
+  }
+  
+  public double getActualRPM(){
+    return currentRPM;
   }
 
   /** Updates the flywheel motor controllers using Take-Back-Half closed-loop control. */
@@ -102,7 +107,7 @@ public class ShooterRPM extends SubsystemBase {
   }
 
   /** Estimates the flywheel motor power needed to maintain a given RPM rate. */
-  private double guessMotorOutputForRPM(double RPM) {
+  public double guessMotorOutputForRPM(double RPM) {
     // TODO: replace this dumb linear estimate with something more accurate.
     return MathUtil.clamp(RPM / MAX_RPM, 0, 1);
   }
@@ -114,6 +119,14 @@ public class ShooterRPM extends SubsystemBase {
     lastMotorPower = power;
   }
 
+  /** Sets the flywheel spin motor controllers to the given voltage. */
+  public void setFlyWheelVoltage(double power) {
+    spinMotor1.setVoltage(power * 12);
+    spinMotor2.setVoltage(power * 12);
+    lastMotorPower = power;
+  }
+
+
   /** Sends important subsystem data to the SmartDashboard for monitoring and deubgging. */
   public void updateDashBoard() {
     SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.get());
@@ -121,6 +134,9 @@ public class ShooterRPM extends SubsystemBase {
     SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM);
     SmartDashboard.putNumber("ShooterRPM/error", error);
     SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
+  }
+  public void enabled(boolean state){
+    
   }
 
   // This method will be called once per scheduler run

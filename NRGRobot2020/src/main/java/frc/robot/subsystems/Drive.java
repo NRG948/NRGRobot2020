@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -319,9 +312,9 @@ public class Drive extends SubsystemBase {
    *                     forward, otherwise pivots back
    */
   public void turnToHeadingExecute(double maxPower, boolean useBothSides, boolean forward) {
-    double currentPower = this.turnPIDController.calculate(navx.getAngle()) * maxPower;
+    double currentPower = this.turnPIDController.calculate(getHeadingContinuous()) * maxPower;
     if (useBothSides) {
-      this.tankDrive(currentPower, -currentPower, this.turnSquareInputs);
+      this.arcadeDrive(0, -currentPower);
     } else {
       double leftPower;
       double rightPower;

@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -13,7 +6,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-
 
 public class LimelightVision extends SubsystemBase {
   public static final String kDefaultAuto = "Default";
@@ -49,11 +41,27 @@ public class LimelightVision extends SubsystemBase {
   double average = (distanceUsingTshort + distance) / 2;
   double distanceMax = 0;
 
+  private boolean ledToggle = false;
   /**
    * Creates a new LimelightVision.
    */
   public LimelightVision() {
+    table.getEntry("ledMode").setNumber(1); // sets defualt led mode to off;
 
+  }
+  // Turns off Led
+  public void turnOffLed(){
+    table.getEntry("ledMode").setNumber(1);
+  }
+  
+  // Turns on Led
+  public void turnOnLed(){
+    table.getEntry("ledMode").setNumber(3);
+  }
+
+  public void toggleLed(){
+    ledToggle = !ledToggle;
+    table.getEntry("ledMode").setNumber(ledToggle ? 3 : 1);
   }
 
   public double getX() {
