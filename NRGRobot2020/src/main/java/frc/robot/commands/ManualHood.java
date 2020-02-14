@@ -38,6 +38,9 @@ public class ManualHood extends CommandBase {
     else if(m_xboxController.getPOV() == 180){
       power = -0.2;
     }
+    else{
+      power = 0;
+    }
     hood.rawHood(power);
   }
  
