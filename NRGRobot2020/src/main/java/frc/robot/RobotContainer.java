@@ -33,6 +33,7 @@ import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.AcquirerPiston;
+import frc.robot.subsystems.AddressableLEDs;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
@@ -59,6 +60,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
 
   // subsystems
+  private final AddressableLEDs leds = new AddressableLEDs();
   private final Drive drive = new Drive();
   private final Acquirer acquirer = new Acquirer();
   private final Feeder feeder = new Feeder();

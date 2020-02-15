@@ -69,15 +69,11 @@ public class RaspberryPiVision extends SubsystemBase {
   private LoadingStationTarget loadingStationTarget;
   private PipelineRunner currentRunner;
 
-  private final AddressableLED led = new AddressableLED(8);
-  private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(12);
 
   /**
    * Creates a new RaspberryPiVision.
    */
   public RaspberryPiVision() {
-    led.setLength(ledBuffer.getLength());
-    led.setData(ledBuffer);
     setPipelineRunner(PipelineRunner.FUEL_CELL);
   }
 
@@ -88,11 +84,8 @@ public class RaspberryPiVision extends SubsystemBase {
    */
   public void setPipelineRunner(PipelineRunner runner) {
     SmartDashboard.putString("Vision/runnerName", runner.getName());
-    for (int i = 0; i < ledBuffer.getLength(); ++i) {
-      ledBuffer.setLED(i, runner.getColor());
-    }
-    led.setData(ledBuffer);
-    led.start();
+    AddressableLEDs.setAll(runner.getColor());
+    AddressableLEDs.sendToLeds();
     currentRunner = runner;
   }
 
