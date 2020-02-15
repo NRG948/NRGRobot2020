@@ -220,12 +220,14 @@ public class RobotContainer {
     driveToLoadingStation.whenPressed(() -> {
       LoadingStationTarget target = raspPi.getLoadingTarget();
       if (target != null) {
-        System.out.println("Start " + this.drive.getPose());
-        System.out.println("Final " + raspPi.getFinalPoint());
-        System.out.println("Waypoint " + raspPi.getWaypoint());
-        Pose2d end = this.drive.getPose();
-        end.plus(new Transform2d(raspPi.getFinalPoint(), new Rotation2d()));
-        //new FollowWaypoints(this.drive, this.drive.getPose(), List.of(raspPi.getWaypoint()), end).schedule();
+        Pose2d start = this.drive.getPose();
+        System.out.println("Start " + start);
+        Translation2d finalPoint = raspPi.getFinalPoint();
+        System.out.println("Final " + finalPoint);
+        Translation2d waypoint = raspPi.getWaypoint();
+        System.out.println("Waypoint " + waypoint);
+        Pose2d end = new Pose2d(start.getTranslation().plus(finalPoint), new Rotation2d());
+        new FollowWaypoints(this.drive, start, List.of(waypoint), end).schedule();
         System.out.println("End " + end);
         
 
@@ -243,6 +245,7 @@ public class RobotContainer {
     // An ExampleCommand will run in autonomous
     AutoPath path = autoPathChooser.getSelected();
     drive.resetOdometry(path.getStartingPosition());
+    
     try {
       return new FollowPathWeaverFile(drive, path.getFile());
     } catch (IOException e) {
@@ -253,7 +256,6 @@ public class RobotContainer {
 
   public void resetSensors() {
     drive.resetHeading();
-    drive.resetOdometry(new Pose2d(1, -3, new Rotation2d()));
     shooterRPM.reset();
   }
 }
