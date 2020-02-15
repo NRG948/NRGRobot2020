@@ -133,7 +133,7 @@ public class RaspberryPiVision extends SubsystemBase {
    */
   public Translation2d getFinalPoint() {
     double distance = Units.inchesToMeters(this.loadingStationTarget.getDistance());
-    double angle = this.loadingStationTarget.getAngleToTarget();
+    double angle = Math.toRadians(this.loadingStationTarget.getAngleToTarget());
     return new Translation2d(distance * Math.cos(angle), distance * Math.sin(angle));
   }
 
@@ -143,7 +143,7 @@ public class RaspberryPiVision extends SubsystemBase {
    */
   public Translation2d getWaypoint() {
     double distance = Units.inchesToMeters(this.loadingStationTarget.getDistance());
-    double angle = this.loadingStationTarget.getAngleToTarget();
+    double angle = Math.toRadians(this.loadingStationTarget.getAngleToTarget());
     return new Translation2d((distance * Math.cos(angle)) - Units.inchesToMeters(12), distance * Math.sin(angle));
   }
 
