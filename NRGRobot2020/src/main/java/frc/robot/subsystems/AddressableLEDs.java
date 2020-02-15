@@ -17,19 +17,27 @@ public class AddressableLEDs extends SubsystemBase {
     led.setData(ledBuffer);
   }
 
+  /**
+   * Sets the entire led buffer to a color.
+   */
   public static void setAll(Color8Bit color){
     for (int i = 0; i < ledBuffer.getLength(); ++i) {
       ledBuffer.setLED(i, color);
     }
   }
 
+  /**
+   * Sets the led buffer at index i to the given color.
+   */
   public static void set(int i, Color8Bit color){
     ledBuffer.setLED(i, color);
   }
 
+  /**
+   * Sends the buffer color data to the led lights.
+   */
   public static void sendToLeds(){
     led.setData(ledBuffer);
     led.start();
   }
-
 }
