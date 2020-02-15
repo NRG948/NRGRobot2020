@@ -12,7 +12,10 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -109,20 +112,17 @@ public class Drive extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
     // Get my gyro angle. We are negating the value because gyros return positive
     // values as the robot turns clockwise. This is not standard convention that is
     // used by the WPILib classes.
-    SmartDashboard.putNumber("gyro", navx.getAngle());
-
     Rotation2d gyroAngle = Rotation2d.fromDegrees(-navx.getAngle());
+
     // Update the pose
     double leftDistance = leftEncoder.getDistance();
     double rightDistance = rightEncoder.getDistance();
-    Pose2d pose = odometry.update(gyroAngle, leftDistance, rightDistance);
 
-    SmartDashboard.putNumber("Drive/Left Distance", leftDistance);
-    SmartDashboard.putNumber("Drive/Right Distance", rightDistance);
-    SmartDashboard.putString("Drive/position", pose.toString());
+    odometry.update(gyroAngle, leftDistance, rightDistance);
   }
 
   /**
@@ -348,11 +348,38 @@ public class Drive extends SubsystemBase {
     this.turnPIDController = null;
   }
 
+  /**
+   * Adds a Shuffleboard tab for the drive subsystem.
+   */
   public void addShuffleBoardTab() {
-    ShuffleboardTab testTab = Shuffleboard.getTab("Drive");
-    testTab.add("Turn to 90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(90));
-    testTab.add("Turn to -90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(-90));
-    testTab.add("Drive 1 meter", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(1));
-    testTab.add("Drive 3 meters", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(3));
+    ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
+
+    // Add test buttons to a layout in the tab
+    ShuffleboardLayout commandsLayout = driveTab.getLayout("Test", BuiltInLayouts.kList).
+      withPosition(0, 0).
+      withSize(2, 3);
+    
+    commandsLayout.add("Turn to 90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(90));
+    commandsLayout.add("Turn to -90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(-90));
+    commandsLayout.add("Drive 1 meter", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(1));
+    commandsLayout.add("Drive 3 meters", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(3));
+
+    // Add the DifferentialDrive object and encoders to a list layout in the tab.
+    ShuffleboardLayout diffDriveLayout = driveTab.getLayout("Base", BuiltInLayouts.kList).
+      withPosition(2, 0).
+      withSize(4, 5);
+
+    diffDriveLayout.add("Differential Drive", diffDrive).withWidget(BuiltInWidgets.kDifferentialDrive);
+    diffDriveLayout.add("Left Encoder", leftEncoder).withWidget(BuiltInWidgets.kEncoder);
+    diffDriveLayout.add("Right Encoder", rightEncoder).withWidget(BuiltInWidgets.kEncoder);
+
+    // Add the odometry to a layout in the tab.
+    ShuffleboardLayout positionLayout = driveTab.getLayout("Position", BuiltInLayouts.kList).
+      withPosition(6, 0).
+      withSize(2, 2);
+
+    positionLayout.addNumber("X", () -> getPose().getTranslation().getX());
+    positionLayout.addNumber("Y", () -> getPose().getTranslation().getY());
+    positionLayout.addNumber("Heading", () -> getHeadingContinuous());
   }
 }
