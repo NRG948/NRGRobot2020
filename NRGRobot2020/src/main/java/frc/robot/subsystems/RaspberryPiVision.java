@@ -90,6 +90,13 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   /**
+   * returns the vision data generation count
+   */
+  public int getGenCount() {
+    return (int) SmartDashboard.getNumber("Vision/genCount", 0);
+  }
+
+  /**
    * Gets the current fuel cell target.
    * 
    * @return The fuel cell target, or null if none.
