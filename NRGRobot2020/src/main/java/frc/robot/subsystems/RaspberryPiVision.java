@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -170,7 +171,7 @@ public class RaspberryPiVision extends SubsystemBase {
     // Adds the processed video to the RaspberryPi Shuffleboard tab.
     VideoSource processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
 
-    piTab.add("Processed Video", processedVideo).withPosition(2, 0).withSize(4, 3);
+    piTab.add("Processed Video", processedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
 
     // When running in the simulator, we'll use the default USB camera to create the
     // "Processed" video server.
