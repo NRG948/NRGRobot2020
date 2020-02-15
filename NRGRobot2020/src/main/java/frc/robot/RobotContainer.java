@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ManualDriveStraight;
 import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualHood;
+import frc.robot.commandSequences.AutoDriveToFuelCell;
+import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
@@ -199,26 +201,8 @@ public class RobotContainer {
     ledModeButton.whenPressed(new InstantCommand(() -> {
       limelightVision.toggleLed();
     }));
-    driveToBall.whenPressed(() -> {
-      FuelCellTarget ballTarget = raspPi.getFuelCellTarget();
-      if (ballTarget != null) {
-        double distanceToTarget = ballTarget.getDistanceToTarget();
-        double angleToTarget = ballTarget.getAngleToTarget();
-
-        new AutoTurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
-            .andThen(new AutoDriveOnHeading(this.drive).forMeters(distanceToTarget)).schedule();
-      }
-    });
-    driveStraightToLoadingStation.whenPressed(() -> {
-      LoadingStationTarget target = raspPi.getLoadingTarget();
-      if (target != null) {
-        double angleToTarget = target.getAngleToTarget();
-        double distanceToTarget = target.getDistance();
-        new AutoTurnToHeading(this.drive).withMaxPower(0.75)
-            .toHeading(this.drive.getHeadingContinuous() + angleToTarget)
-            .andThen(new AutoDriveOnHeading(this.drive).withMaxPower(0.5).forInches(distanceToTarget)).schedule();
-      }
-    });
+    driveToBall.whenPressed(new AutoDriveToFuelCell(this.raspPi, this.drive));
+    driveStraightToLoadingStation.whenPressed(new AutoDriveToLoadingStation(this.raspPi, this.drive));
     driveToLoadingStation.whenPressed(() -> {
       LoadingStationTarget target = raspPi.getLoadingTarget();
       if (target != null) {
