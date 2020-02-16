@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.AutoTurnToHeading;
+import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.WaitForNewVisionData;
 import frc.robot.subsystems.Drive;
@@ -29,15 +30,6 @@ public class AutoDriveToFuelCell extends SequentialCommandGroup {
 
     super(new SetRaspberryPiPipeline(raspberryPiVision, PipelineRunner.FUEL_CELL),
         new WaitForNewVisionData(raspberryPiVision), 
-        new InstantCommand(() -> {
-          FuelCellTarget ballTarget = raspberryPiVision.getFuelCellTarget();
-          if (ballTarget != null) {
-            double distanceToTarget = ballTarget.getDistanceToTarget();
-            double angleToTarget = ballTarget.getAngleToTarget();
-
-            new AutoTurnToHeading(drive).withMaxPower(0.2).toHeading(drive.getHeading() + angleToTarget)
-                .andThen(new AutoDriveOnHeading(drive).forMeters(distanceToTarget)).schedule();
-          }
-        }));
+        new DriveToFuelCell(drive, raspberryPiVision));
   }
 }

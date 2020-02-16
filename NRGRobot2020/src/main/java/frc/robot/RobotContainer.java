@@ -219,7 +219,7 @@ public class RobotContainer {
 
       }
     });
-    driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi).withMaxPower(1.0));
+    driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi));
   }
 
   /**
