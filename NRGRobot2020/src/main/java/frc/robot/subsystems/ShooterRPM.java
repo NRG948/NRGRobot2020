@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -36,9 +38,16 @@ public class ShooterRPM extends SubsystemBase {
   private double motorPower = 0;
   private double lastMotorPower;
   private double prevEncoder = 0;
+  private double previousRPM = 0;
   private double currentRPM = 0;
+  private ArrayList<String> minMaxRPMs = new ArrayList<String>();
   private long prevTime = 0;
   private boolean isTakeBackHalfEnabled = false;
+
+  private double localMaxRPM = 0;
+  private double localMinRPM = Integer.MAX_VALUE;
+  private boolean trendingUp = true;
+
 
   public ShooterRPM() {
     spinMotorEncoder.setDistancePerPulse(1 / TICKS_PER_FLYWHEEL_REVOLUTION);
@@ -62,9 +71,58 @@ public class ShooterRPM extends SubsystemBase {
   private void calculateCurrentRPM() {
     double currentEncoder = spinMotorEncoder.getDistance();
     long currentTime = System.nanoTime();
+    previousRPM = currentRPM;
     currentRPM = (currentEncoder - prevEncoder) / (currentTime - prevTime) * NANOSECS_PER_MINUTE;
     prevEncoder = currentEncoder;
     prevTime = currentTime;
+  }
+
+  /**
+   * Adds to the list of minMax values if a new local minMax value is detected through the changes in the RPM values
+   * @param tolerance how sensitive the method should be to RPM changes
+   * @return "max" or "min" or "goal" or "stable" depending on whether the RPM just reached a 
+   * local max, a local min, the goalRPM, or none of the three
+   */
+  public String checkMinMaxRPM(double tolerance) {
+    if (trendingUp) {
+      if (currentRPM > localMaxRPM) {
+        localMaxRPM = currentRPM;
+      } else if (currentRPM < localMaxRPM - tolerance) {
+        trendingUp = false;
+        double timeInSeconds = prevTime / Math.pow(10.0, 9);
+        double localMax = localMaxRPM;
+        localMaxRPM = 0;
+        minMaxRPMs.add("max time: " + timeInSeconds + " rpm: " + localMax);
+        return "max time: " + timeInSeconds + " rpm: " + localMax;
+      }
+    } else {
+      if (currentRPM < localMinRPM) {
+        localMinRPM = currentRPM;
+      } else if (currentRPM > localMinRPM + tolerance) {
+        trendingUp = true;
+        double timeInSeconds = prevTime / Math.pow(10.0, 9);
+        double localMin = localMinRPM;
+        localMinRPM = Integer.MAX_VALUE;
+        minMaxRPMs.add("min time: " + timeInSeconds + " rpm: " + localMin);
+        return "min time: " + timeInSeconds + " rpm: " + localMin;
+      }
+    }
+    return "stable";
+  }
+
+  // Returns the array of local mins and local maxs
+  public String[] getMinMaxArray() {
+    return minMaxRPMs.toArray(new String[0]);
+  }
+
+  // Returns true if currentRPM just became equal to goalRPM
+  public boolean justReachedGoalRPM(double tolerance) {
+    return Math.abs(currentRPM - goalRPM) <= tolerance && Math.abs(previousRPM - goalRPM) > tolerance;
+  }
+
+  // Returns time in seconds
+  public double getTime() {
+    return prevTime / Math.pow(10.0, 0);
   }
   
   public double getActualRPM(){
@@ -137,6 +195,7 @@ public class ShooterRPM extends SubsystemBase {
     SmartDashboard.putNumber("ShooterRPM/error", error);
     SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
   }
+
   public void enabled(boolean state){
     
   }

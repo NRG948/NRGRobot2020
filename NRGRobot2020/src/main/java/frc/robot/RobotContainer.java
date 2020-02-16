@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ManualDriveStraight;
 import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualHood;
+import frc.robot.commandSequences.AutoDriveToFuelCell;
+import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
@@ -28,11 +30,12 @@ import frc.robot.commands.ManualAcquirerPiston;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
-import frc.robot.commands.RaspberryPiPipelines;
+import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.AcquirerPiston;
+import frc.robot.subsystems.AddressableLEDs;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
@@ -59,6 +62,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
 
   // subsystems
+  private final AddressableLEDs leds = new AddressableLEDs();
   private final Drive drive = new Drive();
   private final Acquirer acquirer = new Acquirer();
   private final Feeder feeder = new Feeder();
@@ -185,8 +189,8 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    xboxButtonA.whenPressed(new RaspberryPiPipelines(raspPi, PipelineRunner.LOADING_STATION));
-    xboxButtonX.whenPressed(new RaspberryPiPipelines(raspPi, PipelineRunner.FUEL_CELL));
+    xboxButtonA.whenPressed(new SetRaspberryPiPipeline(raspPi, PipelineRunner.LOADING_STATION));
+    xboxButtonX.whenPressed(new SetRaspberryPiPipeline(raspPi, PipelineRunner.FUEL_CELL));
     xboxButtonB.whenPressed(new MaintainShooterRPM(4000, shooterRPM));
     xboxButtonY.whenPressed(followWaypointsSCurve);
     // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
@@ -197,26 +201,8 @@ public class RobotContainer {
     ledModeButton.whenPressed(new InstantCommand(() -> {
       limelightVision.toggleLed();
     }));
-    driveToBall.whenPressed(() -> {
-      FuelCellTarget ballTarget = raspPi.getFuelCellTarget();
-      if (ballTarget != null) {
-        double distanceToTarget = ballTarget.getDistanceToTarget();
-        double angleToTarget = ballTarget.getAngleToTarget();
-
-        new AutoTurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
-            .andThen(new AutoDriveOnHeading(this.drive).forMeters(distanceToTarget)).schedule();
-      }
-    });
-    driveStraightToLoadingStation.whenPressed(() -> {
-      LoadingStationTarget target = raspPi.getLoadingTarget();
-      if (target != null) {
-        double angleToTarget = target.getAngleToTarget();
-        double distanceToTarget = target.getDistance();
-        new AutoTurnToHeading(this.drive).withMaxPower(0.75)
-            .toHeading(this.drive.getHeadingContinuous() + angleToTarget)
-            .andThen(new AutoDriveOnHeading(this.drive).withMaxPower(0.5).forInches(distanceToTarget)).schedule();
-      }
-    });
+    driveToBall.whenPressed(new AutoDriveToFuelCell(this.raspPi, this.drive));
+    driveStraightToLoadingStation.whenPressed(new AutoDriveToLoadingStation(this.raspPi, this.drive));
     driveToLoadingStation.whenPressed(() -> {
       LoadingStationTarget target = raspPi.getLoadingTarget();
       if (target != null) {

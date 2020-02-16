@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.RaspberryPiPipelines;
+import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.vision.FuelCellTarget;
 import frc.robot.vision.LoadingStationTarget;
 import frc.robot.Constants.RaspberryPiConstants;
@@ -69,15 +69,11 @@ public class RaspberryPiVision extends SubsystemBase {
   private LoadingStationTarget loadingStationTarget;
   private PipelineRunner currentRunner;
 
-  private final AddressableLED led = new AddressableLED(8);
-  private final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(12);
 
   /**
    * Creates a new RaspberryPiVision.
    */
   public RaspberryPiVision() {
-    led.setLength(ledBuffer.getLength());
-    led.setData(ledBuffer);
     setPipelineRunner(PipelineRunner.FUEL_CELL);
   }
 
@@ -88,12 +84,16 @@ public class RaspberryPiVision extends SubsystemBase {
    */
   public void setPipelineRunner(PipelineRunner runner) {
     SmartDashboard.putString("Vision/runnerName", runner.getName());
-    for (int i = 0; i < ledBuffer.getLength(); ++i) {
-      ledBuffer.setLED(i, runner.getColor());
-    }
-    led.setData(ledBuffer);
-    led.start();
+    AddressableLEDs.setAll(runner.getColor());
+    AddressableLEDs.sendToLeds();
     currentRunner = runner;
+  }
+
+  /**
+   * returns the vision data generation count
+   */
+  public int getGenCount() {
+    return (int) SmartDashboard.getNumber("Vision/genCount", 0);
   }
 
   /**
@@ -165,8 +165,8 @@ public class RaspberryPiVision extends SubsystemBase {
         2);
 
     pipelineLayout.addString("Pipeline Runner", () -> currentRunner.getName());
-    pipelineLayout.add("LoadingBayTarget", new RaspberryPiPipelines(this, PipelineRunner.LOADING_STATION));
-    pipelineLayout.add("FuelCellTrackerTarget", new RaspberryPiPipelines(this, PipelineRunner.FUEL_CELL));
+    pipelineLayout.add("LoadingBayTarget", new SetRaspberryPiPipeline(this, PipelineRunner.LOADING_STATION));
+    pipelineLayout.add("FuelCellTrackerTarget", new SetRaspberryPiPipeline(this, PipelineRunner.FUEL_CELL));
 
     // Adds the processed video to the RaspberryPi Shuffleboard tab.
     VideoSource processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
