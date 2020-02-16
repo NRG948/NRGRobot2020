@@ -105,8 +105,6 @@ public class RobotContainer {
       activateAcquirerPiston);
   private MaintainShooterRPM maintainShooterRPM = new MaintainShooterRPM(2000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
-  private FollowWaypoints followWaypointsSCurve = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
-      List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)));
   private FollowPathWeaverFile followPathTest;
 
   // autonomous chooser
@@ -189,11 +187,7 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    xboxButtonA.whenPressed(new SetRaspberryPiPipeline(raspPi, PipelineRunner.LOADING_STATION));
-    xboxButtonX.whenPressed(new SetRaspberryPiPipeline(raspPi, PipelineRunner.FUEL_CELL));
     xboxButtonB.whenPressed(new MaintainShooterRPM(4000, shooterRPM));
-    xboxButtonY.whenPressed(followWaypointsSCurve);
-    // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
     DriveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
       resetSensors();
@@ -242,6 +236,7 @@ public class RobotContainer {
 
   public void resetSensors() {
     drive.resetHeading();
+    drive.resetOdometry(new Pose2d(0,0, new Rotation2d()));
     shooterRPM.reset();
   }
 }
