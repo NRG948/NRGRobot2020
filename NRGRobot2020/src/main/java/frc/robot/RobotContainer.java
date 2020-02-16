@@ -23,6 +23,7 @@ import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
+import frc.robot.commands.LEDTest;
 import frc.robot.commands.ManualAcquirer;
 import frc.robot.commands.ManualAcquirerPiston;
 import frc.robot.commands.ManualDrive;
@@ -105,6 +106,7 @@ public class RobotContainer {
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private FollowWaypoints followWaypointsSCurve = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
       List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)));
+  private LEDTest ledTest = new LEDTest(leds);
   private FollowPathWeaverFile followPathTest;
 
   // autonomous chooser
@@ -149,6 +151,7 @@ public class RobotContainer {
     turret.setDefaultCommand(manualTurret);
     hood.setDefaultCommand(manualHood);
     acquirerPiston.setDefaultCommand(manualAcquirerPiston);
+    leds.setDefaultCommand(ledTest);
 
     // Configure the button bindings
     configureButtonBindings();
