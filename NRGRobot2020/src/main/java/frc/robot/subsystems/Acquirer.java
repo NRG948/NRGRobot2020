@@ -26,7 +26,6 @@ public class Acquirer extends SubsystemBase {
   private static final double MAX_ACQUIRER_POWER = 0.5;
 
   private CANSparkMax acquirerMotor = new CANSparkMax(4, MotorType.kBrushless);
-  // private Victor acquirerMotor = new Victor(4);
 
   /** Creates a new Acquirer. */
   public Acquirer() {
@@ -40,12 +39,10 @@ public class Acquirer extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
   }
 
   public void initShuffleboard() {
     ShuffleboardTab acquirerTab = Shuffleboard.getTab("Acquirer");
-
     ShuffleboardLayout acquirerLayout = acquirerTab.getLayout("Acquirer", BuiltInLayouts.kList).withPosition(0, 0)
         .withSize(2, 4);
     acquirerRawOutputWidget = acquirerLayout.add("Raw Output", 0.0);

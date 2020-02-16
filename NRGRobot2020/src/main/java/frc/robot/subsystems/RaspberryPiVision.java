@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.RaspberryPiPipelines;
+import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.vision.FuelCellTarget;
 import frc.robot.vision.LoadingStationTarget;
 import frc.robot.Constants.RaspberryPiConstants;
@@ -90,6 +90,13 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   /**
+   * returns the vision data generation count
+   */
+  public int getGenCount() {
+    return (int) SmartDashboard.getNumber("Vision/genCount", 0);
+  }
+
+  /**
    * Gets the current fuel cell target.
    * 
    * @return The fuel cell target, or null if none.
@@ -128,26 +135,6 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   /**
-   * @return the change in inches for x, y value from starting odometry value to
-   *         final point.
-   */
-  public Translation2d getFinalPoint() {
-    double distance = Units.inchesToMeters(this.loadingStationTarget.getDistance());
-    double angle = Math.toRadians(this.loadingStationTarget.getAngleToTarget());
-    return new Translation2d(distance * Math.cos(angle), distance * Math.sin(angle));
-  }
-
-  /**
-   * @return the change in inches for x, y value from starting odometry value to
-   *         the waypoint.
-   */
-  public Translation2d getWaypoint() {
-    double distance = Units.inchesToMeters(this.loadingStationTarget.getDistance());
-    double angle = Math.toRadians(this.loadingStationTarget.getAngleToTarget());
-    return new Translation2d((distance * Math.cos(angle)) - Units.inchesToMeters(12), distance * Math.sin(angle));
-  }
-
-  /**
    * Adds a Shuffleboard tab for the Raspberry Pi subsystem.
    */
   public void addShuffleBoardTab() {
@@ -158,8 +145,8 @@ public class RaspberryPiVision extends SubsystemBase {
         2);
 
     pipelineLayout.addString("Pipeline Runner", () -> currentRunner.getName());
-    pipelineLayout.add("LoadingBayTarget", new RaspberryPiPipelines(this, PipelineRunner.LOADING_STATION));
-    pipelineLayout.add("FuelCellTrackerTarget", new RaspberryPiPipelines(this, PipelineRunner.FUEL_CELL));
+    pipelineLayout.add("LoadingBayTarget", new SetRaspberryPiPipeline(this, PipelineRunner.LOADING_STATION));
+    pipelineLayout.add("FuelCellTrackerTarget", new SetRaspberryPiPipeline(this, PipelineRunner.FUEL_CELL));
 
     // Adds the processed video to the RaspberryPi Shuffleboard tab.
     VideoSource processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");

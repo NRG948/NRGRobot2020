@@ -9,12 +9,13 @@ import frc.robot.utilities.NRGPreferences;
 import frc.robot.vision.FuelCellTarget;
 
 /**
- * Drives the robot toward the nearest fuel cell using the Raspberry Pi for vision processing.
+ * Drives the robot toward the nearest fuel cell using the Raspberry Pi for
+ * vision processing.
  */
 public class DriveToFuelCell extends CommandBase {
   private final Drive drive;
   private final RaspberryPiVision raspPi;
-  private double maxPower;
+  private double maxPower = Double.NaN;
   private boolean ballNotFound;
   private static final double IMAGE_FOV_DEGREES = 64.4;
   private static final double INCHES_TO_SLOW = 20;
@@ -23,18 +24,18 @@ public class DriveToFuelCell extends CommandBase {
   /**
    * Constructs an instance of this class.
    * 
-   * @param drive The drive subsystem.
+   * @param drive  The drive subsystem.
    * @param raspPi The Raspberry Pi vision subsystem.
    */
   public DriveToFuelCell(Drive drive, RaspberryPiVision raspPi) {
     this.drive = drive;
     this.raspPi = raspPi;
-    maxPower = NRGPreferences.DRIVE_TO_BALL_MAXPOWER.getValue();
     addRequirements(drive);
   }
 
   /**
    * Sets the maximum power at which to drive the robot.
+   * 
    * @param maxPower The maximum power.
    * @return Returns this to allow a fluent-style
    */
@@ -43,10 +44,12 @@ public class DriveToFuelCell extends CommandBase {
     return this;
   }
 
-  
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    if (maxPower == Double.NaN) {
+      maxPower = NRGPreferences.DRIVE_TO_BALL_MAXPOWER.getValue();
+    }
     ballNotFound = false;
   }
 
@@ -59,19 +62,19 @@ public class DriveToFuelCell extends CommandBase {
       double distanceToTarget = ballTarget.getDistanceToTarget();
       double angleToTarget = ballTarget.getAngleToTarget();
       double turnPower = angleToTarget / IMAGE_FOV_DEGREES;
-      double drivePower = MathUtil.clamp((distanceToTarget / INCHES_TO_SLOW), 0.4, maxPower);
-      drive.arcadeDrive(drivePower, turnPower);
+      double drivePower = MathUtil.clamp((distanceToTarget / INCHES_TO_SLOW), 0.1, maxPower);
+      drive.arcadeDrive(drivePower, -turnPower);
       SmartDashboard.putNumber("DriveToBall/Distance", distanceToTarget);
       SmartDashboard.putNumber("DriveToBall/Angle", angleToTarget);
       SmartDashboard.putNumber("DriveToBall/turnPower", turnPower);
       SmartDashboard.putNumber("DriveToBall/drivePower", drivePower);
     } else {
       ballNotFoundCounter++;
-      if(ballNotFoundCounter>25){
+      if (ballNotFoundCounter > 25) {
         ballNotFound = true;
       }
     }
-    
+
   }
 
   // Called once the command ends or is interrupted.

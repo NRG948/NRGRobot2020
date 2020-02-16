@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ManualDriveStraight;
 import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualHood;
+import frc.robot.commandSequences.AutoDriveToFuelCell;
+import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
@@ -29,7 +31,7 @@ import frc.robot.commands.ManualAcquirerPiston;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
-import frc.robot.commands.RaspberryPiPipelines;
+import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.subsystems.Acquirer;
@@ -102,11 +104,8 @@ public class RobotContainer {
   private final ManualHood manualHood = new ManualHood(hood, xboxController);
   private final ManualAcquirerPiston manualAcquirerPiston = new ManualAcquirerPiston(acquirerPiston,
       activateAcquirerPiston);
-  private MaintainShooterRPM SetShooterRPM = new MaintainShooterRPM(1000.0, shooterRPM);
+  private MaintainShooterRPM maintainShooterRPM = new MaintainShooterRPM(2000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
-  private FollowWaypoints followWaypointsSCurve = new FollowWaypoints(drive, new Pose2d(0, 0, new Rotation2d(0)),
-      List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)));
-  private LEDTest ledTest = new LEDTest(leds);
   private FollowPathWeaverFile followPathTest;
 
   // autonomous chooser
@@ -190,11 +189,7 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    xboxButtonA.whenPressed(new RaspberryPiPipelines(raspPi, PipelineRunner.LOADING_STATION));
-    xboxButtonX.whenPressed(new RaspberryPiPipelines(raspPi, PipelineRunner.FUEL_CELL));
-    xboxButtonB.whenPressed(new MaintainShooterRPM(3900, shooterRPM));
-    xboxButtonY.whenPressed(followWaypointsSCurve);
-    // xboxButtonA.whenPressed(new TurnTurretToTarget(limelightVision, turret));
+    xboxButtonB.whenPressed(new MaintainShooterRPM(4000, shooterRPM));
     DriveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
       resetSensors();
@@ -202,34 +197,16 @@ public class RobotContainer {
     ledModeButton.whenPressed(new InstantCommand(() -> {
       limelightVision.toggleLed();
     }));
-    driveToBall.whenPressed(() -> {
-      FuelCellTarget ballTarget = raspPi.getFuelCellTarget();
-      if (ballTarget != null) {
-        double distanceToTarget = ballTarget.getDistanceToTarget();
-        double angleToTarget = ballTarget.getAngleToTarget();
-
-        new AutoTurnToHeading(this.drive).withMaxPower(0.2).toHeading(this.drive.getHeading() + angleToTarget)
-            .andThen(new AutoDriveOnHeading(this.drive).forMeters(distanceToTarget)).schedule();
-      }
-    });
-    driveStraightToLoadingStation.whenPressed(() -> {
-      LoadingStationTarget target = raspPi.getLoadingTarget();
-      if (target != null) {
-        double angleToTarget = target.getAngleToTarget();
-        double distanceToTarget = target.getDistance();
-        new AutoTurnToHeading(this.drive).withMaxPower(0.75)
-            .toHeading(this.drive.getHeadingContinuous() + angleToTarget)
-            .andThen(new AutoDriveOnHeading(this.drive).withMaxPower(0.5).forInches(distanceToTarget)).schedule();
-      }
-    });
+    driveToBall.whenPressed(new AutoDriveToFuelCell(this.raspPi, this.drive));
+    driveStraightToLoadingStation.whenPressed(new AutoDriveToLoadingStation(this.raspPi, this.drive));
     driveToLoadingStation.whenPressed(() -> {
       LoadingStationTarget target = raspPi.getLoadingTarget();
       if (target != null) {
         Pose2d start = this.drive.getPose();
         System.out.println("Start " + start);
-        Translation2d finalPoint = raspPi.getFinalPoint();
+        Translation2d finalPoint = target.getFinalPoint();
         System.out.println("Final " + finalPoint);
-        Translation2d waypoint = raspPi.getWaypoint();
+        Translation2d waypoint = target.getWaypoint();
         System.out.println("Waypoint " + waypoint);
         Pose2d end = new Pose2d(start.getTranslation().plus(finalPoint), new Rotation2d());
         new FollowWaypoints(this.drive, start, List.of(waypoint), end).schedule();
@@ -238,7 +215,7 @@ public class RobotContainer {
 
       }
     });
-    driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi).withMaxPower(1.0));
+    driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi));
   }
 
   /**
@@ -261,6 +238,7 @@ public class RobotContainer {
 
   public void resetSensors() {
     drive.resetHeading();
+    drive.resetOdometry(new Pose2d(0,0, new Rotation2d()));
     shooterRPM.reset();
   }
 }
