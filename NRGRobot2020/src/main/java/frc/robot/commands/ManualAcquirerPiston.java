@@ -8,13 +8,13 @@ import frc.robot.subsystems.AcquirerPiston.State;
 public class ManualAcquirerPiston extends CommandBase {
   private State state;
   private AcquirerPiston acquirerPiston;
+  private JoystickButton joystickButton;
   /**
    * Creates a new ManualAcquirerPiston.
    */
   public ManualAcquirerPiston(AcquirerPiston acquirerPiston, JoystickButton joystickButton) {
     this.acquirerPiston = acquirerPiston;
-    
-    // Use addRequirements() here to declare subsystem dependencies.
+    this.joystickButton = joystickButton;
     addRequirements(acquirerPiston);
   }
 
@@ -26,8 +26,9 @@ public class ManualAcquirerPiston extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    acquirerPiston.setState();
-    
+    if (joystickButton.get()) {
+      acquirerPiston.setState();
+    }
   }
 
   // Called once the command ends or is interrupted.
