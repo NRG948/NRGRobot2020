@@ -19,7 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.commands.RaspberryPiPipelines;
+import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.vision.FuelCellTarget;
 import frc.robot.vision.LoadingStationTarget;
 import frc.robot.Constants.RaspberryPiConstants;
@@ -165,8 +165,8 @@ public class RaspberryPiVision extends SubsystemBase {
         2);
 
     pipelineLayout.addString("Pipeline Runner", () -> currentRunner.getName());
-    pipelineLayout.add("LoadingBayTarget", new RaspberryPiPipelines(this, PipelineRunner.LOADING_STATION));
-    pipelineLayout.add("FuelCellTrackerTarget", new RaspberryPiPipelines(this, PipelineRunner.FUEL_CELL));
+    pipelineLayout.add("LoadingBayTarget", new SetRaspberryPiPipeline(this, PipelineRunner.LOADING_STATION));
+    pipelineLayout.add("FuelCellTrackerTarget", new SetRaspberryPiPipeline(this, PipelineRunner.FUEL_CELL));
 
     // Adds the processed video to the RaspberryPi Shuffleboard tab.
     VideoSource processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");

@@ -7,10 +7,10 @@ import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
 /**
  * Add your docs here.
  */
-public class RaspberryPiPipelines extends CommandBase {
+public class SetRaspberryPiPipeline extends CommandBase {
     private final RaspberryPiVision raspPi;
     private final PipelineRunner runner;
-    public RaspberryPiPipelines(RaspberryPiVision raspPi, PipelineRunner runner) {
+    public SetRaspberryPiPipeline(RaspberryPiVision raspPi, PipelineRunner runner) {
         this.raspPi = raspPi;
         this.runner = runner;
         addRequirements(raspPi);

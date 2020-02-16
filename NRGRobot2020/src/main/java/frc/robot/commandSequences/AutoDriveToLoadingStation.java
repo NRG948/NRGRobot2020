@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.AutoTurnToHeading;
-import frc.robot.commands.RaspberryPiPipelines;
+import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.WaitForNewVisionData;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.RaspberryPiVision;
@@ -28,7 +28,7 @@ public class AutoDriveToLoadingStation extends SequentialCommandGroup {
   public AutoDriveToLoadingStation(RaspberryPiVision raspberryPiVision, Drive drive) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
-    super(new RaspberryPiPipelines(raspberryPiVision, PipelineRunner.LOADING_STATION),
+    super(new SetRaspberryPiPipeline(raspberryPiVision, PipelineRunner.LOADING_STATION),
         new WaitForNewVisionData(raspberryPiVision), 
         new InstantCommand(() -> {
           LoadingStationTarget target = raspberryPiVision.getLoadingTarget();
