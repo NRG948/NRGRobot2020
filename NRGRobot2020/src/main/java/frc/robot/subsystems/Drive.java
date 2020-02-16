@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.List;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.SPI;
@@ -24,6 +26,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.commands.AutoTurnToHeading;
+import frc.robot.commands.FollowWaypoints;
 
 public class Drive extends SubsystemBase {
   /**
@@ -363,6 +366,10 @@ public class Drive extends SubsystemBase {
     commandsLayout.add("Turn to -90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(-90));
     commandsLayout.add("Drive 1 meter", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(1));
     commandsLayout.add("Drive 3 meters", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(3));
+    commandsLayout.add("Follow S Curve", new FollowWaypoints(this, 
+      new Pose2d(0, 0, new Rotation2d(0)),
+      List.of(new Translation2d(1, -1), new Translation2d(2, 1)),
+       new Pose2d(3, 0, new Rotation2d(0))));
 
     // Add the DifferentialDrive object and encoders to a list layout in the tab.
     ShuffleboardLayout diffDriveLayout = driveTab.getLayout("Base", BuiltInLayouts.kList).
