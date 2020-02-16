@@ -25,6 +25,7 @@ import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
+import frc.robot.commands.LEDTest;
 import frc.robot.commands.ManualAcquirer;
 import frc.robot.commands.ManualAcquirerPiston;
 import frc.robot.commands.ManualDrive;
@@ -153,6 +154,7 @@ public class RobotContainer {
     turret.setDefaultCommand(manualTurret);
     hood.setDefaultCommand(manualHood);
     acquirerPiston.setDefaultCommand(manualAcquirerPiston);
+    leds.setDefaultCommand(ledTest);
 
     // Configure the button bindings
     configureButtonBindings();
@@ -207,9 +209,9 @@ public class RobotContainer {
       if (target != null) {
         Pose2d start = this.drive.getPose();
         System.out.println("Start " + start);
-        Translation2d finalPoint = raspPi.getFinalPoint();
+        Translation2d finalPoint = target.getFinalPoint();
         System.out.println("Final " + finalPoint);
-        Translation2d waypoint = raspPi.getWaypoint();
+        Translation2d waypoint = target.getWaypoint();
         System.out.println("Waypoint " + waypoint);
         Pose2d end = new Pose2d(start.getTranslation().plus(finalPoint), new Rotation2d());
         new FollowWaypoints(this.drive, start, List.of(waypoint), end).schedule();

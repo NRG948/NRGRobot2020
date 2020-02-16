@@ -9,8 +9,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  * Subsystem that control addressable leds
  */
 public class AddressableLEDs extends SubsystemBase {
+
+  private static final int NUMBER_OF_LEDS = 8;
   private static final AddressableLED led = new AddressableLED(8);
-  private static final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(12);
+  private static final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(NUMBER_OF_LEDS);
 
   public AddressableLEDs(){
     led.setLength(ledBuffer.getLength());

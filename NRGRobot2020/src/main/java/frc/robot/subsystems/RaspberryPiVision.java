@@ -135,26 +135,6 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   /**
-   * @return the change in inches for x, y value from starting odometry value to
-   *         final point.
-   */
-  public Translation2d getFinalPoint() {
-    double distance = Units.inchesToMeters(this.loadingStationTarget.getDistance());
-    double angle = Math.toRadians(this.loadingStationTarget.getAngleToTarget());
-    return new Translation2d(distance * Math.cos(angle) - Units.inchesToMeters(6), distance * Math.sin(angle));
-  }
-
-  /**
-   * @return the change in inches for x, y value from starting odometry value to
-   *         the waypoint.
-   */
-  public Translation2d getWaypoint() {
-    double distance = Units.inchesToMeters(this.loadingStationTarget.getDistance());
-    double angle = Math.toRadians(this.loadingStationTarget.getAngleToTarget());
-    return new Translation2d((distance * Math.cos(angle)) - Units.inchesToMeters(36), distance * Math.sin(angle));
-  }
-
-  /**
    * Adds a Shuffleboard tab for the Raspberry Pi subsystem.
    */
   public void addShuffleBoardTab() {

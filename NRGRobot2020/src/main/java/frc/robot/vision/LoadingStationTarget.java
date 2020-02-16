@@ -7,6 +7,8 @@
 
 package frc.robot.vision;
 
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.subsystems.RaspberryPiVision;
 
 /**
@@ -18,7 +20,7 @@ public class LoadingStationTarget {
     private double skew;
     private double angle;
 
-    public LoadingStationTarget(double distance, double angle, double skew){
+    public LoadingStationTarget(double distance, double angle, double skew) {
         this.distance = distance;
         this.angle = angle;
         this.skew = skew;
@@ -36,4 +38,26 @@ public class LoadingStationTarget {
     public double getSkew() {
         return skew;
     }
+
+      /**
+   * @return the change in inches for x, y value from starting odometry value to
+   *         final point.
+   */
+  public Translation2d getFinalPoint() {
+    double distanceMeters = Units.inchesToMeters(distance);
+    double angleRadians = Math.toRadians(angle);
+    return new Translation2d(distanceMeters * Math.cos(angleRadians) - Units.inchesToMeters(6), 
+            distanceMeters * Math.sin(angleRadians));
+  }
+
+  /**
+   * @return the change in inches for x, y value from starting odometry value to
+   *         the waypoint.
+   */
+  public Translation2d getWaypoint() {
+    double distanceMeters = Units.inchesToMeters(distance);
+    double angleRadians = Math.toRadians(angle);
+    return new Translation2d(distanceMeters * Math.cos(angleRadians) - Units.inchesToMeters(36), 
+            distanceMeters * Math.sin(angleRadians));
+  }
 }
