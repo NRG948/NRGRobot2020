@@ -208,9 +208,9 @@ public class RobotContainer {
       if (target != null) {
         Pose2d start = this.drive.getPose();
         System.out.println("Start " + start);
-        Translation2d finalPoint = raspPi.getFinalPoint();
+        Translation2d finalPoint = target.getFinalPoint();
         System.out.println("Final " + finalPoint);
-        Translation2d waypoint = raspPi.getWaypoint();
+        Translation2d waypoint = target.getWaypoint();
         System.out.println("Waypoint " + waypoint);
         Pose2d end = new Pose2d(start.getTranslation().plus(finalPoint), new Rotation2d());
         new FollowWaypoints(this.drive, start, List.of(waypoint), end).schedule();
