@@ -161,6 +161,9 @@ public class NRGPreferences {
     public static final NumberPrefs CLIMBER_REAR_MIN_TICKS = new NumberPrefs("ClimberRearMinTicks", 800);
     public static final NumberPrefs CLIMBER_ARM_WHEELS_POWER = new NumberPrefs("ClimberArmWheelsPower", 0.5);
 
+    public static final NumberPrefs FEEDER_POWER = new NumberPrefs("FeederPower", 0.3);
+    public static final NumberPrefs ACQUIRER_POWER = new NumberPrefs("AcquirerPower", 0.3);
+
     public static final NumberPrefs DRIVE_STRAIGHT_MAXPOWER = new NumberPrefs("DriveStraightMaxPower", .5);
     public static final NumberPrefs DRIVE_TO_BALL_MAXPOWER = new NumberPrefs("DriveToBallMaxPower", 0.5);
     

@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.Constants.TurretConstants;
 
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -33,11 +34,15 @@ public class Turret extends SubsystemBase {
 
   private SimpleWidget turretPidErrorWidget;
   private SimpleWidget turretRawOutputWidget;
+  private Boolean pidEnabled;
+
+  private LimelightVision limelightVision;
 
   /**
    * Creates a new Turret subsystem.
    */
-  public Turret() {
+  public Turret(LimelightVision limelightVision) {
+    this.limelightVision = limelightVision;
     turretMotor.setInverted(true);
   }
 
@@ -48,6 +53,8 @@ public class Turret extends SubsystemBase {
    * @param tolerance
    */
   public void turretAnglePIDInit(double desiredAngleX, double maxPower, double tolerance) {
+    this.maxPower = maxPower;
+
     double kP = NRGPreferences.TURRET_P_TERM.getValue();
     double kI = NRGPreferences.TURRET_I_TERM.getValue();
     double kD = NRGPreferences.TURRET_D_TERM.getValue();
@@ -56,7 +63,7 @@ public class Turret extends SubsystemBase {
     this.turretPIDController.setSetpoint(desiredAngleX);
     this.turretPIDController.setTolerance(tolerance);
 
-    this.maxPower = maxPower;
+    pidEnabled = true;
   }
 
   /**
@@ -99,12 +106,18 @@ public class Turret extends SubsystemBase {
   public void turretAngleEnd() {
     this.turretMotor.set(0);
     this.turretPIDController = null;
+    pidEnabled = false;
   }
 
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Turret/Distance", turretEncoder.getDistance());
+    if(pidEnabled) {
+      double currentAngle = limelightVision.getX();
+      turretAngleToExecute(currentAngle);
+    }
   }
+
   public void initShuffleboard(){
     ShuffleboardTab turretTab = Shuffleboard.getTab("Turret");
 

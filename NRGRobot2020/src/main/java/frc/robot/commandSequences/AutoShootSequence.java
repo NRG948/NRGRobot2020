@@ -10,10 +10,16 @@ package frc.robot.commandSequences;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.AutoFeedToShooter;
+import frc.robot.commands.AutoTurret;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.SetApproximateShooterRPM;
+import frc.robot.commands.WaitForBallReady;
 import frc.robot.commands.WaitForMinRPM;
+import frc.robot.subsystems.Acquirer;
+import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.ShooterRPM;
+import frc.robot.subsystems.Turret;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -22,19 +28,19 @@ public class AutoShootSequence extends SequentialCommandGroup {
   /**
    * Creates a new ShootAtMinRPM.
    */
-  public AutoShootSequence(double rpm, ShooterRPM shooterRPM) {
+  public AutoShootSequence(double rpm, ShooterRPM shooterRPM, Turret turret, Feeder feeder, Acquirer acquirer) {
 
     super( 
-      // Parallel, Raise a close to target
-      new ParallelCommandGroup(new SetApproximateShooterRPM(rpm * .9, shooterRPM)),
-      // Parallel, Is turret aimed?
-      // Wait for ball
-      // Is shoot button pressed?
+      // Parallel, Raise a close to target and start Turret PID.
+      new SetApproximateShooterRPM(rpm * .9, shooterRPM)
+        .alongWith(new AutoTurret(turret))
+        .andThen(new WaitForBallReady(feeder))
       // Start ramping up rpm
-      new InstantCommand(() -> { shooterRPM.setFlyWheel(1); }),
+        .andThen(new InstantCommand(() -> { shooterRPM.setFlyWheel(1); }))
       // Are you at target rpm?
-      new WaitForMinRPM(rpm, shooterRPM)
+        .andThen(new WaitForMinRPM(rpm, shooterRPM))
       // Release Ball
+        .andThen(new AutoFeedToShooter(acquirer, feeder))
       // Feed balls through indexer
     );
   }
