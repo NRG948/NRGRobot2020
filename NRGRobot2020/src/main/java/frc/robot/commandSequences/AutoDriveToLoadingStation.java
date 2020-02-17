@@ -7,10 +7,14 @@
 
 package frc.robot.commandSequences;
 
+import java.util.List;
+
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.AutoDriveOnHeading;
-import frc.robot.commands.AutoTurnToHeading;
+import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.WaitForNewVisionData;
 import frc.robot.subsystems.Drive;
@@ -33,10 +37,15 @@ public class AutoDriveToLoadingStation extends SequentialCommandGroup {
         new InstantCommand(() -> {
           LoadingStationTarget target = raspberryPiVision.getLoadingTarget();
           if (target != null) {
-            double angleToTarget = target.getAngleToTarget();
-            double distanceToTarget = target.getDistance();
-            new AutoTurnToHeading(drive).withMaxPower(0.75).toHeading(drive.getHeadingContinuous() + angleToTarget)
-                .andThen(new AutoDriveOnHeading(drive).withMaxPower(0.5).forInches(distanceToTarget)).schedule();
+            Pose2d start = drive.getPose();
+            System.out.println("Start " + start);
+            Translation2d finalPoint = target.getFinalPoint();
+            System.out.println("Final " + finalPoint);
+            Translation2d waypoint = target.getWaypoint();
+            System.out.println("Waypoint " + waypoint);
+            Pose2d end = new Pose2d(start.getTranslation().plus(finalPoint), new Rotation2d());
+            new FollowWaypoints(drive, start, List.of(waypoint), end).schedule();
+            System.out.println("End " + end);
           }
         }));
   }
