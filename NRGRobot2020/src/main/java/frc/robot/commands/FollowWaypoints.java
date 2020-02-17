@@ -26,8 +26,8 @@ public class FollowWaypoints extends FollowTrajectory {
   /**
    * Creates a new FollowWaypoints.
    */
-  public FollowWaypoints(Drive drive, Pose2d begin, List<Translation2d> waypoints, Pose2d end) {
+  public FollowWaypoints(Drive drive, Pose2d begin, List<Translation2d> waypoints, Pose2d end, boolean isReversed) {
     // Use addRequirements() here to declare subsystem dependencies.
-    super(drive, TrajectoryGenerator.generateTrajectory(begin, waypoints, end, config));
+    super(drive, TrajectoryGenerator.generateTrajectory(begin, waypoints, end, config.setReversed(isReversed)));
   }
 }

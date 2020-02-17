@@ -44,7 +44,7 @@ public class AutoDriveToLoadingStation extends SequentialCommandGroup {
             Translation2d waypoint = target.getWaypoint();
             System.out.println("Waypoint " + waypoint);
             Pose2d end = new Pose2d(start.getTranslation().plus(finalPoint), new Rotation2d());
-            new FollowWaypoints(drive, start, List.of(waypoint), end).schedule();
+            new FollowWaypoints(drive, start, List.of(waypoint), end, false).schedule();
             System.out.println("End " + end);
           }
         }));
