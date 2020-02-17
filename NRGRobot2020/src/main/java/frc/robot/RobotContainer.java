@@ -84,7 +84,6 @@ public class RobotContainer {
   private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
   private JoystickButton DriveStraight = new JoystickButton(leftJoystick, 1);
   private JoystickButton ledModeButton = new JoystickButton(leftJoystick, 8);
-  private JoystickButton driveStraightToLoadingStation = new JoystickButton(rightJoystick, 5);
   private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 6);
   private JoystickButton activateAcquirerPiston = new JoystickButton(rightJoystick, 10);
 
@@ -204,23 +203,7 @@ public class RobotContainer {
       limelightVision.toggleLed();
     }));
     driveToBall.whenPressed(new AutoDriveToFuelCell(this.raspPi, this.drive));
-    driveStraightToLoadingStation.whenPressed(new AutoDriveToLoadingStation(this.raspPi, this.drive));
-    driveToLoadingStation.whenPressed(() -> {
-      LoadingStationTarget target = raspPi.getLoadingTarget();
-      if (target != null) {
-        Pose2d start = this.drive.getPose();
-        System.out.println("Start " + start);
-        Translation2d finalPoint = target.getFinalPoint();
-        System.out.println("Final " + finalPoint);
-        Translation2d waypoint = target.getWaypoint();
-        System.out.println("Waypoint " + waypoint);
-        Pose2d end = new Pose2d(start.getTranslation().plus(finalPoint), new Rotation2d());
-        new FollowWaypoints(this.drive, start, List.of(waypoint), end).schedule();
-        System.out.println("End " + end);
-        
-
-      }
-    });
+    driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(this.raspPi, this.drive));
     driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi));
   }
 
