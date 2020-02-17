@@ -26,6 +26,7 @@ public class Delay extends CommandBase {
   @Override
   public void initialize() {
     this.timer = new Timer();
+    timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,6 +42,6 @@ public class Delay extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return timer.get() >= seconds;
+    return timer.hasPeriodPassed(seconds);
   }
 }
