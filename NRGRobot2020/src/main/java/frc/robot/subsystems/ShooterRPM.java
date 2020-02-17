@@ -1,9 +1,12 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.utilities.MathUtil;
 
 /**
@@ -24,9 +27,9 @@ public class ShooterRPM extends SubsystemBase {
   private static final double TICKS_PER_FLYWHEEL_REVOLUTION = 645;
   private static final double NANOSECS_PER_MINUTE = 60 * 1000000000.0;
   
-  private final Victor spinMotor1 = new Victor(0);
-  private final Victor spinMotor2 = new Victor(1);
-  private final Counter spinMotorEncoder = new Counter(6);
+  private final Victor spinMotor1 = new Victor(ShooterConstants.kSpinMotor1Port);
+  private final Victor spinMotor2 = new Victor(ShooterConstants.kSpinMotor2Port);
+  private final Counter spinMotorEncoder = new Counter(ShooterConstants.kSpinEncoderPort);
 
   private double goalRPM = 0;
   private double error = 0;
@@ -35,8 +38,16 @@ public class ShooterRPM extends SubsystemBase {
   private double motorPower = 0;
   private double lastMotorPower;
   private double prevEncoder = 0;
+  private double previousRPM = 0;
   private double currentRPM = 0;
+  private ArrayList<String> minMaxRPMs = new ArrayList<String>();
   private long prevTime = 0;
+  private boolean isTakeBackHalfEnabled = false;
+
+  private double localMaxRPM = 0;
+  private double localMinRPM = Integer.MAX_VALUE;
+  private boolean trendingUp = true;
+
 
   public ShooterRPM() {
     spinMotorEncoder.setDistancePerPulse(1 / TICKS_PER_FLYWHEEL_REVOLUTION);
@@ -57,12 +68,65 @@ public class ShooterRPM extends SubsystemBase {
    * 
    * WARNING: will cause innacurate results if called more than once per 20ms cycle.
    */
-  public void calculateCurrentRPM() {
+  private void calculateCurrentRPM() {
     double currentEncoder = spinMotorEncoder.getDistance();
     long currentTime = System.nanoTime();
+    previousRPM = currentRPM;
     currentRPM = (currentEncoder - prevEncoder) / (currentTime - prevTime) * NANOSECS_PER_MINUTE;
     prevEncoder = currentEncoder;
     prevTime = currentTime;
+  }
+
+  /**
+   * Adds to the list of minMax values if a new local minMax value is detected through the changes in the RPM values
+   * @param tolerance how sensitive the method should be to RPM changes
+   * @return "max" or "min" or "goal" or "stable" depending on whether the RPM just reached a 
+   * local max, a local min, the goalRPM, or none of the three
+   */
+  public String checkMinMaxRPM(double tolerance) {
+    if (trendingUp) {
+      if (currentRPM > localMaxRPM) {
+        localMaxRPM = currentRPM;
+      } else if (currentRPM < localMaxRPM - tolerance) {
+        trendingUp = false;
+        double timeInSeconds = prevTime / Math.pow(10.0, 9);
+        double localMax = localMaxRPM;
+        localMaxRPM = 0;
+        minMaxRPMs.add("max time: " + timeInSeconds + " rpm: " + localMax);
+        return "max time: " + timeInSeconds + " rpm: " + localMax;
+      }
+    } else {
+      if (currentRPM < localMinRPM) {
+        localMinRPM = currentRPM;
+      } else if (currentRPM > localMinRPM + tolerance) {
+        trendingUp = true;
+        double timeInSeconds = prevTime / Math.pow(10.0, 9);
+        double localMin = localMinRPM;
+        localMinRPM = Integer.MAX_VALUE;
+        minMaxRPMs.add("min time: " + timeInSeconds + " rpm: " + localMin);
+        return "min time: " + timeInSeconds + " rpm: " + localMin;
+      }
+    }
+    return "stable";
+  }
+
+  // Returns the array of local mins and local maxs
+  public String[] getMinMaxArray() {
+    return minMaxRPMs.toArray(new String[0]);
+  }
+
+  // Returns true if currentRPM just became equal to goalRPM
+  public boolean justReachedGoalRPM(double tolerance) {
+    return Math.abs(currentRPM - goalRPM) <= tolerance && Math.abs(previousRPM - goalRPM) > tolerance;
+  }
+
+  // Returns time in seconds
+  public double getTime() {
+    return prevTime / Math.pow(10.0, 0);
+  }
+  
+  public double getActualRPM(){
+    return currentRPM;
   }
 
   /** Updates the flywheel motor controllers using Take-Back-Half closed-loop control. */
@@ -86,6 +150,7 @@ public class ShooterRPM extends SubsystemBase {
       previousError = 0;
       tbh = 0;
     } else {
+      isTakeBackHalfEnabled = true;
       // If we're going from stopped to a positive goal RPM, use full power
       // to spin up the flywheel as quickly as possible, and initialize TBH
       // so that our best-guess-power is used after the first crossover.
@@ -102,7 +167,7 @@ public class ShooterRPM extends SubsystemBase {
   }
 
   /** Estimates the flywheel motor power needed to maintain a given RPM rate. */
-  private double guessMotorOutputForRPM(double RPM) {
+  public double guessMotorOutputForRPM(double RPM) {
     // TODO: replace this dumb linear estimate with something more accurate.
     return MathUtil.clamp(RPM / MAX_RPM, 0, 1);
   }
@@ -114,6 +179,14 @@ public class ShooterRPM extends SubsystemBase {
     lastMotorPower = power;
   }
 
+  /** Sets the flywheel spin motor controllers to the given voltage. */
+  public void setFlyWheelVoltage(double power) {
+    spinMotor1.setVoltage(power * 12);
+    spinMotor2.setVoltage(power * 12);
+    lastMotorPower = power;
+  }
+
+
   /** Sends important subsystem data to the SmartDashboard for monitoring and deubgging. */
   public void updateDashBoard() {
     SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.get());
@@ -123,14 +196,22 @@ public class ShooterRPM extends SubsystemBase {
     SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
   }
 
+  public void enabled(boolean state){
+    
+  }
+
   // This method will be called once per scheduler run
   @Override
   public void periodic() {
     calculateCurrentRPM();
+    if(isTakeBackHalfEnabled){
+      updateRPM();
+    }
   }
 
   /** Resets the ShooterRPM subsystem to its initial state. */
   public void reset() {
+    isTakeBackHalfEnabled = false;
     spinMotorEncoder.reset();
     spinMotor1.disable();
     spinMotor2.disable();
@@ -138,5 +219,9 @@ public class ShooterRPM extends SubsystemBase {
     lastMotorPower = 0;
     prevEncoder = 0;
     prevTime = System.nanoTime();
+  }
+
+  public void disableTakeBackHalf(){
+    reset();
   }
 }

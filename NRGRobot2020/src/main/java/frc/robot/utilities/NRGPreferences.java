@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.utilities;
 
 import java.util.LinkedList;
@@ -160,13 +153,19 @@ public class NRGPreferences {
     public static final NumberPrefs TURRET_P_TERM = new NumberPrefs("TurretP", 0.081);
     public static final NumberPrefs TURRET_I_TERM = new NumberPrefs("TurretI", 0.00016);
     public static final NumberPrefs TURRET_D_TERM = new NumberPrefs("TurretD", 0.0072);
+    public static final NumberPrefs TURRET_MANUAL_MOTOR_POWER = new NumberPrefs("TurretMotorPower", 0.2);
+
+    public static final NumberPrefs HOOD_MANUAL_MOTOR_POWER = new NumberPrefs("HoodMotorPower", 0.35);
 
     public static final NumberPrefs CLIMBER_REAR_POWER = new NumberPrefs("ClimberRearPower", 0.95);
     public static final NumberPrefs CLIMBER_REAR_MIN_TICKS = new NumberPrefs("ClimberRearMinTicks", 800);
     public static final NumberPrefs CLIMBER_ARM_WHEELS_POWER = new NumberPrefs("ClimberArmWheelsPower", 0.5);
 
+    public static final NumberPrefs FEEDER_POWER = new NumberPrefs("FeederPower", 0.3);
+    public static final NumberPrefs ACQUIRER_POWER = new NumberPrefs("AcquirerPower", 0.3);
+
     public static final NumberPrefs DRIVE_STRAIGHT_MAXPOWER = new NumberPrefs("DriveStraightMaxPower", .5);
-    public static final NumberPrefs DRIVE_TO_BALL_MAXPOWER = new NumberPrefs("DriveToBallMaxPower", 0.75);
+    public static final NumberPrefs DRIVE_TO_BALL_MAXPOWER = new NumberPrefs("DriveToBallMaxPower", 0.5);
     
     public static final BooleanPrefs WRITE_DEFAULT = new BooleanPrefs("WriteDefault", true); 
     public static final BooleanPrefs USING_PRACTICE_BOT = new BooleanPrefs("UsingPracticeBot", false);

@@ -11,6 +11,11 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ControlPanelConstants;
 
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 /**
  * Subsystem which commands the Control Panel color spinner.
  */
@@ -94,5 +99,11 @@ public class ControlPanelSpinner extends SubsystemBase {
       color = "Unknown";
       return 'U';
     }
+  }
+  public void initShuffleboard(){
+    ShuffleboardTab controlPanelSpinnerTab = Shuffleboard.getTab("Control Panel Spinner");
+
+    ShuffleboardLayout controlPanelSpinnerLayout = controlPanelSpinnerTab.getLayout("Control Panel Spinner", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
+    
   }
 }

@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.commands;
 
 import java.util.List;
@@ -33,8 +26,8 @@ public class FollowWaypoints extends FollowTrajectory {
   /**
    * Creates a new FollowWaypoints.
    */
-  public FollowWaypoints(Drive drive, Pose2d begin, List<Translation2d> waypoints, Pose2d end) {
+  public FollowWaypoints(Drive drive, Pose2d begin, List<Translation2d> waypoints, Pose2d end, boolean isReversed) {
     // Use addRequirements() here to declare subsystem dependencies.
-    super(drive, TrajectoryGenerator.generateTrajectory(begin, waypoints, end, config));
+    super(drive, TrajectoryGenerator.generateTrajectory(begin, waypoints, end, config.setReversed(isReversed)));
   }
 }

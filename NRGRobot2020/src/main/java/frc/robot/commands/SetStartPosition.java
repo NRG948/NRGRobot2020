@@ -7,32 +7,31 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Drive;
 
-public class ManualIndexer extends CommandBase {
-  Indexer indexer;
-  final XboxController m_xboxController;
+public class SetStartPosition extends CommandBase {
+  private Drive drive;
+  private Pose2d pose;
   /**
-   * Creates a new ManualIndexer.
+   * Creates a new SetStartPosition.
    */
-  public ManualIndexer(Indexer indexer, final XboxController xboxController) {
-    this.indexer = indexer;
-    this.m_xboxController = xboxController;
-    addRequirements(indexer);
+  public SetStartPosition(Drive drive, Pose2d pose) {
+    this.drive = drive;
+    this.pose = pose;
+    addRequirements(drive);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    drive.resetOdometry(pose);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    indexer.rawIndexer(m_xboxController.getY(Hand.kLeft));
   }
 
   // Called once the command ends or is interrupted.
@@ -43,6 +42,6 @@ public class ManualIndexer extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

@@ -7,35 +7,35 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ShooterRPM;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.subsystems.AddressableLEDs;
 
-public class SetShooterRPM extends CommandBase {
-  private final double goalRPM;
-  private final ShooterRPM shooterRPM;
-  private Timer timer = new Timer();
-  /**
-   * Creates a new SetShooterRPM.
-   */
-  public SetShooterRPM(double goalRPM, ShooterRPM shooterRPM) {
-    this.goalRPM = goalRPM;
-    this.shooterRPM = shooterRPM;
-    addRequirements(shooterRPM);
+public class LEDTest extends CommandBase {
+
+  int counter = 0;
+  public LEDTest(AddressableLEDs addressableLEDs) {
+    addRequirements(addressableLEDs);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    timer.reset();
-    timer.start();
-    shooterRPM.setGoalRPM(goalRPM);
+    AddressableLEDs.setAll(new Color8Bit(0,0,0));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooterRPM.updateRPM();
+    AddressableLEDs.set(0, new Color8Bit(counter,0,0));
+    AddressableLEDs.set(2, new Color8Bit(0,counter,0));
+    AddressableLEDs.set(4, new Color8Bit(0,0,counter));
+    AddressableLEDs.set(6, new Color8Bit(counter,counter,0));
+    AddressableLEDs.set(7, new Color8Bit(counter,0,counter));
+    AddressableLEDs.sendToLeds();
+    counter = (counter + 1) % 256;
   }
 
   // Called once the command ends or is interrupted.
@@ -46,10 +46,6 @@ public class SetShooterRPM extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(timer.get()>10){
-      timer.stop();
-      return true;
-    }
     return false;
   }
 }
