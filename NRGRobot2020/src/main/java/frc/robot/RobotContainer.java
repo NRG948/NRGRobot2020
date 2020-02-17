@@ -106,6 +106,7 @@ public class RobotContainer {
       activateAcquirerPiston);
   private MaintainShooterRPM maintainShooterRPM = new MaintainShooterRPM(2000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
+  private LEDTest ledTest = new LEDTest(leds);
   private FollowPathWeaverFile followPathTest;
 
   // autonomous chooser
@@ -150,7 +151,7 @@ public class RobotContainer {
     turret.setDefaultCommand(manualTurret);
     hood.setDefaultCommand(manualHood);
     acquirerPiston.setDefaultCommand(manualAcquirerPiston);
-    leds.setDefaultCommand(ledTest);
+    // leds.setDefaultCommand(ledTest);
 
     // Configure the button bindings
     configureButtonBindings();

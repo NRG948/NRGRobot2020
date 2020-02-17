@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class AddressableLEDs extends SubsystemBase {
 
-  private static final int NUMBER_OF_LEDS = 8;
+  private static final int NUMBER_OF_LEDS = 18;
   private static final AddressableLED led = new AddressableLED(8);
   private static final AddressableLEDBuffer ledBuffer = new AddressableLEDBuffer(NUMBER_OF_LEDS);
 
