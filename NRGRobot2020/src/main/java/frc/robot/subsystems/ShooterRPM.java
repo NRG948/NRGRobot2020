@@ -211,7 +211,7 @@ public class ShooterRPM extends SubsystemBase {
 
   /** Resets the ShooterRPM subsystem to its initial state. */
   public void reset() {
-    disableTakeBackHalf();
+    isTakeBackHalfEnabled = false;
     spinMotorEncoder.reset();
     spinMotor1.disable();
     spinMotor2.disable();
@@ -222,6 +222,6 @@ public class ShooterRPM extends SubsystemBase {
   }
 
   public void disableTakeBackHalf(){
-    isTakeBackHalfEnabled = false;
+    reset();
   }
 }
