@@ -25,6 +25,7 @@ import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
+import frc.robot.commands.InterruptAll;
 import frc.robot.commands.LEDTest;
 import frc.robot.commands.ManualAcquirer;
 import frc.robot.commands.ManualAcquirerPiston;
@@ -75,10 +76,11 @@ public class RobotContainer {
   public final ShooterRPM shooterRPM = new ShooterRPM();
   private final RaspberryPiVision raspPi = new RaspberryPiVision();
   private final AcquirerPiston acquirerPiston = new AcquirerPiston();
-
+ 
   // Joystick and JoystickButtons
   private final Joystick leftJoystick = new Joystick(0);
   private final Joystick rightJoystick = new Joystick(1);
+
   private JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
   private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
@@ -87,6 +89,7 @@ public class RobotContainer {
   private JoystickButton driveStraightToLoadingStation = new JoystickButton(rightJoystick, 5);
   private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 6);
   private JoystickButton activateAcquirerPiston = new JoystickButton(rightJoystick, 10);
+  private JoystickButton interruptAllButton = new JoystickButton(leftJoystick, 2);
 
   // XboxController and Xbox buttons
   private XboxController xboxController = new XboxController(2);
@@ -111,6 +114,9 @@ public class RobotContainer {
   private MaintainShooterRPM maintainShooterRPM = new MaintainShooterRPM(2000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private FollowPathWeaverFile followPathTest;
+  private LEDTest ledTest = new LEDTest(leds);
+  private InterruptAll interruptAll = new InterruptAll(leds, drive, acquirer, feeder,
+  limelightVision, turret, hood, shooterRPM, raspPi, acquirerPiston );
 
   // autonomous chooser
   private SendableChooser<AutoPath> autoPathChooser;
@@ -216,11 +222,10 @@ public class RobotContainer {
         Pose2d end = new Pose2d(start.getTranslation().plus(finalPoint), new Rotation2d());
         new FollowWaypoints(this.drive, start, List.of(waypoint), end).schedule();
         System.out.println("End " + end);
-        
-
       }
     });
     driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi));
+    interruptAllButton.whenPressed(interruptAll);
   }
 
   /**
