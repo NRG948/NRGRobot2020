@@ -20,8 +20,6 @@ public class Feeder extends SubsystemBase {
 
   private DigitalInput beamBreak = new DigitalInput(8);
   private Victor feederMotor = new Victor(5);
-  
-  private double sentPower;
   private SimpleWidget feederRawOutputWidget;  
 
   /**
@@ -31,9 +29,8 @@ public class Feeder extends SubsystemBase {
   }
 
   public void rawFeeder(double power){
-    sentPower = power * 0.5;
-    feederRawOutputWidget.getEntry().setDouble(sentPower);
-    feederMotor.set(sentPower);
+    feederRawOutputWidget.getEntry().setDouble(power);
+    feederMotor.set(power);
   }
 
   public boolean isBallInShootingPosition(){
@@ -44,9 +41,9 @@ public class Feeder extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
   }
+
   public void initShuffleboard(){
     ShuffleboardTab feederTab = Shuffleboard.getTab("Feeder");
-
     ShuffleboardLayout feederLayout = feederTab.getLayout("Feeder", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
     feederRawOutputWidget = feederLayout.add("Raw Output", 0.0);
   }

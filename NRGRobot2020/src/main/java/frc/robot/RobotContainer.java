@@ -32,8 +32,10 @@ import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
 import frc.robot.commands.SetRaspberryPiPipeline;
+import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AutoTurnToHeading;
+import frc.robot.commands.AutoTurret;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.AcquirerPiston;
 import frc.robot.subsystems.AddressableLEDs;
@@ -67,10 +69,10 @@ public class RobotContainer {
   private final Drive drive = new Drive();
   private final Acquirer acquirer = new Acquirer();
   private final Feeder feeder = new Feeder();
-  private final Turret turret = new Turret();
+  private final LimelightVision limelightVision = new LimelightVision();
+  private final Turret turret = new Turret(limelightVision);
   private final Hood hood = new Hood();
   public final ShooterRPM shooterRPM = new ShooterRPM();
-  private final LimelightVision limelightVision = new LimelightVision();
   private final RaspberryPiVision raspPi = new RaspberryPiVision();
   private final AcquirerPiston acquirerPiston = new AcquirerPiston();
 
@@ -92,6 +94,8 @@ public class RobotContainer {
   private JoystickButton xboxButtonB = new JoystickButton(xboxController, 2); // B Button
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
+  private JoystickButton xboxLeftBumper = new JoystickButton(xboxController, 5); 
+  private JoystickButton xboxRightBumper = new JoystickButton(xboxController, 6);
 
   // left/right dpad - turret, up/down dpad - hood, right trigger - shooter rpm,
   // right stick up/down - acquirer, back button + right stick up/down - feeder,
@@ -191,6 +195,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     xboxButtonB.whenPressed(new MaintainShooterRPM(4000, shooterRPM));
+    xboxLeftBumper.whenPressed(new AutoTurret(turret));
     DriveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
       resetSensors();
@@ -227,7 +232,7 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     AutoPath path = autoPathChooser.getSelected();
-    drive.resetOdometry(path.getStartingPosition());
+    new SetStartPosition(drive, path.getStartingPosition());
     
     try {
       return new FollowPathWeaverFile(drive, path.getFile());

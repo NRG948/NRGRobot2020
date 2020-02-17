@@ -1,25 +1,22 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.Turret;
 
+/**
+ * Enables Turret PID and leaves it running after command exits.
+ */
 public class AutoTurret extends CommandBase {
   private final Turret turret;
   private double maxPower;
-  private final LimelightVision limelight;
-  // desiredAngle is relative?
-  private double desiredAngle;
 
   /**
    * Creates a new AutoTurret.
    */
-  public AutoTurret(final Turret turret, final LimelightVision limelight) {
+  public AutoTurret(final Turret turret) {
     this.turret = turret;
-    this.limelight = limelight;
 
     addRequirements(turret);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   public AutoTurret withMaxPower(double maxPower) {
@@ -36,8 +33,7 @@ public class AutoTurret extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    desiredAngle = limelight.getX();
-    turret.turretAngleToExecute(desiredAngle);
+    //Turret.periodic() takes care of updating controller
   }
 
   // Called once the command ends or is interrupted.
@@ -46,13 +42,9 @@ public class AutoTurret extends CommandBase {
     turret.turretAngleEnd();
   }
 
-  // Returns true when the command should end.
-  /**
-   * isFinished can be used to detect if a switch is toggled or button is pressed.
-   * Or, it can be not used, and this would be a continous command.
-   */
+  // Command always exits immediately but leaves PID running.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
