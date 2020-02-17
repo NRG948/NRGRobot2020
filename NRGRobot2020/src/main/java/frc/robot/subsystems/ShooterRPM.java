@@ -47,8 +47,7 @@ public class ShooterRPM extends SubsystemBase {
   private double localMaxRPM = 0;
   private double localMinRPM = Integer.MAX_VALUE;
   private boolean trendingUp = true;
-
-
+  
   public ShooterRPM() {
     spinMotorEncoder.setDistancePerPulse(1 / TICKS_PER_FLYWHEEL_REVOLUTION);
     spinMotor1.setInverted(true);
@@ -140,7 +139,6 @@ public class ShooterRPM extends SubsystemBase {
       previousError = error; // and save the previous error
     }
     setFlyWheel(motorPower);
-    updateDashBoard();
   }
 
   /** Sets the target speed of the shooter flywheel in revolutions per minute. */
@@ -151,6 +149,7 @@ public class ShooterRPM extends SubsystemBase {
       tbh = 0;
     } else {
       isTakeBackHalfEnabled = true;
+
       // If we're going from stopped to a positive goal RPM, use full power
       // to spin up the flywheel as quickly as possible, and initialize TBH
       // so that our best-guess-power is used after the first crossover.
@@ -186,7 +185,6 @@ public class ShooterRPM extends SubsystemBase {
     lastMotorPower = power;
   }
 
-
   /** Sends important subsystem data to the SmartDashboard for monitoring and deubgging. */
   public void updateDashBoard() {
     SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.get());
@@ -207,6 +205,7 @@ public class ShooterRPM extends SubsystemBase {
     if(isTakeBackHalfEnabled){
       updateRPM();
     }
+    updateDashBoard();
   }
 
   /** Resets the ShooterRPM subsystem to its initial state. */
