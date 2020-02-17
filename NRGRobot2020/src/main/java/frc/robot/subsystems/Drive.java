@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -26,15 +27,18 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.commands.AutoTurnToHeading;
+import frc.robot.commands.Delay;
+import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
+import frc.robot.commands.SetStartPosition;
 
 public class Drive extends SubsystemBase {
   /**
    * Creates a new ExampleSubsystem.
    */
-// Gyro Declaration
+  // Gyro Declaration
   private AHRS navx = new AHRS(SPI.Port.kMXP);
-// Motor Declaration
+  // Motor Declaration
   private WPI_VictorSPX rightMotor1 = new WPI_VictorSPX(DriveConstants.kRightMotor1Port);
   private WPI_VictorSPX rightMotor2 = new WPI_VictorSPX(DriveConstants.kRightMotor2Port);
   private WPI_VictorSPX leftMotor1 = new WPI_VictorSPX(DriveConstants.kLeftMotor1Port);
@@ -75,39 +79,46 @@ public class Drive extends SubsystemBase {
     resetHeading();
     resetEncoders();
   }
+
   /**
-   * Basic Tank Drive method for drive subsystem, takes direct inputs for left and right sides.
+   * Basic Tank Drive method for drive subsystem, takes direct inputs for left and
+   * right sides.
    * 
-   * @param leftPower value from -1 to 1 set to left motor group. + is forward.
-   * @param rightPower value from -1 to 1 set to right motor group. + is forward.
+   * @param leftPower    value from -1 to 1 set to left motor group. + is forward.
+   * @param rightPower   value from -1 to 1 set to right motor group. + is
+   *                     forward.
    * @param squareInputs squares motor inputs if true
-   */  
+   */
   public void tankDrive(double leftPower, double rightPower, boolean squareInputs) {
     diffDrive.tankDrive(leftPower, rightPower, squareInputs);
   }
+
   /**
    * Tank Drive with volatge inputs instead of power inputs.
    * 
    * Voltage inputs allows more control over motors.
    * 
-   * @param leftVolts Value from -12 to 12 volts set to left motor group. + is forward.
-   * @param rightVolts Value from -12 to 12 volts set to right motor group. + is forward.
+   * @param leftVolts  Value from -12 to 12 volts set to left motor group. + is
+   *                   forward.
+   * @param rightVolts Value from -12 to 12 volts set to right motor group. + is
+   *                   forward.
    */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     leftMotors.setVoltage(leftVolts);
     rightMotors.setVoltage(-rightVolts);
     diffDrive.feed();
   }
+
   /**
    * Drive method that uses 2 inputs on the x and z axis.
    * 
    * Allows drive with singuler joystick/controller.
    * 
-   * @param xPower The robot's speed along the X axis [-1.0..1.0]. + is forward
+   * @param xPower   The robot's speed along the X axis [-1.0..1.0]. + is forward
    * @param rotation The robot's rotation rate around the Z axis [-1.0..1.0]. + is
-   * Clockwise.
+   *                 Clockwise.
    */
-  public void arcadeDrive(double xPower, double rotation){
+  public void arcadeDrive(double xPower, double rotation) {
     diffDrive.setDeadband(0);
     diffDrive.arcadeDrive(xPower, rotation, false);
   }
@@ -177,8 +188,9 @@ public class Drive extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    odometry.resetPosition(pose, new Rotation2d());
+    odometry.resetPosition(pose, pose.getRotation());
   }
+
   /**
    * Resets Encoders
    */
@@ -244,11 +256,11 @@ public class Drive extends SubsystemBase {
   public void driveOnHeadingExecute(double power) {
     double powerDelta = this.drivePIDController.calculate(getHeadingContinuous());
     // if (Math.signum(powerDelta) != Math.signum(power)) {
-    //   this.tankDrive(power + powerDelta, power, false);
+    // this.tankDrive(power + powerDelta, power, false);
     // } else {
-    //   this.tankDrive(power, power - powerDelta, false);
+    // this.tankDrive(power, power - powerDelta, false);
     // }
-    powerDelta= MathUtil.clamp(powerDelta, -Math.abs(power), Math.abs(power));
+    powerDelta = MathUtil.clamp(powerDelta, -Math.abs(power), Math.abs(power));
 
     this.arcadeDrive(power, -powerDelta);
 
@@ -264,6 +276,7 @@ public class Drive extends SubsystemBase {
     this.diffDrive.stopMotor();
     this.drivePIDController = null;
   }
+
   /**
    * Sets the current heading of the robot.
    * 
@@ -289,8 +302,10 @@ public class Drive extends SubsystemBase {
     this.turnPIDController.setTolerance(tolerance);
     this.turnSquareInputs = areTurnInputsSquared();
   }
+
   /**
    * Returns if Turn inputs are squared
+   * 
    * @return boolean TURN_SQUARE_INPUTS
    */
   public boolean areTurnInputsSquared() {
@@ -358,18 +373,31 @@ public class Drive extends SubsystemBase {
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
 
     // Add test buttons to a layout in the tab
-    ShuffleboardLayout commandsLayout = driveTab.getLayout("Test", BuiltInLayouts.kList).
-      withPosition(0, 0).
-      withSize(2, 3);
-    
+    ShuffleboardLayout commandsLayout = driveTab.getLayout("Test", BuiltInLayouts.kList).withPosition(0, 0).withSize(2,
+        3);
+
     commandsLayout.add("Turn to 90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(90));
     commandsLayout.add("Turn to -90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(-90));
     commandsLayout.add("Drive 1 meter", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(1));
     commandsLayout.add("Drive 3 meters", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(3));
-    commandsLayout.add("Follow S Curve", new FollowWaypoints(this, 
-      new Pose2d(0, 0, new Rotation2d(0)),
-      List.of(new Translation2d(1, -1), new Translation2d(2, 1)),
-       new Pose2d(3, 0, new Rotation2d(0))));
+    commandsLayout.add("Follow S Curve", new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0))));
+    try {
+      commandsLayout.add("1st path", new SetStartPosition(this, new Pose2d(3.473, -7.2, new Rotation2d(0)))
+          .andThen(new FollowPathWeaverFile(this, "INITIATION_LINE_TO_RIGHT_TRENCH.wpilib.json")));
+      commandsLayout.add("2nd path", new SetStartPosition(this, new Pose2d(6.22, -7.2, new Rotation2d(Math.toRadians(-45))))
+          .andThen(new FollowPathWeaverFile(this, "RIGHT_TRENCH_TO_SHOOT.wpilib.json")));
+      commandsLayout.add("Both Paths", new SetStartPosition(this, new Pose2d(3.473, -7.2, new Rotation2d(0)))
+          .andThen(new FollowPathWeaverFile(this, "INITIATION_LINE_TO_RIGHT_TRENCH.wpilib.json"),
+                  new Delay(0.5), 
+                   new FollowPathWeaverFile(this, "RIGHT_TRENCH_TO_SHOOT.wpilib.json")));
+    } catch (IllegalArgumentException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (IOException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
 
     // Add the DifferentialDrive object and encoders to a list layout in the tab.
     ShuffleboardLayout diffDriveLayout = driveTab.getLayout("Base", BuiltInLayouts.kList).

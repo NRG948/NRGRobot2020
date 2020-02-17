@@ -34,7 +34,7 @@ public class Turret extends SubsystemBase {
 
   private SimpleWidget turretPidErrorWidget;
   private SimpleWidget turretRawOutputWidget;
-  private Boolean pidEnabled;
+  private boolean pidEnabled = false;
 
   private LimelightVision limelightVision;
 

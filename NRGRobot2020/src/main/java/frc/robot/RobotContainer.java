@@ -3,6 +3,7 @@ package frc.robot;
 import java.io.IOException;
 import java.util.List;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -76,7 +77,8 @@ public class RobotContainer {
   public final ShooterRPM shooterRPM = new ShooterRPM();
   private final RaspberryPiVision raspPi = new RaspberryPiVision();
   private final AcquirerPiston acquirerPiston = new AcquirerPiston();
- 
+  private final Compressor compressor = new Compressor();
+
   // Joystick and JoystickButtons
   private final Joystick leftJoystick = new Joystick(0);
   private final Joystick rightJoystick = new Joystick(1);
@@ -114,7 +116,6 @@ public class RobotContainer {
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private LEDTest ledTest = new LEDTest(leds);
   private FollowPathWeaverFile followPathTest;
-  private LEDTest ledTest = new LEDTest(leds);
   private InterruptAll interruptAll = new InterruptAll(leds, drive, acquirer, feeder,
   limelightVision, turret, hood, shooterRPM, raspPi, acquirerPiston );
 
@@ -127,6 +128,7 @@ public class RobotContainer {
         new Pose2d(3.3, -0.786, new Rotation2d(0))),
     INITIATION_LINE_TO_RIGHT_TRENCH("INITIATION_LINE_TO_RIGHT_TRENCH.wpilib.json",
         new Pose2d(3.473, -7.501, new Rotation2d(0)));
+
 
     private final String fileName;
     private final Pose2d startingPosition;
@@ -177,13 +179,14 @@ public class RobotContainer {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+
+    compressor.start();
     // Adds AutoPath chooser to SmartDashBoard
     ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
     autoPathChooser = new SendableChooser<AutoPath>();
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_MIDDLE.name(), AutoPath.INITIATION_LINE_TO_MIDDLE);
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
-    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(),
-        AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
+    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoTab.add("autoPath", autoPathChooser);
 
     CommandScheduler scheduler = CommandScheduler.getInstance();
