@@ -124,6 +124,7 @@ public class NRGPreferences {
         }
     }
 
+    // Drive subsystem preferences
     public static final NumberPrefs DRIVE_P_TERM = new NumberPrefs("DriveP", 1.11);
     public static final NumberPrefs DRIVE_I_TERM = new NumberPrefs("DriveI", 0);
     public static final NumberPrefs DRIVE_D_TERM = new NumberPrefs("DriveD", 0.0285); 
@@ -144,39 +145,38 @@ public class NRGPreferences {
     public static final NumberPrefs TRACK_WIDTH_METERS = new NumberPrefs("TrackWidthMeters", Units.inchesToMeters(25.0));
     public static final NumberPrefs ENCODER_CPR = new NumberPrefs("EncoderCPR", 1050);
     
-    public static final NumberPrefs DRIVE_TO_VISION_TAPE_MIN_POWER = new NumberPrefs("VisionMinPower", 0.15);
-    public static final NumberPrefs DRIVE_TO_VISION_TAPE_MAX_POWER = new NumberPrefs("VisionMaxPower", 0.65);
-    public static final NumberPrefs CAMERA_ANGLE_SKEW = new NumberPrefs("CameraAngleSkew", -1.7);
-    public static final NumberPrefs CAMERA_DISTANCE_SCALE = new NumberPrefs("CameraDistanceScale", 1.0);
-    public static final NumberPrefs CAMERA_ANGLE_SCALE = new NumberPrefs("CameraAngleScale", 0.8);
-
-    public static final NumberPrefs TURRET_P_TERM = new NumberPrefs("TurretP", 0.081);
-    public static final NumberPrefs TURRET_I_TERM = new NumberPrefs("TurretI", 0.00016);
-    public static final NumberPrefs TURRET_D_TERM = new NumberPrefs("TurretD", 0.0072);
-    public static final NumberPrefs TURRET_MANUAL_MOTOR_POWER = new NumberPrefs("TurretMotorPower", 0.2);
-
-    public static final NumberPrefs HOOD_MANUAL_MOTOR_POWER = new NumberPrefs("HoodMotorPower", 0.35);
-
-    public static final NumberPrefs CLIMBER_REAR_POWER = new NumberPrefs("ClimberRearPower", 0.95);
-    public static final NumberPrefs CLIMBER_REAR_MIN_TICKS = new NumberPrefs("ClimberRearMinTicks", 800);
-    public static final NumberPrefs CLIMBER_ARM_WHEELS_POWER = new NumberPrefs("ClimberArmWheelsPower", 0.5);
-
-    public static final NumberPrefs FEEDER_POWER = new NumberPrefs("FeederPower", 0.3);
-    public static final NumberPrefs ACQUIRER_POWER = new NumberPrefs("AcquirerPower", 0.3);
-
     public static final NumberPrefs DRIVE_STRAIGHT_MAXPOWER = new NumberPrefs("DriveStraightMaxPower", .5);
     public static final NumberPrefs DRIVE_TO_BALL_MAXPOWER = new NumberPrefs("DriveToBallMaxPower", 0.5);
-    
-    public static final BooleanPrefs WRITE_DEFAULT = new BooleanPrefs("WriteDefault", true); 
-    public static final BooleanPrefs USING_PRACTICE_BOT = new BooleanPrefs("UsingPracticeBot", false);
+
     public static final BooleanPrefs PATHS_SQUARE_INPUTS = new BooleanPrefs("PathsSquareInputs", false); 
     public static final BooleanPrefs TURN_SQUARE_INPUTS = new BooleanPrefs("TurnSquareInputs", false);
     public static final BooleanPrefs TELEOP_SQUARE_INPUTS = new BooleanPrefs("TeleopSquareInputs", true); 
     public static final BooleanPrefs DRIVE_SQUARE_INPUTS = new BooleanPrefs("DriveSquareInputs", false);
     public static final BooleanPrefs DRIVE_USE_XBOX_CONTROL = new BooleanPrefs("DriveUseXboxControl", false);
     
-    public static final StringPrefs TEST_PATH_NAME = new StringPrefs("TestPathName", "LEFT_TO_CARGO_FRONT_LEFT_HATCH");
-    
+    // Vision subsystem preferences
+    public static final NumberPrefs CAMERA_DISTANCE_SCALE = new NumberPrefs("CameraDistanceScale", 1.0);
+
+    // Turret and Hood preferences
+    public static final BooleanPrefs ENABLE_TURRET_LOGGING = new BooleanPrefs("TurretLogging", true); 
+    public static final NumberPrefs TURRET_P_TERM = new NumberPrefs("TurretP", 0.081);
+    public static final NumberPrefs TURRET_I_TERM = new NumberPrefs("TurretI", 0.00016);
+    public static final NumberPrefs TURRET_D_TERM = new NumberPrefs("TurretD", 0.0072);
+    public static final NumberPrefs TURRET_MANUAL_MOTOR_POWER = new NumberPrefs("TurretMotorPower", 0.2);
+    public static final NumberPrefs HOOD_MANUAL_MOTOR_POWER = new NumberPrefs("HoodMotorPower", 0.35);
+
+    // Climber preferences
+    public static final NumberPrefs CLIMBER_REAR_POWER = new NumberPrefs("ClimberRearPower", 0.95);
+    public static final NumberPrefs CLIMBER_REAR_MIN_TICKS = new NumberPrefs("ClimberRearMinTicks", 800);
+    public static final NumberPrefs CLIMBER_ARM_WHEELS_POWER = new NumberPrefs("ClimberArmWheelsPower", 0.5);
+
+    // Power Cell intake preferences
+    public static final NumberPrefs FEEDER_POWER = new NumberPrefs("FeederPower", 0.3);
+    public static final NumberPrefs ACQUIRER_POWER = new NumberPrefs("AcquirerPower", 0.3);
+
+    // General preferences
+    public static final BooleanPrefs USING_PRACTICE_BOT = new BooleanPrefs("UsingPracticeBot", false);
+    public static final BooleanPrefs WRITE_DEFAULT = new BooleanPrefs("WriteDefault", true); 
 
     public static void init() {
         if (NRGPreferences.WRITE_DEFAULT.getValue()) {
