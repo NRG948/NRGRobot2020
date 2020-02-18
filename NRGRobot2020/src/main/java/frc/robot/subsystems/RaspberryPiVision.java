@@ -32,17 +32,24 @@ public class RaspberryPiVision extends SubsystemBase {
    * Enumeration representing pipeline to run
    */
   public enum PipelineRunner {
+    /**
+     * The pipeline runner for tracking fuel cells.
+     */
     FUEL_CELL("FuelCellTrackingRunner", RaspberryPiConstants.kWhite),
+
+    /**
+     * The pipeline runner for locating the loading station.
+     */
     LOADING_STATION("LoadingStationRunner", RaspberryPiConstants.kGreen);
 
     private final String name;
     private final Color8Bit color;
 
     /**
-     * constructs the enumeration
+     * Constructs the enumeration.
      * 
-     * @param name  name of the pipeline
-     * @param color color of the leds
+     * @param name  The name of the pipeline.
+     * @param color The color of the LEDs.
      */
     PipelineRunner(String name, Color8Bit color) {
       this.name = name;
@@ -50,16 +57,18 @@ public class RaspberryPiVision extends SubsystemBase {
     }
 
     /**
+     * Returns the name of the pipeline.
      * 
-     * @return returns the name of the pipeline
+     * @return The name of the pipeline.
      */
     public String getName() {
       return this.name;
     }
 
     /**
+     * Returns the color of the LEDs.
      * 
-     * @return returns the color of the led
+     * @return The color of the LEDs.
      */
     public Color8Bit getColor() {
       return this.color;
@@ -79,9 +88,10 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   /**
-   * sets the pipeline to run on the rasberry pi
+   * Sets the pipeline to run on the Raspberry Pi.
    * 
-   * @param runner value from the pipeline enumeration
+   * @param runner A value from the pipeline enumeration representing the pipeline
+   *               to run.
    */
   public void setPipelineRunner(PipelineRunner runner) {
     SmartDashboard.putString("Vision/runnerName", runner.getName());
@@ -91,23 +101,25 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   /**
-   * returns the vision data generation count
+   * Returns the vision data generation count.
+   * 
+   * @return The vision data generation count.
    */
   public int getGenCount() {
     return (int) SmartDashboard.getNumber("Vision/genCount", 0);
   }
 
   /**
-   * returns the current vision target
+   * Returns the current vision target.
    * 
-   * @return the current vision target
+   * @return the current vision target, or null if none.
    */
   public VisionTarget getCurrentTarget() {
     return this.currentTarget;
   }
 
   /**
-   * Gets the current fuel cell target.
+   * Returns the current fuel cell target.
    * 
    * @return The fuel cell target, or null if none.
    */
@@ -115,12 +127,22 @@ public class RaspberryPiVision extends SubsystemBase {
     return this.fuelCellTarget;
   }
 
+  /**
+   * Returns the current loading station target.
+   * 
+   * @return The current loading station target, or null if none.
+   */
   public LoadingStationTarget getLoadingTarget() {
     return this.loadingStationTarget;
   }
 
-  private void updateFuelCell() {
+  /**
+   * Called from the periodic method to update the fuel cell target information
+   * from the vision data.
+   */
+  private void updateFuelCellTarget() {
     boolean hasTarget = SmartDashboard.getBoolean("Vision/fuelCell/hasTarget", false);
+
     if (hasTarget) {
       double distance = SmartDashboard.getNumber("Vision/fuelCell/distance", 0);
       double angle = SmartDashboard.getNumber("Vision/fuelCell/angle", 0);
@@ -130,8 +152,13 @@ public class RaspberryPiVision extends SubsystemBase {
     }
   }
 
-  private void updateLoadingStation() {
+  /**
+   * Called from the periodic method to update the loading station target
+   * information from the vision data.
+   */
+  private void updateLoadingStationTarget() {
     boolean hasTarget = SmartDashboard.getBoolean("Vision/LoadingStation/HasTarget", false);
+    
     if (hasTarget) {
       double distance = SmartDashboard.getNumber("Vision/LoadingStation/DistanceInches", 0.0);
       double angle = SmartDashboard.getNumber("Vision/LoadingStation/Angle", 0.0);
@@ -142,9 +169,13 @@ public class RaspberryPiVision extends SubsystemBase {
     }
   }
 
+  /**
+   * Called from the periodic method to update the current target information from
+   * the vision data.
+   */
   private void updateCurrentTarget() {
-    updateLoadingStation();
-    updateFuelCell();
+    updateLoadingStationTarget();
+    updateFuelCellTarget();
     if (loadingStationTarget != null) {
       currentTarget = loadingStationTarget;
     } else if (fuelCellTarget != null) {
@@ -182,6 +213,7 @@ public class RaspberryPiVision extends SubsystemBase {
         () -> this.currentTarget != null ? this.currentTarget.getDistanceInInches() : 0.0);
     targetLayout.addNumber("Angle", () -> this.currentTarget != null ? this.currentTarget.getAngleInDegrees() : 0.0);
     targetLayout.addNumber("Skew", () -> this.currentTarget != null ? this.currentTarget.getSkewInDegrees() : 0.0);
+
     // When running in the simulator, we'll use the default USB camera to create the
     // "Processed" video server.
     if (!RobotBase.isReal()) {
@@ -214,6 +246,9 @@ public class RaspberryPiVision extends SubsystemBase {
     cameraThread.start();
   }
 
+  /**
+   * Called by the scheduler to perform periodic tasks before commands exectue.
+   */
   @Override
   public void periodic() {
     updateCurrentTarget();
