@@ -158,7 +158,8 @@ public class NRGPreferences {
     public static final NumberPrefs CAMERA_DISTANCE_SCALE = new NumberPrefs("CameraDistanceScale", 1.0);
 
     // Turret and Hood preferences
-    public static final BooleanPrefs ENABLE_TURRET_LOGGING = new BooleanPrefs("TurretLogging", true); 
+    public static final BooleanPrefs ENABLE_TURRET_LOGGING = new BooleanPrefs("TurretLogging", true);
+    public static final NumberPrefs SHOOTER_TEST_RPM = new NumberPrefs("ShooterTestRPM", 4000);
     public static final NumberPrefs TURRET_P_TERM = new NumberPrefs("TurretP", 0.081);
     public static final NumberPrefs TURRET_I_TERM = new NumberPrefs("TurretI", 0.00016);
     public static final NumberPrefs TURRET_D_TERM = new NumberPrefs("TurretD", 0.0072);
