@@ -108,7 +108,7 @@ public class RobotContainer {
   private InterruptAll interruptAll = new InterruptAll(leds, drive, acquirer, feeder,
   limelightVision, turret, hood, shooterRPM, raspPi, acquirerPiston );
 
-  // autonomous chooser
+  // Autonomous chooser
   private SendableChooser<AutoPath> autoPathChooser;
 
   private enum AutoPath {
@@ -142,7 +142,7 @@ public class RobotContainer {
     System.out.println("RobotContainer");
     NRGPreferences.init();
 
-    // subsystem default commands
+    // Set subsystem default commands
     drive.setDefaultCommand(manualDrive);
     shooterRPM.setDefaultCommand(manualShooter);
     acquirer.setDefaultCommand(manualAcquirer);
@@ -154,6 +154,8 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
+
+    // Configure Shuffleboard Tabs
     drive.addShuffleBoardTab();
     raspPi.addShuffleBoardTab();
     acquirer.initShuffleboard();
@@ -180,7 +182,6 @@ public class RobotContainer {
     CommandScheduler scheduler = CommandScheduler.getInstance();
     scheduler.onCommandInitialize(command -> System.out.println(command.getName() + " init"));
     scheduler.onCommandFinish(command -> System.out.println(command.getName() + " finished"));
-
   }
 
   /**
