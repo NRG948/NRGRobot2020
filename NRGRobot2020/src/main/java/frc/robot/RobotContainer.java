@@ -1,31 +1,23 @@
 package frc.robot;
 
 import java.io.IOException;
-import java.util.List;
 
 import edu.wpi.first.wpilibj.Compressor;
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Transform2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.ManualDriveStraight;
 import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualHood;
 import frc.robot.commandSequences.AutoDriveToFuelCell;
 import frc.robot.commandSequences.AutoDriveToLoadingStation;
-import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
-import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.InterruptAll;
 import frc.robot.commands.LEDTest;
 import frc.robot.commands.ManualAcquirer;
@@ -33,10 +25,8 @@ import frc.robot.commands.ManualAcquirerPiston;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
-import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.MaintainShooterRPM;
-import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.commands.AutoTurret;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.AcquirerPiston;
@@ -49,9 +39,6 @@ import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
-import frc.robot.vision.FuelCellTarget;
-import frc.robot.vision.LoadingStationTarget;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -128,7 +115,6 @@ public class RobotContainer {
         new Pose2d(3.3, -0.786, new Rotation2d(0))),
     INITIATION_LINE_TO_RIGHT_TRENCH("INITIATION_LINE_TO_RIGHT_TRENCH.wpilib.json",
         new Pose2d(3.473, -7.501, new Rotation2d(0)));
-
 
     private final String fileName;
     private final Pose2d startingPosition;
