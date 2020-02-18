@@ -66,18 +66,19 @@ public class RobotContainer {
   private final AcquirerPiston acquirerPiston = new AcquirerPiston();
   private final Compressor compressor = new Compressor();
 
-  // Joystick and JoystickButtons
+  // Joysticks and JoystickButtons
   private final Joystick leftJoystick = new Joystick(0);
   private final Joystick rightJoystick = new Joystick(1);
 
-  private JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
+  private JoystickButton driveStraight = new JoystickButton(leftJoystick, 1);
+  private JoystickButton interruptAllButton = new JoystickButton(leftJoystick, 2);
+  private JoystickButton ledModeButton = new JoystickButton(leftJoystick, 8);
+
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
   private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
-  private JoystickButton driveStraight = new JoystickButton(leftJoystick, 1);
-  private JoystickButton ledModeButton = new JoystickButton(leftJoystick, 8);
   private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 6);
   private JoystickButton activateAcquirerPiston = new JoystickButton(rightJoystick, 10);
-  private JoystickButton interruptAllButton = new JoystickButton(leftJoystick, 2);
+  private JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
 
   // XboxController and Xbox buttons
   private XboxController xboxController = new XboxController(2);
