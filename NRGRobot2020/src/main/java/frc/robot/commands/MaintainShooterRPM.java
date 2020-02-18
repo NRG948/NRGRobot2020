@@ -3,10 +3,12 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ShooterRPM;
+import frc.robot.utilities.NRGPreferences;
 
 public class MaintainShooterRPM extends CommandBase {
-  private final double goalRPM;
   private final ShooterRPM shooterRPM;
+
+  private double goalRPM;
   private Timer timer = new Timer();
   private double seconds = 20;
   private boolean setAndExit;
@@ -14,10 +16,15 @@ public class MaintainShooterRPM extends CommandBase {
   /**
    * Creates a new SetShooterRPM.
    */
-  public MaintainShooterRPM(double goalRPM, ShooterRPM shooterRPM) {
-    this.goalRPM = goalRPM;
+  public MaintainShooterRPM(ShooterRPM shooterRPM) {
+    this.goalRPM = Double.NaN;
     this.shooterRPM = shooterRPM;
     addRequirements(shooterRPM);
+  }
+
+  public MaintainShooterRPM atRpm(double goalRPM) {
+    this.goalRPM = goalRPM;
+    return this;
   }
 
   public MaintainShooterRPM forSeconds(double seconds) {
@@ -35,6 +42,9 @@ public class MaintainShooterRPM extends CommandBase {
   public void initialize() {
     timer.reset();
     timer.start();
+    if (Double.isNaN(goalRPM)) {
+      goalRPM = NRGPreferences.SHOOTER_TEST_RPM.getValue();
+    }
     shooterRPM.setGoalRPM(goalRPM);
   }
 

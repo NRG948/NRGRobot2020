@@ -53,7 +53,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
 
-  // subsystems
+  // Create subsystems
   private final AddressableLEDs leds = new AddressableLEDs();
   private final Drive drive = new Drive();
   private final Acquirer acquirer = new Acquirer();
@@ -89,10 +89,12 @@ public class RobotContainer {
   private JoystickButton xboxLeftBumper = new JoystickButton(xboxController, 5); 
   private JoystickButton xboxRightBumper = new JoystickButton(xboxController, 6);
 
-  // left/right dpad - turret, up/down dpad - hood, right trigger - shooter rpm,
-  // right stick up/down - acquirer, back button + right stick up/down - feeder,
+  // D-pad left/right - turret rotate
+  // D-pad up/down - hood up/down
+  // Xbox right trigger - manual shooter rpm
+  // Xbox right stick up/down - acquirer, back button + right stick up/down - feeder,
   
-  // commands
+  // Commands
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick, xboxController);
   private final ManualAcquirer manualAcquirer = new ManualAcquirer(acquirer, xboxController);
   private final ManualFeeder manualFeeder = new ManualFeeder(feeder, xboxController);
@@ -100,7 +102,6 @@ public class RobotContainer {
   private final ManualHood manualHood = new ManualHood(hood, xboxController);
   private final ManualAcquirerPiston manualAcquirerPiston = new ManualAcquirerPiston(acquirerPiston,
       activateAcquirerPiston);
-  private MaintainShooterRPM maintainShooterRPM = new MaintainShooterRPM(2000.0, shooterRPM);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private LEDTest ledTest = new LEDTest(leds);
   private FollowPathWeaverFile followPathTest;
@@ -189,7 +190,7 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    xboxButtonB.whenPressed(new MaintainShooterRPM(4000, shooterRPM));
+    xboxButtonB.whenPressed(new MaintainShooterRPM(shooterRPM));
     xboxLeftBumper.whenPressed(new AutoTurret(turret));
     driveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
