@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.vision.FuelCellTarget;
 import frc.robot.vision.LoadingStationTarget;
+import frc.robot.vision.VisionTarget;
 import frc.robot.Constants.RaspberryPiConstants;
 
 import org.opencv.core.Mat;
@@ -65,10 +66,10 @@ public class RaspberryPiVision extends SubsystemBase {
     }
   }
 
+  private VisionTarget currentTarget;
   private FuelCellTarget fuelCellTarget;
   private LoadingStationTarget loadingStationTarget;
   private PipelineRunner currentRunner;
-
 
   /**
    * Creates a new RaspberryPiVision.
@@ -97,17 +98,24 @@ public class RaspberryPiVision extends SubsystemBase {
   }
 
   /**
+   * returns the current vision target
+   * 
+   * @return the current vision target
+   */
+  public VisionTarget getCurrentTarget() {
+    return this.currentTarget;
+  }
+
+  /**
    * Gets the current fuel cell target.
    * 
    * @return The fuel cell target, or null if none.
    */
   public FuelCellTarget getFuelCellTarget() {
-    updateFuelCell();
     return this.fuelCellTarget;
   }
 
   public LoadingStationTarget getLoadingTarget() {
-    updateLoadingStation();
     return this.loadingStationTarget;
   }
 
@@ -134,6 +142,18 @@ public class RaspberryPiVision extends SubsystemBase {
     }
   }
 
+  private void updateCurrentTarget() {
+    updateLoadingStation();
+    updateFuelCell();
+    if (loadingStationTarget != null) {
+      currentTarget = loadingStationTarget;
+    } else if (fuelCellTarget != null) {
+      currentTarget = fuelCellTarget;
+    } else {
+      currentTarget = null;
+    }
+  }
+
   /**
    * Adds a Shuffleboard tab for the Raspberry Pi subsystem.
    */
@@ -151,8 +171,17 @@ public class RaspberryPiVision extends SubsystemBase {
     // Adds the processed video to the RaspberryPi Shuffleboard tab.
     VideoSource processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
 
-    piTab.add("Processed Video", processedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
+    piTab.add("Processed Video", processedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4,
+        3);
 
+    // Creating a list layout and add current vision target information
+    ShuffleboardLayout targetLayout = piTab.getLayout("Current Target", BuiltInLayouts.kList).withPosition(6, 0)
+        .withSize(2, 3);
+    targetLayout.addBoolean("Has target", () -> this.getCurrentTarget() != null).withWidget(BuiltInWidgets.kBooleanBox);
+    targetLayout.addNumber("Distance",
+        () -> this.currentTarget != null ? this.currentTarget.getDistanceInInches() : 0.0);
+    targetLayout.addNumber("Angle", () -> this.currentTarget != null ? this.currentTarget.getAngleInDegrees() : 0.0);
+    targetLayout.addNumber("Skew", () -> this.currentTarget != null ? this.currentTarget.getSkewInDegrees() : 0.0);
     // When running in the simulator, we'll use the default USB camera to create the
     // "Processed" video server.
     if (!RobotBase.isReal()) {
@@ -187,6 +216,6 @@ public class RaspberryPiVision extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    updateCurrentTarget();
   }
 }
