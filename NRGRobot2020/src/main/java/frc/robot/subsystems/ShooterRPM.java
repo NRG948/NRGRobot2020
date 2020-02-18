@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.utilities.MathUtil;
+import frc.robot.utilities.NRGPreferences;
 
 /**
  * Robot Subsystem that controls the rotation rate of the shooter flywheel.
@@ -23,35 +24,39 @@ import frc.robot.utilities.MathUtil;
 public class ShooterRPM extends SubsystemBase {
 
   private static final double GAIN = 0.0008;
-  private static final double MAX_RPM = 4200; // figure out actual max rpm
+  private static final double MAX_RPM = 5100; // figure out actual max rpm
   private static final double TICKS_PER_FLYWHEEL_REVOLUTION = 645;
-  private static final double NANOSECS_PER_MINUTE = 60 * 1000000000.0;
+  private static final double NANOSECS_PER_SEC = 1000 * 1000 * 1000;
+  private static final double NANOSECS_PER_MINUTE = 60 * NANOSECS_PER_SEC;
   
   private final Victor spinMotor1 = new Victor(ShooterConstants.kSpinMotor1Port);
   private final Victor spinMotor2 = new Victor(ShooterConstants.kSpinMotor2Port);
   private final Counter spinMotorEncoder = new Counter(ShooterConstants.kSpinEncoderPort);
 
-  private double goalRPM = 0;
-  private double error = 0;
-  private double previousError = 0;
+  private double goalRPM = 0;  // The desired RPM for the shooter wheels
+  private double error = 0;  // The most recent RPM error
+  private double previousError = 0;  // The RPM error from the previous feedback cycle
   private double tbh = 0; // Take-back-half value
   private double motorPower = 0;
   private double lastMotorPower;
   private double prevEncoder = 0;
-  private double previousRPM = 0;
-  private double currentRPM = 0;
+  private double currentRPM = 0;  // The most recent rotational speed of the shooter wheels
+  private double previousRPM = 0;  // The shooter wheel speed from the previous cycle
   private ArrayList<String> minMaxRPMs = new ArrayList<String>();
-  private long prevTime = 0;
   private boolean isTakeBackHalfEnabled = false;
-
+  private boolean trendingUp = true;  // True if the shooter wheel RPM has been trending upward
   private double localMaxRPM = 0;
   private double localMinRPM = Integer.MAX_VALUE;
-  private boolean trendingUp = true;
+  private long currentTime;
+  private long prevTime = 0;
+  private long prevMinMaxTime = 0;
+  private boolean turretLoggingEnabled;
  
   public ShooterRPM() {
     spinMotorEncoder.setDistancePerPulse(1 / TICKS_PER_FLYWHEEL_REVOLUTION);
     spinMotor1.setInverted(true);
     spinMotor2.setInverted(true);
+    turretLoggingEnabled = NRGPreferences.ENABLE_TURRET_LOGGING.getValue();
   }
 
   /** Sets the default command for this subsystem that runs when no other command is active. */
@@ -65,65 +70,17 @@ public class ShooterRPM extends SubsystemBase {
    * we calculate the RPM manually using Counter.getDistance(), which yields a steadier
    * measurement.
    * 
-   * WARNING: will cause innacurate results if called more than once per 20ms cycle.
+   * WARNING: will compute innacurate results if called more than once per 20ms cycle.
    */
   private void calculateCurrentRPM() {
     double currentEncoder = spinMotorEncoder.getDistance();
-    long currentTime = System.nanoTime();
+    currentTime = System.nanoTime();
     previousRPM = currentRPM;
     currentRPM = (currentEncoder - prevEncoder) / (currentTime - prevTime) * NANOSECS_PER_MINUTE;
     prevEncoder = currentEncoder;
     prevTime = currentTime;
   }
 
-  /**
-   * Adds to the list of minMax values if a new local minMax value is detected through the changes in the RPM values
-   * @param tolerance how sensitive the method should be to RPM changes
-   * @return "max" or "min" or "goal" or "stable" depending on whether the RPM just reached a 
-   * local max, a local min, the goalRPM, or none of the three
-   */
-  public String checkMinMaxRPM(double tolerance) {
-    if (trendingUp) {
-      if (currentRPM > localMaxRPM) {
-        localMaxRPM = currentRPM;
-      } else if (currentRPM < localMaxRPM - tolerance) {
-        trendingUp = false;
-        double timeInSeconds = prevTime / Math.pow(10.0, 9);
-        double localMax = localMaxRPM;
-        localMaxRPM = 0;
-        minMaxRPMs.add("max time: " + timeInSeconds + " rpm: " + localMax);
-        return "max time: " + timeInSeconds + " rpm: " + localMax;
-      }
-    } else {
-      if (currentRPM < localMinRPM) {
-        localMinRPM = currentRPM;
-      } else if (currentRPM > localMinRPM + tolerance) {
-        trendingUp = true;
-        double timeInSeconds = prevTime / Math.pow(10.0, 9);
-        double localMin = localMinRPM;
-        localMinRPM = Integer.MAX_VALUE;
-        minMaxRPMs.add("min time: " + timeInSeconds + " rpm: " + localMin);
-        return "min time: " + timeInSeconds + " rpm: " + localMin;
-      }
-    }
-    return "stable";
-  }
-
-  // Returns the array of local mins and local maxs
-  public String[] getMinMaxArray() {
-    return minMaxRPMs.toArray(new String[0]);
-  }
-
-  // Returns true if currentRPM just became equal to goalRPM
-  public boolean justReachedGoalRPM(double tolerance) {
-    return Math.abs(currentRPM - goalRPM) <= tolerance && Math.abs(previousRPM - goalRPM) > tolerance;
-  }
-
-  // Returns time in seconds
-  public double getTime() {
-    return prevTime / Math.pow(10.0, 0);
-  }
-  
   public double getActualRPM(){
     return currentRPM;
   }
@@ -156,6 +113,7 @@ public class ShooterRPM extends SubsystemBase {
         motorPower = 1;
         previousError = 1;
         tbh = 2 * guessMotorOutputForRPM(newGoalRPM) - 1;
+        prevMinMaxTime = System.nanoTime();
       } else {
         // If the goal RPM is being continuously changed from one non-zero
         // value to another, just let TBH continue to integrate as normal.
@@ -200,22 +158,69 @@ public class ShooterRPM extends SubsystemBase {
     if(isTakeBackHalfEnabled){
       updateRPM();
     }
+    if (turretLoggingEnabled) {
+      trackMinMaxRPM(30);
+    }
     updateDashBoard();
   }
 
   /** Resets the ShooterRPM subsystem to its initial state. */
   public void reset() {
     isTakeBackHalfEnabled = false;
+    prevEncoder = 0;
     spinMotorEncoder.reset();
     spinMotor1.disable();
     spinMotor2.disable();
     setGoalRPM(0);
     lastMotorPower = 0;
-    prevEncoder = 0;
-    prevTime = System.nanoTime();
   }
 
   public void disableTakeBackHalf(){
     reset();
+  }
+
+  /**
+   * Logs and adds to the list of minMax values if a new local minimum or naximum is detected in the RPM values.
+   * @param toleranceRPM how sensitive the method should be to RPM changes
+   */
+  public void trackMinMaxRPM(double toleranceRPM) {
+    if (trendingUp) {  // RPM is trending upward (or stable)
+      if (currentRPM >= localMaxRPM) {
+        localMaxRPM = currentRPM;
+      } else if (currentRPM < localMaxRPM - toleranceRPM) {  // Reversing direction?
+        trendingUp = false;
+        localMinRPM = currentRPM;
+        String s = String.format("Max rpm: %6.1f time: %5.3f", localMaxRPM, getTimeSincePrevMinMax());
+        minMaxRPMs.add(s);
+        System.out.println(s);
+      }
+    } else {  // RPM is trending downward (or stable)
+      if (currentRPM <= localMinRPM) {
+        localMinRPM = currentRPM;
+      } else if (currentRPM > localMinRPM + toleranceRPM) {  // Reversing direction?
+        trendingUp = true;
+        localMaxRPM = currentRPM;
+        String s = String.format("Min rpm: %6.1f time: %5.3f", localMinRPM, getTimeSincePrevMinMax());
+        minMaxRPMs.add(s);
+        System.out.println(s);
+      }
+    }
+  }
+
+  // Returns the array of local mins and local maxs
+  public String[] getMinMaxArray() {
+    return minMaxRPMs.toArray(new String[0]);
+  }
+
+  // Returns true if currentRPM just became equal to goalRPM
+  public boolean justReachedGoalRPM(double tolerance) {
+    return Math.abs(currentRPM - goalRPM) <= tolerance && Math.abs(previousRPM - goalRPM) > tolerance;
+  }
+
+  // Returns time (in seconds) that has elapsed since the previous RPM local minimum/maximum.
+  private double getTimeSincePrevMinMax() {
+    double deltaTime = (currentTime - prevMinMaxTime) / NANOSECS_PER_SEC;
+    prevMinMaxTime = currentTime;
+    return deltaTime;
   }
 }
