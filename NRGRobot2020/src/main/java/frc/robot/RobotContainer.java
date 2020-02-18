@@ -8,7 +8,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import frc.robot.commands.ManualDriveStraight;
@@ -40,7 +43,6 @@ import frc.robot.subsystems.ShooterRPM;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.subsystems.Turret;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -104,7 +106,6 @@ public class RobotContainer {
       activateAcquirerPiston);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private LEDTest ledTest = new LEDTest(leds);
-  private FollowPathWeaverFile followPathTest;
   private InterruptAll interruptAll = new InterruptAll(leds, drive, acquirer, feeder,
   limelightVision, turret, hood, shooterRPM, raspPi, acquirerPiston );
 
@@ -156,6 +157,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     // Configure Shuffleboard Tabs
+    this.addAutonomousShuffleboardTab();
     drive.addShuffleBoardTab();
     raspPi.addShuffleBoardTab();
     acquirer.initShuffleboard();
@@ -163,25 +165,7 @@ public class RobotContainer {
     turret.initShuffleboard();
     hood.initShuffleboard();
 
-    try {
-      followPathTest = new FollowPathWeaverFile(drive, "Test.wpilib.json");
-    } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    }
-
     compressor.start();
-    // Adds AutoPath chooser to SmartDashBoard
-    ShuffleboardTab autoTab = Shuffleboard.getTab("Auto");
-    autoPathChooser = new SendableChooser<AutoPath>();
-    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_MIDDLE.name(), AutoPath.INITIATION_LINE_TO_MIDDLE);
-    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
-    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
-    autoTab.add("autoPath", autoPathChooser);
-
-    CommandScheduler scheduler = CommandScheduler.getInstance();
-    scheduler.onCommandInitialize(command -> System.out.println(command.getName() + " init"));
-    scheduler.onCommandFinish(command -> System.out.println(command.getName() + " finished"));
   }
 
   /**
@@ -204,6 +188,22 @@ public class RobotContainer {
     driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(this.raspPi, this.drive));
     driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi));
     interruptAllButton.whenPressed(interruptAll);
+  }
+
+  /**
+   * Adds the Shuffleboard tab for autonomous selection.
+   */
+  private void addAutonomousShuffleboardTab() {
+    ShuffleboardTab autoTab = Shuffleboard.getTab("Autonomous");
+
+    // Create a list layout and add the autonomous selection widgets
+    ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList).withPosition(0, 0).withSize(6, 4);
+
+    autoPathChooser = new SendableChooser<AutoPath>();
+    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_MIDDLE.name(), AutoPath.INITIATION_LINE_TO_MIDDLE);
+    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
+    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
+    autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
   }
 
   /**
