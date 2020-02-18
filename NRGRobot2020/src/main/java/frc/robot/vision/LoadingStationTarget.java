@@ -14,7 +14,7 @@ import frc.robot.subsystems.RaspberryPiVision;
 /**
  * Add your docs here.
  */
-public class LoadingStationTarget {
+public class LoadingStationTarget implements VisionTarget{
 
     private double distance;
     private double skew;
@@ -26,16 +26,18 @@ public class LoadingStationTarget {
         this.skew = skew;
     }
 
-
-    public double getDistance() {
+    @Override
+    public double getDistanceInInches() {
         return distance;
     }
     
-    public double getAngleToTarget() {
+    @Override
+    public double getAngleInDegrees() {
         return angle;
     }
     
-    public double getSkew() {
+    @Override
+    public double getSkewInDegrees() {
         return skew;
     }
 

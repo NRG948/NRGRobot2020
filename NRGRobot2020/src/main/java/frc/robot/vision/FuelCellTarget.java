@@ -1,20 +1,28 @@
 package frc.robot.vision;
 
-import org.opencv.core.Point;
+import frc.robot.vision.VisionTarget;
 
-import edu.wpi.first.wpilibj.util.Units;
-
-public class FuelCellTarget {
+public class FuelCellTarget implements VisionTarget {
     private double distance;
     private double angle;
+
     public FuelCellTarget(double distance, double angle) {
         this.distance = distance;
         this.angle = angle;
     }
-    public double getDistanceToTarget(){
+
+    @Override
+    public double getDistanceInInches() {
         return this.distance;
     }
-    public double getAngleToTarget() {
+
+    @Override
+    public double getAngleInDegrees() {
         return this.angle;
+    }
+
+    @Override
+    public double getSkewInDegrees() {
+        return 0;
     }
 }
