@@ -1,6 +1,5 @@
 package frc.robot.subsystems;
 
-import java.io.IOException;
 import java.util.List;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -28,7 +27,6 @@ import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.commands.Delay;
-import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetStartPosition;
 
@@ -382,13 +380,39 @@ public class Drive extends SubsystemBase {
     commandsLayout.add("Drive 3 meters", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(3));
     commandsLayout.add("Follow S Curve", new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
         List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)), false));
-    commandsLayout.add("Ten ball auto", new SetStartPosition(this, new Pose2d(3.473, -7.2, new Rotation2d(0)))
-          .andThen(new FollowWaypoints(this, new Pose2d( 3.43, -7.2, new Rotation2d(0)), List.of(new Translation2d(5.068, -6.809)), new Pose2d(6.2, -7.2, new Rotation2d(Math.toRadians(-45))), false),
-                  new Delay(0.5), 
-                   new FollowWaypoints(this, new Pose2d(6.22, -7.2, new Rotation2d(Math.toRadians(-45))), List.of(new Translation2d(4.648, -4.236)), new Pose2d(4.549, -2.567, new Rotation2d(Math.toRadians(-90))), true)));
-    commandsLayout.add("INITIATION_LINE_TO_LEFT_TRENCH", new SetStartPosition(this, new Pose2d(3.3, -0.786, new Rotation2d(0)))
-          .andThen(new FollowWaypoints(this, new Pose2d( 3.3, -0.786, new Rotation2d(0)), 
-          List.of(new Translation2d(4.339,-0.86), new Translation2d(5.489, -1.651)), new Pose2d(6.243, -2.53, new Rotation2d(Math.toRadians(-90))), false)));
+    commandsLayout.add("Ten ball auto",
+     new SetStartPosition(this, new Pose2d(3.473, -7.2, new Rotation2d(0)))
+      .andThen(new FollowWaypoints(this,
+                                   // Starting pose
+                                   new Pose2d(3.43, -7.2, new Rotation2d(0)),
+                                   // Waypoints
+                                   List.of(new Translation2d(5.068, -6.809)),
+                                   // Ending pose
+                                   new Pose2d(6.2, -7.2, new Rotation2d(Math.toRadians(-45))),
+                                   // Drive forward
+                                   false),
+               new Delay(0.5), 
+               new FollowWaypoints(this,
+                                   // Starting pose
+                                   new Pose2d(6.22, -7.2, new Rotation2d(Math.toRadians(-45))),
+                                   // Waypoints
+                                   List.of(new Translation2d(4.648, -4.236)),
+                                   // Ending pose
+                                   new Pose2d(4.549, -2.567, new Rotation2d(Math.toRadians(-90))),
+                                   // Drive backward
+                                   true)));
+    commandsLayout.add("INITIATION_LINE_TO_LEFT_TRENCH",
+     new SetStartPosition(this, new Pose2d(3.3, -0.786, new Rotation2d(0)))
+      .andThen(new FollowWaypoints(this,
+                                   // Starting pose
+                                   new Pose2d( 3.3, -0.786, new Rotation2d(0)),
+                                   // Waypoint
+                                   List.of(new Translation2d(4.339,-0.86), new Translation2d(5.489, -1.651)),
+                                   // Ending pose
+                                   new Pose2d(6.243, -2.53, new Rotation2d(Math.toRadians(-90))),
+                                   // Drive forward
+                                   false)));
+
     // Add the DifferentialDrive object and encoders to a list layout in the tab.
     ShuffleboardLayout diffDriveLayout = driveTab.getLayout("Base", BuiltInLayouts.kList).
       withPosition(2, 0).
