@@ -1,19 +1,11 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utilities.NRGPreferences;
-<<<<<<< HEAD
-=======
-import frc.robot.Constants;
-import frc.robot.Robot;
->>>>>>> f8e4c5db47f846b5957c406a5aae8b9a753eab01
 import frc.robot.Constants.TurretConstants;
 
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -21,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+
 /**
  * Robot subsystem that controls the rotation of the shooter turret.
  */
@@ -115,15 +108,15 @@ public class Turret extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Turret/Distance", turretEncoder.getDistance());
-    if(pidEnabled) {
+    if (pidEnabled) {
       double currentAngle = limelightVision.getX();
       turretAngleToExecute(currentAngle);
     }
   }
 
+  /** Initializes the Shuffleboard Tab that displays debug information about the Turret subsystem. */
   public void initShuffleboard(){
     ShuffleboardTab turretTab = Shuffleboard.getTab("Turret");
-
     ShuffleboardLayout turretLayout = turretTab.getLayout("Turret", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
     turretLayout.add("Encoder", turretEncoder);
     turretPidErrorWidget = turretLayout.add("PID Position Error", 0.0);
