@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AcquirerPiston extends SubsystemBase {
     public DoubleSolenoid acquirerSolenoid = new DoubleSolenoid(2, 3);
+
     State state = State.RETRACT;
     
     public enum State {

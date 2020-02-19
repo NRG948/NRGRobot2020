@@ -1,11 +1,12 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.SparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
-
+import edu.wpi.first.wpilibj.PWMSparkMax;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -25,13 +26,13 @@ public class Acquirer extends SubsystemBase {
 
   private static final double MAX_ACQUIRER_POWER = 0.5;
 
-  private CANSparkMax acquirerMotor = new CANSparkMax(4, MotorType.kBrushless);
+  private final PWMSparkMax acquirerMotor = new PWMSparkMax(4);
 
   /** Creates a new Acquirer. */
   public Acquirer() {
   }
 
-  public void rawAcquirer(double power) {
+  public void rawAcquirer(final double power) {
     sentPower = MathUtil.clamp(power, -MAX_ACQUIRER_POWER, MAX_ACQUIRER_POWER);
     acquirerRawOutputWidget.getEntry().setDouble(sentPower);
     acquirerMotor.set(sentPower);
@@ -42,8 +43,8 @@ public class Acquirer extends SubsystemBase {
   }
 
   public void initShuffleboard() {
-    ShuffleboardTab acquirerTab = Shuffleboard.getTab("Acquirer");
-    ShuffleboardLayout acquirerLayout = acquirerTab.getLayout("Acquirer", BuiltInLayouts.kList).withPosition(0, 0)
+    final ShuffleboardTab acquirerTab = Shuffleboard.getTab("Acquirer");
+    final ShuffleboardLayout acquirerLayout = acquirerTab.getLayout("Acquirer", BuiltInLayouts.kList).withPosition(0, 0)
         .withSize(2, 4);
     acquirerRawOutputWidget = acquirerLayout.add("Raw Output", 0.0);
   }
