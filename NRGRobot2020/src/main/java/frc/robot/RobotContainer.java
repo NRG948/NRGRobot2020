@@ -37,6 +37,7 @@ import frc.robot.subsystems.AddressableLEDs;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Gearbox;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
@@ -58,6 +59,7 @@ public class RobotContainer {
   // Create subsystems
   private final AddressableLEDs leds = new AddressableLEDs();
   private final Drive drive = new Drive();
+  private final Gearbox gearbox = new Gearbox();
   private final Acquirer acquirer = new Acquirer();
   private final AcquirerPiston acquirerPiston = new AcquirerPiston();
   private final Feeder feeder = new Feeder();
@@ -76,6 +78,7 @@ public class RobotContainer {
   private JoystickButton interruptAllButton = new JoystickButton(leftJoystick, 2);
   private JoystickButton ledModeButton = new JoystickButton(leftJoystick, 8);
 
+  private JoystickButton shiftGears = new JoystickButton(rightJoystick, 1);
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
   private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
   private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 6);
@@ -177,6 +180,7 @@ public class RobotContainer {
     xboxButtonB.whenPressed(new MaintainShooterRPM(shooterRPM));
     xboxLeftBumper.whenPressed(new AutoTurret(turret));
     driveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
+    shiftGears.whenPressed(new InstantCommand(() -> { gearbox.toggleGears(); } ));
     activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(acquirerPiston));
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
       resetSensors();
