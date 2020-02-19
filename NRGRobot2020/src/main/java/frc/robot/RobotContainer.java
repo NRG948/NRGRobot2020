@@ -34,6 +34,7 @@ import frc.robot.commands.AutoTurret;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.AcquirerPiston;
 import frc.robot.subsystems.AddressableLEDs;
+import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
@@ -67,6 +68,7 @@ public class RobotContainer {
   private final RaspberryPiVision raspPi = new RaspberryPiVision();
   private final AcquirerPiston acquirerPiston = new AcquirerPiston();
   private final Compressor compressor = new Compressor();
+  private final BallCounter ballCounter = new BallCounter();
 
   // Joysticks and JoystickButtons
   private final Joystick leftJoystick = new Joystick(0);
