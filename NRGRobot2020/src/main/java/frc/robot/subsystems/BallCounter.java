@@ -61,6 +61,8 @@ public class BallCounter extends SubsystemBase {
       --ballCount;
       updateBallCountWidget();
     }
+    acquirerLastState = acquirerCurrentState;
+    feederLastState = feederCurrentState;
   }
 
   public void addShuffleboardTab() {
