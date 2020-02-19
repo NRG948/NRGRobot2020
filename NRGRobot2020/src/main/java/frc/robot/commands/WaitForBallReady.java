@@ -1,16 +1,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.BallCounter;
 
 public class WaitForBallReady extends CommandBase {
-  private Feeder feeder;
+  private BallCounter ballCounter;
   /**
    * Creates a new WaitForBallReady.
    */
-  public WaitForBallReady(Feeder feeder) {
-    this.feeder = feeder;
-    addRequirements(feeder);
+  public WaitForBallReady(BallCounter ballCounter) {
+    this.ballCounter = ballCounter;
+    addRequirements(ballCounter);
   }
 
   // Called when the command is initially scheduled.
@@ -31,6 +31,6 @@ public class WaitForBallReady extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return feeder.isBallInShootingPosition();
+    return ballCounter.isBallInShootingPosition();
   }
 }
