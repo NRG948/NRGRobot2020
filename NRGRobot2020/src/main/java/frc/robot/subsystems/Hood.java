@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 public class Hood extends SubsystemBase {
   
   private Victor hoodMotor = new Victor(TurretConstants.kHoodMotorPort);
-  private AnalogInput encoderInput = new AnalogInput(0);
+  private AnalogInput encoderInput = new AnalogInput(1);
   private AnalogEncoder hoodEncoder = new AnalogEncoder(encoderInput);
   private double sentPower;
 
