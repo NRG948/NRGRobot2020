@@ -8,6 +8,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class BallCounter extends SubsystemBase {
@@ -20,6 +25,8 @@ public class BallCounter extends SubsystemBase {
   private boolean acquirerLastState = acquirerBeamBreak.get();
   private boolean feederLastState = feederBeamBreak.get();
   private int ballCount = 3;
+  private SimpleWidget ballCountWidget;
+
   /**
    * Creates a new BallCounter.
    */
@@ -30,7 +37,7 @@ public class BallCounter extends SubsystemBase {
   /**
    * Returns true if a ball is in shooting postition
    */
-  public boolean isBallInShootingPosition(){
+  public boolean isBallInShootingPosition() {
     return feederBeamBreak.get();
   }
 
@@ -45,11 +52,28 @@ public class BallCounter extends SubsystemBase {
   public void periodic() {
     boolean acquirerCurrentState = acquirerBeamBreak.get();
     boolean feederCurrentState = feederBeamBreak.get();
-    if (acquirerCurrentState != acquirerLastState && acquirerLastState == BEAM_CONNECTED){
+    if (acquirerCurrentState != acquirerLastState && acquirerLastState == BEAM_CONNECTED) {
       ++ballCount;
+      updateBallCountWidget();
     }
-    if (feederCurrentState != feederLastState && feederLastState == BEAM_BROKEN && ballCount > 0){
+    if (feederCurrentState != feederLastState && feederLastState == BEAM_BROKEN && ballCount > 0) {
       --ballCount;
+      updateBallCountWidget();
+    }
+  }
+
+  public void addShuffleboardTab() {
+    ShuffleboardTab ballCounterTab = Shuffleboard.getTab("Ball Counter");
+    ShuffleboardLayout layout = ballCounterTab.getLayout("Ball Counter", BuiltInLayouts.kList).withPosition(0, 0)
+        .withSize(2, 3);
+    layout.addBoolean("Acquirer Beam Break", () -> acquirerBeamBreak.get());
+    layout.addBoolean("Feeder  Beam Break", () -> feederBeamBreak.get());
+    ballCountWidget = layout.add("Ball Count", ballCount);
+  }
+
+  private void updateBallCountWidget() {
+    if (ballCountWidget != null) {
+      ballCountWidget.getEntry().forceSetNumber(ballCount);
     }
   }
 }

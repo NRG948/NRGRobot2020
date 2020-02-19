@@ -166,6 +166,7 @@ public class RobotContainer {
     feeder.initShuffleboard();
     turret.initShuffleboard();
     hood.initShuffleboard();
+    ballCounter.addShuffleboardTab();
 
     compressor.start();
   }
