@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
  */
 public class Feeder extends SubsystemBase {
 
-  private DigitalInput beamBreak = new DigitalInput(8);
   private Victor feederMotor = new Victor(5);
   private SimpleWidget feederRawOutputWidget;  
 
@@ -31,10 +30,6 @@ public class Feeder extends SubsystemBase {
   public void rawFeeder(double power){
     feederRawOutputWidget.getEntry().setDouble(power);
     feederMotor.set(power);
-  }
-
-  public boolean isBallInShootingPosition(){
-    return beamBreak.get();
   }
 
   @Override

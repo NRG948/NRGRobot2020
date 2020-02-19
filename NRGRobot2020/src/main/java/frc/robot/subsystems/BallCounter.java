@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
@@ -60,20 +61,22 @@ public class BallCounter extends SubsystemBase {
       --ballCount;
       updateBallCountWidget();
     }
+    acquirerLastState = acquirerCurrentState;
+    feederLastState = feederCurrentState;
   }
 
   public void addShuffleboardTab() {
     ShuffleboardTab ballCounterTab = Shuffleboard.getTab("Ball Counter");
     ShuffleboardLayout layout = ballCounterTab.getLayout("Ball Counter", BuiltInLayouts.kList).withPosition(0, 0)
         .withSize(2, 3);
-    layout.addBoolean("Acquirer Beam Break", () -> acquirerBeamBreak.get());
-    layout.addBoolean("Feeder  Beam Break", () -> feederBeamBreak.get());
-    ballCountWidget = layout.add("Ball Count", ballCount);
+    layout.addBoolean("Acquirer Beam Break", () -> acquirerBeamBreak.get() == BEAM_CONNECTED).withWidget(BuiltInWidgets.kBooleanBox);
+    layout.addBoolean("Feeder  Beam Break", () -> feederBeamBreak.get() == BEAM_CONNECTED).withWidget(BuiltInWidgets.kBooleanBox);
+    ballCountWidget = layout.add("Ball Count", (double)ballCount);
   }
 
   private void updateBallCountWidget() {
     if (ballCountWidget != null) {
-      ballCountWidget.getEntry().forceSetNumber(ballCount);
+      ballCountWidget.getEntry().setNumber(ballCount);
     }
   }
 }
