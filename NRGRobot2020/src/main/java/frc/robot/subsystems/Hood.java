@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.AnalogEncoder;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TurretConstants;
@@ -13,6 +14,7 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 public class Hood extends SubsystemBase {
   private Victor hoodMotor = new Victor(TurretConstants.kHoodMotorPort);
+  private AnalogEncoder hoodEncoder;
   private double sentPower;
 
   private SimpleWidget rawHoodOutputWidget;
