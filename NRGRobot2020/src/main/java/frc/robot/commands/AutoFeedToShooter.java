@@ -2,23 +2,26 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Acquirer;
+import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.Feeder;
 import frc.robot.utilities.NRGPreferences;
 
 public class AutoFeedToShooter extends CommandBase {
   private Acquirer acquirer;
   private Feeder feeder;
-
+  private BallCounter ballCounter;
+  
   private double acquirerPower;
   private double feederPower;
   private boolean hasBallBeenShot;
   /**
    * Creates a new AutoFeedToShooter.
    */
-  public AutoFeedToShooter(Acquirer acquirer, Feeder feeder) {
+  public AutoFeedToShooter(Acquirer acquirer, Feeder feeder, BallCounter ballCounter) {
     this.acquirer = acquirer;
     this.feeder = feeder;
-    addRequirements(feeder, acquirer);
+    this.ballCounter = ballCounter;
+    addRequirements(feeder, acquirer, ballCounter);
   }
 
   // Called when the command is initially scheduled.
@@ -44,7 +47,7 @@ public class AutoFeedToShooter extends CommandBase {
   // Returns true when current ball has been shot and a new ball is ready.
   @Override
   public boolean isFinished() {
-    if(feeder.isBallInShootingPosition()) {
+    if(ballCounter.isBallInShootingPosition()) {
       return hasBallBeenShot;
     } else {
       hasBallBeenShot = true;
