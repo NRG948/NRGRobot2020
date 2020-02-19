@@ -5,20 +5,19 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class AcquirerPiston extends SubsystemBase {
-    public DoubleSolenoid acquirerSolenoid = new DoubleSolenoid(0, 1);
-    public AcquirerPiston() {
-    }
+    public DoubleSolenoid acquirerSolenoid = new DoubleSolenoid(2, 3);
+    State state = State.RETRACT;
     
     public enum State {
       EXTEND, RETRACT;
     }
 
-    State state = State.RETRACT;
+    public AcquirerPiston() {
+    }
 
-    public void setState() {
-      Value direction = state == State.EXTEND ? Value.kReverse : Value.kForward;
+    public void toggleState() {
       state = state == State.EXTEND ? State.RETRACT : State.EXTEND;
-      acquirerSolenoid.set(direction); 
+      acquirerSolenoid.set(state == State.EXTEND ? Value.kForward : Value.kReverse); 
     }
 
   @Override

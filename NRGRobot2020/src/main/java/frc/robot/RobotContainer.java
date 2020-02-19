@@ -24,7 +24,7 @@ import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.InterruptAll;
 import frc.robot.commands.LEDTest;
 import frc.robot.commands.ManualAcquirer;
-import frc.robot.commands.ManualAcquirerPiston;
+import frc.robot.commands.ToggleAcquirerPiston;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
@@ -59,13 +59,13 @@ public class RobotContainer {
   private final AddressableLEDs leds = new AddressableLEDs();
   private final Drive drive = new Drive();
   private final Acquirer acquirer = new Acquirer();
+  private final AcquirerPiston acquirerPiston = new AcquirerPiston();
   private final Feeder feeder = new Feeder();
   private final LimelightVision limelightVision = new LimelightVision();
   private final Turret turret = new Turret(limelightVision);
   private final Hood hood = new Hood();
   public final ShooterRPM shooterRPM = new ShooterRPM();
   private final RaspberryPiVision raspPi = new RaspberryPiVision();
-  private final AcquirerPiston acquirerPiston = new AcquirerPiston();
   private final Compressor compressor = new Compressor();
 
   // Joysticks and JoystickButtons
@@ -102,8 +102,7 @@ public class RobotContainer {
   private final ManualFeeder manualFeeder = new ManualFeeder(feeder, xboxController);
   private final ManualTurret manualTurret = new ManualTurret(turret, xboxController);
   private final ManualHood manualHood = new ManualHood(hood, xboxController);
-  private final ManualAcquirerPiston manualAcquirerPiston = new ManualAcquirerPiston(acquirerPiston,
-      activateAcquirerPiston);
+  private final ToggleAcquirerPiston manualAcquirerPiston = new ToggleAcquirerPiston(acquirerPiston);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private LEDTest ledTest = new LEDTest(leds);
   private InterruptAll interruptAll = new InterruptAll(leds, drive, acquirer, feeder,
@@ -178,6 +177,7 @@ public class RobotContainer {
     xboxButtonB.whenPressed(new MaintainShooterRPM(shooterRPM));
     xboxLeftBumper.whenPressed(new AutoTurret(turret));
     driveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
+    activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(acquirerPiston));
     resetSensorsButton.whenPressed(new InstantCommand(() -> {
       resetSensors();
     }));
