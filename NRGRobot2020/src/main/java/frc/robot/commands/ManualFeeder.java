@@ -13,8 +13,7 @@ public class ManualFeeder extends CommandBase {
   public ManualFeeder(Feeder feeder, final XboxController xboxController) {
     this.feeder = feeder;
     this.m_xboxController = xboxController;
-    addRequirements(feeder);    
-
+    addRequirements(feeder);
   }
 
   // Called when the command is initially scheduled.
@@ -25,8 +24,10 @@ public class ManualFeeder extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_xboxController.getBackButton()) {
-      feeder.rawFeeder(m_xboxController.getY(Hand.kRight)*0.5);
+    if (m_xboxController.getBackButton()) {
+      feeder.rawFeeder(m_xboxController.getY(Hand.kRight) * 0.5); 
+    } else {
+      feeder.rawFeeder(0);
     }
   }
 

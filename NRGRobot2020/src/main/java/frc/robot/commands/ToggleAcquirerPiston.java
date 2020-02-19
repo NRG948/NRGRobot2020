@@ -1,20 +1,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import frc.robot.subsystems.AcquirerPiston;
-import frc.robot.subsystems.AcquirerPiston.State;
 
-public class ManualAcquirerPiston extends CommandBase {
-  private State state;
+public class ToggleAcquirerPiston extends CommandBase {
+
   private AcquirerPiston acquirerPiston;
-  private JoystickButton joystickButton;
+
   /**
-   * Creates a new ManualAcquirerPiston.
+   * Creates a new ToggleAcquirerPiston.
    */
-  public ManualAcquirerPiston(AcquirerPiston acquirerPiston, JoystickButton joystickButton) {
+  public ToggleAcquirerPiston(AcquirerPiston acquirerPiston) {
     this.acquirerPiston = acquirerPiston;
-    this.joystickButton = joystickButton;
     addRequirements(acquirerPiston);
   }
 
@@ -26,9 +23,7 @@ public class ManualAcquirerPiston extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (joystickButton.get()) {
-      acquirerPiston.setState();
-    }
+      acquirerPiston.toggleState();
   }
 
   // Called once the command ends or is interrupted.
@@ -39,6 +34,6 @@ public class ManualAcquirerPiston extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
