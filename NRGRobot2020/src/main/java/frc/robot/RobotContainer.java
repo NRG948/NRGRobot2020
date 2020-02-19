@@ -102,7 +102,6 @@ public class RobotContainer {
   private final ManualFeeder manualFeeder = new ManualFeeder(feeder, xboxController);
   private final ManualTurret manualTurret = new ManualTurret(turret, xboxController);
   private final ManualHood manualHood = new ManualHood(hood, xboxController);
-  private final ToggleAcquirerPiston manualAcquirerPiston = new ToggleAcquirerPiston(acquirerPiston);
   private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
   private LEDTest ledTest = new LEDTest(leds);
   private InterruptAll interruptAll = new InterruptAll(leds, drive, acquirer, feeder,
@@ -149,7 +148,6 @@ public class RobotContainer {
     feeder.setDefaultCommand(manualFeeder);
     turret.setDefaultCommand(manualTurret);
     hood.setDefaultCommand(manualHood);
-    acquirerPiston.setDefaultCommand(manualAcquirerPiston);
     // leds.setDefaultCommand(ledTest);
 
     // Configure the button bindings
