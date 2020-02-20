@@ -180,7 +180,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     xboxButtonB.whenPressed(new MaintainShooterRPM(shooterRPM));
-    xboxLeftBumper.whenPressed(new AutoTurret(turret, limelightVision).withMaxPower(0.5));
+    xboxLeftBumper.whenPressed(new AutoTurret(turret, limelightVision));
     xboxRightBumper.whenPressed(new AutoShootSequence(3000, shooterRPM, turret, feeder, acquirer, ballCounter));
     driveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
     shiftGears.whenPressed(new InstantCommand(() -> { gearbox.toggleGears(); } ));
