@@ -19,6 +19,7 @@ import frc.robot.commands.WaitForMinRPM;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
 import frc.robot.subsystems.Turret;
 
@@ -29,12 +30,12 @@ public class AutoShootSequence extends SequentialCommandGroup {
   /**
    * Creates a new ShootAtMinRPM.
    */
-  public AutoShootSequence(double rpm, ShooterRPM shooterRPM, Turret turret, Feeder feeder, Acquirer acquirer, BallCounter ballCounter) {
+  public AutoShootSequence(double rpm, ShooterRPM shooterRPM, Turret turret, Feeder feeder, Acquirer acquirer, BallCounter ballCounter, LimelightVision limelightVision) {
 
     super( 
       // Parallel, Raise a close to target and start Turret PID.
-      new SetApproximateShooterRPM(rpm * .9, shooterRPM)
-        // .alongWith(new AutoTurret(turret))
+      new SetApproximateShooterRPM(rpm , shooterRPM)
+        .alongWith(new AutoTurret(turret, limelightVision))
         .andThen(new WaitForBallReady(ballCounter))
       // Start ramping up rpm
         .andThen(new InstantCommand(() -> { shooterRPM.setFlyWheel(1); }))
@@ -42,6 +43,15 @@ public class AutoShootSequence extends SequentialCommandGroup {
         .andThen(new WaitForMinRPM(rpm, shooterRPM))
       // Release Ball
         .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
+      // Are you at target rpm?
+        .andThen(new WaitForMinRPM(rpm, shooterRPM))
+      // Release Ball
+        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
+      // Are you at target rpm?
+        .andThen(new WaitForMinRPM(rpm, shooterRPM))
+      // Release Ball
+        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
+
       // Feed balls through indexer
     );
   }
