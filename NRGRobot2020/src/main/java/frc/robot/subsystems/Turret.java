@@ -30,6 +30,7 @@ public class Turret extends SubsystemBase {
 
   private SimpleWidget turretPidErrorWidget;
   private SimpleWidget turretRawOutputWidget;
+  private SimpleWidget turretPIDEnabledWidget;
   private boolean pidEnabled = false;
 
   private LimelightVision limelightVision;
@@ -61,6 +62,7 @@ public class Turret extends SubsystemBase {
     this.turretPIDController.setTolerance(tolerance);
 
     pidEnabled = true;
+    System.out.println("Turret Init");
   }
 
   /**
@@ -81,11 +83,11 @@ public class Turret extends SubsystemBase {
    */
   public void rawTurret(double power){
     int encoderTicks = turretEncoder.get();
-    turretRawOutputWidget.getEntry().setDouble(power);
     //Prevent the turret from turning past hard stops
     if (encoderTicks >= MAX_ENCODER_VALUE && power > 0 || encoderTicks < MIN_ENCODER_VALUE && power < 0){
       power = 0;
     }
+    turretRawOutputWidget.getEntry().setDouble(power);
     turretMotor.set(power);
   }
 
@@ -109,7 +111,9 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Turret/Distance", turretEncoder.getDistance());
+    turretPIDEnabledWidget.getEntry().setBoolean(pidEnabled);
+    System.out.println(pidEnabled);
+    System.out.println("x: "+limelightVision.getX());
     if (pidEnabled) {
       double currentAngle = limelightVision.getX();
       turretAngleToExecute(currentAngle);
@@ -123,5 +127,6 @@ public class Turret extends SubsystemBase {
     turretLayout.add("Encoder", turretEncoder);
     turretPidErrorWidget = turretLayout.add("PID Position Error", 0.0);
     turretRawOutputWidget = turretLayout.add("Raw Output", 0.0);
+    turretPIDEnabledWidget = turretLayout.add("PIDEnabled", false);
   }
 }

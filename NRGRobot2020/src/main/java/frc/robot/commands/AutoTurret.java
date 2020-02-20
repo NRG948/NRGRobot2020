@@ -45,6 +45,6 @@ public class AutoTurret extends CommandBase {
   // Command always exits immediately but leaves PID running.
   @Override
   public boolean isFinished() {
-    return turret.turretAngleOnTarget();
+    return true;
   }
 }
