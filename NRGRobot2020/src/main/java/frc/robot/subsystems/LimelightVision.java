@@ -12,7 +12,7 @@ public class LimelightVision extends SubsystemBase {
   public static final String kCustomAuto = "My Auto";
   public String m_autoSelected;
   public final SendableChooser<String> m_chooser = new SendableChooser<>();
-  public final double visionAngle = 0; // limelight mounting angle
+  public final double visionAngle = 22; // limelight mounting angle
   public final double h2 = 83.75; // height of high target
   public final double h1 = 38; // mounting height
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
@@ -25,21 +25,9 @@ public class LimelightVision extends SubsystemBase {
   NetworkTableEntry thor = table.getEntry("thor");
   NetworkTableEntry tvert = table.getEntry("tver");
   // read values periodically
-  boolean averageDistancebool = false;
-  double x = tx.getDouble(0.0);
-  double y = ty.getDouble(0.0);
-  double area = ta.getDouble(0.0);
-  double skew = ts.getDouble(0.0);
-  double z = tshort.getDouble(0.0);
-  double tLong = tlong.getDouble(0.0);
-  double width = thor.getDouble(0.0);
-  double height = tvert.getDouble(0.0);
-  double distanceUsingTshort = (4822 / z) - 5.0664;
-  double distanceTLong = (-0.024 + Math.sqrt(-0.0148 * tLong + 1.2543432)) / 0.0074;
-  double AngledDistance = Math.sqrt(Math.pow(distanceUsingTshort, 2) + Math.pow(distanceTLong, 2));
-  double distance = (h2 - h1) / Math.tan(Math.toRadians(visionAngle + y));
-  double average = (distanceUsingTshort + distance) / 2;
-  double distanceMax = 0;
+
+  double distanceUsingTshort = (4822 / tshort.getDouble(0.0)) - 5.0664; //Keeping this because it was hard to figure out
+
 
   private boolean ledToggle = false;
   /**
@@ -63,39 +51,33 @@ public class LimelightVision extends SubsystemBase {
     ledToggle = !ledToggle;
     table.getEntry("ledMode").setNumber(ledToggle ? 3 : 1);
   }
-
+  /**
+   * Returns the horizontal angle to the target.
+   * 
+   * @return The horizontal angle to the target with positive being counterclockwise
+   */
   public double getX() {
-    return x;
+    return tx.getDouble(0); 
   }
 
   public double getDistance() {
-    return distance;
+    return (h2 - h1) / Math.tan(Math.toRadians(visionAngle + ty.getDouble(0)));
   }
 
   public double getWidth() {
-    return width;
+    return thor.getDouble(0.0);
   }
 
   public double getHeight() {
-    return height;
+    return tvert.getDouble(0.0);
   }
 
   public double getSkew() {
-    return skew;
+    return ts.getDouble(0.0);
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("LimelightX", x);
-    SmartDashboard.putNumber("LimelightY", y);
-    SmartDashboard.putNumber("LimelightArea", area);
-    SmartDashboard.putNumber("LimelightSkew", skew);
-    SmartDashboard.putNumber("Tshort", z);
-    SmartDashboard.putNumber("DistanceUsingTshort", distanceUsingTshort);
-    SmartDashboard.putNumber("AverageDistance", average);
-    SmartDashboard.putNumber("LimeLightDistance", distance);
-    SmartDashboard.putNumber("Tlong", distanceTLong);
-    SmartDashboard.putNumber("AngledDistance", AngledDistance);
     // post to smart dashboard periodically
   }
 }

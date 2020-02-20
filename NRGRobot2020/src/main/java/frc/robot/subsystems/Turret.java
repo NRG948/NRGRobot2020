@@ -1,18 +1,19 @@
 package frc.robot.subsystems;
 
+import edu.wpi.cscore.HttpCamera;
+import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.Constants.TurretConstants;
 
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 /**
  * Robot subsystem that controls the rotation of the shooter turret.
@@ -28,9 +29,6 @@ public class Turret extends SubsystemBase {
   private PIDController turretPIDController;
   private double maxPower;
 
-  private SimpleWidget turretPidErrorWidget;
-  private SimpleWidget turretRawOutputWidget;
-  private SimpleWidget turretPIDEnabledWidget;
   private boolean pidEnabled = false;
 
   private LimelightVision limelightVision;
@@ -42,6 +40,10 @@ public class Turret extends SubsystemBase {
     this.limelightVision = limelightVision;
     turretMotor.setInverted(false);
     turretEncoder.setDistancePerPulse(0.027);
+  }
+
+  public void resetHeading(){
+    turretEncoder.reset();
   }
 
   /**
@@ -71,9 +73,7 @@ public class Turret extends SubsystemBase {
    * @param limelightAngleX from limelight is used to calculate power
    */
   public void turretAngleToExecute(double limelightAngleX) {
-    turretPidErrorWidget.getEntry().setDouble(turretPIDController.getPositionError());
     double currentPower = this.turretPIDController.calculate(limelightAngleX) * maxPower;
-    SmartDashboard.putNumber("Turret/power", this.turretPIDController.calculate(limelightAngleX));
     rawTurret(currentPower);
   }
 
@@ -87,7 +87,6 @@ public class Turret extends SubsystemBase {
     if (encoderTicks >= MAX_ENCODER_VALUE && power > 0 || encoderTicks < MIN_ENCODER_VALUE && power < 0){
       power = 0;
     }
-    turretRawOutputWidget.getEntry().setDouble(power);
     turretMotor.set(power);
   }
 
@@ -107,26 +106,26 @@ public class Turret extends SubsystemBase {
     this.turretMotor.set(0);
     this.turretPIDController = null;
     pidEnabled = false;
+    System.out.println("Turret End");
   }
 
   @Override
   public void periodic() {
-    turretPIDEnabledWidget.getEntry().setBoolean(pidEnabled);
-    System.out.println(pidEnabled);
-    System.out.println("x: "+limelightVision.getX());
-    if (pidEnabled) {
-      double currentAngle = limelightVision.getX();
-      turretAngleToExecute(currentAngle);
-    }
   }
 
   /** Initializes the Shuffleboard Tab that displays debug information about the Turret subsystem. */
   public void initShuffleboard(){
     ShuffleboardTab turretTab = Shuffleboard.getTab("Turret");
-    ShuffleboardLayout turretLayout = turretTab.getLayout("Turret", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
+    ShuffleboardLayout turretLayout = turretTab.getLayout("Turret", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 5);
     turretLayout.add("Encoder", turretEncoder);
-    turretPidErrorWidget = turretLayout.add("PID Position Error", 0.0);
-    turretRawOutputWidget = turretLayout.add("Raw Output", 0.0);
-    turretPIDEnabledWidget = turretLayout.add("PIDEnabled", false);
+    turretLayout.addNumber("PID Position Error",() -> (turretPIDController!=null)? turretPIDController.getPositionError(): 0.0);
+    turretLayout.addNumber("Raw Output", () -> (turretMotor.get()));
+    turretLayout.addBoolean("PIDEnabled", () -> (pidEnabled));
+    turretLayout.addNumber("Limelight x", () -> (limelightVision.getX()));
+
+    VideoSource processedVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream/mjpg");
+
+    turretTab.add("Processed Video", processedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4,
+        3);
   }
 }
