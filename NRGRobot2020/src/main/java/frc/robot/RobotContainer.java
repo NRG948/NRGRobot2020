@@ -19,6 +19,7 @@ import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualHood;
 import frc.robot.commandSequences.AutoDriveToFuelCell;
 import frc.robot.commandSequences.AutoDriveToLoadingStation;
+import frc.robot.commandSequences.AutoShootSequence;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.InterruptAll;
@@ -179,7 +180,8 @@ public class RobotContainer {
    */
   private void configureButtonBindings() {
     xboxButtonB.whenPressed(new MaintainShooterRPM(shooterRPM));
-    xboxLeftBumper.whenPressed(new AutoTurret(turret));
+    xboxLeftBumper.whenPressed(new AutoTurret(turret).withMaxPower(0.3));
+    xboxRightBumper.whenPressed(new AutoShootSequence(3000, shooterRPM, turret, feeder, acquirer, ballCounter));
     driveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
     shiftGears.whenPressed(new InstantCommand(() -> { gearbox.toggleGears(); } ));
     activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(acquirerPiston));

@@ -34,7 +34,7 @@ public class AutoShootSequence extends SequentialCommandGroup {
     super( 
       // Parallel, Raise a close to target and start Turret PID.
       new SetApproximateShooterRPM(rpm * .9, shooterRPM)
-        .alongWith(new AutoTurret(turret))
+        // .alongWith(new AutoTurret(turret))
         .andThen(new WaitForBallReady(ballCounter))
       // Start ramping up rpm
         .andThen(new InstantCommand(() -> { shooterRPM.setFlyWheel(1); }))

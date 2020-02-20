@@ -21,7 +21,7 @@ public class Turret extends SubsystemBase {
 
   // TODO: min and max values need to be figured out; the values below are fictious values.
   private static final double MIN_ENCODER_VALUE = 0;
-  private static final double MAX_ENCODER_VALUE = 1024;
+  private static final double MAX_ENCODER_VALUE = 4900;
 
   private final Victor turretMotor = new Victor(TurretConstants.kTurretMotorPort); // Change back to victor when we get the actual robot
   private final Encoder turretEncoder = new Encoder(TurretConstants.kTurretEncoderPorts[0], TurretConstants.kTurretEncoderPorts[1]);
@@ -39,7 +39,8 @@ public class Turret extends SubsystemBase {
    */
   public Turret(LimelightVision limelightVision) {
     this.limelightVision = limelightVision;
-    turretMotor.setInverted(true);
+    turretMotor.setInverted(false);
+    turretEncoder.setDistancePerPulse(0.027);
   }
 
   /**
@@ -70,6 +71,7 @@ public class Turret extends SubsystemBase {
   public void turretAngleToExecute(double limelightAngleX) {
     turretPidErrorWidget.getEntry().setDouble(turretPIDController.getPositionError());
     double currentPower = this.turretPIDController.calculate(limelightAngleX) * maxPower;
+    SmartDashboard.putNumber("Turret/power", this.turretPIDController.calculate(limelightAngleX));
     rawTurret(currentPower);
   }
 
@@ -81,9 +83,9 @@ public class Turret extends SubsystemBase {
     int encoderTicks = turretEncoder.get();
     turretRawOutputWidget.getEntry().setDouble(power);
     //Prevent the turret from turning past hard stops
-    // if (encoderTicks >= MAX_ENCODER_VALUE && power > 0 || encoderTicks < MIN_ENCODER_VALUE && power < 0){
-    //   power = 0;
-    // }
+    if (encoderTicks >= MAX_ENCODER_VALUE && power > 0 || encoderTicks < MIN_ENCODER_VALUE && power < 0){
+      power = 0;
+    }
     turretMotor.set(power);
   }
 

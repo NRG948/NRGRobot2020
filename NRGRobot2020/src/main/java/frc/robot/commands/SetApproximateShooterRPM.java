@@ -10,9 +10,9 @@ public class SetApproximateShooterRPM extends CommandBase {
   /**
    * Creates a new SetShooterApproximateRPM.
    */
-  public SetApproximateShooterRPM(double rpm, ShooterRPM shooterRpm) {
+  public SetApproximateShooterRPM(double rpm, ShooterRPM shooterRPM) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(shooterRpm);
+    addRequirements(shooterRPM);
     this.rpm = rpm;
     this.shooterRPM = shooterRPM;
   }

@@ -24,7 +24,7 @@ public class Acquirer extends SubsystemBase {
   private double sentPower;
   private SimpleWidget acquirerRawOutputWidget;
 
-  private static final double MAX_ACQUIRER_POWER = 0.5;
+  private static final double MAX_ACQUIRER_POWER = 1;
 
   private final PWMSparkMax acquirerMotor = new PWMSparkMax(4);
 
