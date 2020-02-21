@@ -20,6 +20,7 @@ public class LimelightVision extends SubsystemBase {
   NetworkTableEntry ty = table.getEntry("ty");
   NetworkTableEntry ta = table.getEntry("ta");
   NetworkTableEntry ts = table.getEntry("ts");
+  NetworkTableEntry tv = table.getEntry("tv");
   NetworkTableEntry tshort = table.getEntry("tshort");
   NetworkTableEntry tlong = table.getEntry("tlong");
   NetworkTableEntry thor = table.getEntry("thor");
@@ -74,6 +75,10 @@ public class LimelightVision extends SubsystemBase {
 
   public double getSkew() {
     return ts.getDouble(0.0);
+  }
+
+  public double getTv(){
+    return tv.getDouble(0.0);
   }
 
   @Override

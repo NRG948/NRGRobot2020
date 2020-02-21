@@ -9,37 +9,38 @@ public class ManualTurret extends CommandBase {
   /**
    * Creates a new ManualTurret.
    */
-  final XboxController m_xboxController;
-  final Turret m_turret;
+  final XboxController xboxController;
+  final Turret turret;
   private double power;
 
   ; 
 
   public ManualTurret(Turret turret, XboxController xboxController) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.m_xboxController = xboxController;
-    this.m_turret = turret;
-    addRequirements(m_turret);
+    this.xboxController = xboxController;
+    this.turret = turret;
+    addRequirements(turret);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    turret.turretAngleEnd();
     power = 0;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_xboxController.getPOV() == 90){
+    if(xboxController.getPOV() == 90){
       power = NRGPreferences.TURRET_MOTOR_POWER.getValue();
     }
-    else if(m_xboxController.getPOV() == 270){
+    else if(xboxController.getPOV() == 270){
       power = -NRGPreferences.TURRET_MOTOR_POWER.getValue();
     } else {
       power = 0;
     }
-    m_turret.rawTurret(power);
+    turret.rawTurret(power);
   }
 
   // Called once the command ends or is interrupted.

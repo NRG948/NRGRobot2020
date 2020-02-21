@@ -4,11 +4,13 @@ import edu.wpi.cscore.HttpCamera;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.Constants.TurretConstants;
-
+import frc.robot.commands.ManualTurret;
+import frc.robot.commands.TurnTurretToAngle;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -22,22 +24,24 @@ public class Turret extends SubsystemBase {
 
   // TODO: min and max values need to be figured out; the values below are fictious values.
   private static final double MIN_ENCODER_VALUE = 0;
-  private static final double MAX_ENCODER_VALUE = 4900;
+  private static final double MAX_ENCODER_VALUE = 135;
 
   private final Victor turretMotor = new Victor(TurretConstants.kTurretMotorPort); // Change back to victor when we get the actual robot
   private final Encoder turretEncoder = new Encoder(TurretConstants.kTurretEncoderPorts[0], TurretConstants.kTurretEncoderPorts[1]);
   private PIDController turretPIDController;
   private double maxPower;
+  private XboxController xboxController;
 
-  private boolean pidEnabled = false;
+  private boolean continuousPID = false;
 
   private LimelightVision limelightVision;
 
   /**
    * Creates the Turret subsystem.
    */
-  public Turret(LimelightVision limelightVision) {
+  public Turret(LimelightVision limelightVision, XboxController xboxController) {
     this.limelightVision = limelightVision;
+    this.xboxController = xboxController;
     turretMotor.setInverted(false);
     turretEncoder.setDistancePerPulse(0.027);
   }
@@ -46,13 +50,17 @@ public class Turret extends SubsystemBase {
     turretEncoder.reset();
   }
 
+  public double getHeading(){
+    return turretEncoder.getDistance();
+  }
+
   /**
    * Initializes PID controller for turret.
    * 
    * @param desiredAngleX
    * @param tolerance
    */
-  public void turretAnglePIDInit(double desiredAngleX, double maxPower, double tolerance) {
+  public void turretAnglePIDInit(double desiredAngleX, double maxPower, double tolerance, boolean continuousPID) {
     this.maxPower = maxPower;
 
     double kP = NRGPreferences.TURRET_P_TERM.getValue();
@@ -63,7 +71,7 @@ public class Turret extends SubsystemBase {
     this.turretPIDController.setSetpoint(desiredAngleX);
     this.turretPIDController.setTolerance(tolerance);
 
-    pidEnabled = true;
+    this.continuousPID = continuousPID;
     System.out.println("Turret Init");
   }
 
@@ -82,9 +90,9 @@ public class Turret extends SubsystemBase {
    * @param power
    */
   public void rawTurret(double power){
-    int encoderTicks = turretEncoder.get();
+    double encoderAngle = turretEncoder.getDistance();
     //Prevent the turret from turning past hard stops
-    if (encoderTicks >= MAX_ENCODER_VALUE && power > 0 || encoderTicks < MIN_ENCODER_VALUE && power < 0){
+    if (encoderAngle >= MAX_ENCODER_VALUE && power > 0 || encoderAngle < MIN_ENCODER_VALUE && power < 0){
       power = 0;
     }
     turretMotor.set(power);
@@ -103,14 +111,18 @@ public class Turret extends SubsystemBase {
    * Stops the turretMotor at the end of a turret command.
    */
   public void turretAngleEnd() {
-    this.turretMotor.set(0);
+    this.turretMotor.stopMotor();
     this.turretPIDController = null;
-    pidEnabled = false;
+    continuousPID = false;
     System.out.println("Turret End");
   }
 
   @Override
   public void periodic() {
+    if(continuousPID){
+      double currentAngle = limelightVision.getX();
+      this.turretAngleToExecute(currentAngle);
+    }
   }
 
   /** Initializes the Shuffleboard Tab that displays debug information about the Turret subsystem. */
@@ -120,8 +132,10 @@ public class Turret extends SubsystemBase {
     turretLayout.add("Encoder", turretEncoder);
     turretLayout.addNumber("PID Position Error",() -> (turretPIDController!=null)? turretPIDController.getPositionError(): 0.0);
     turretLayout.addNumber("Raw Output", () -> (turretMotor.get()));
-    turretLayout.addBoolean("PIDEnabled", () -> (pidEnabled));
+    turretLayout.addBoolean("ContinuousPID", () -> (continuousPID));
     turretLayout.addNumber("Limelight x", () -> (limelightVision.getX()));
+    turretLayout.add("Manual turret", new ManualTurret(this, xboxController));
+    turretLayout.add("Turret turn to angle", new TurnTurretToAngle(this, 135));
 
     VideoSource processedVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream/mjpg");
 

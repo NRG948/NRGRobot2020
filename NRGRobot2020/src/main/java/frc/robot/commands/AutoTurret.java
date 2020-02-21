@@ -35,25 +35,28 @@ public class AutoTurret extends CommandBase {
     if (useDefaultMaxPower) {
       maxPower = NRGPreferences.TURRET_MOTOR_POWER.getValue();
     }
-    turret.turretAnglePIDInit(0, maxPower, 1);
+    turret.turretAnglePIDInit(0, maxPower, 1, true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double currentAngle = limelightVision.getX();
-    turret.turretAngleToExecute(currentAngle);
+    // double currentAngle = limelightVision.getX();
+    // turret.turretAngleToExecute(currentAngle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    turret.turretAngleEnd();
+    if(interrupted || (limelightVision.getTv() != 1)){
+      turret.turretAngleEnd();
+    }
   }
 
   // Command always exits immediately but leaves PID running.
   @Override
   public boolean isFinished() {
-    return turret.turretAngleOnTarget();
+    return true;
+    // return turret.turretAngleOnTarget();
   }
 }

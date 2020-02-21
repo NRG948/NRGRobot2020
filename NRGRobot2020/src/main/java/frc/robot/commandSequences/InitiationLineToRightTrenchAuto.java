@@ -6,21 +6,34 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.AcquireNumberOfBalls;
+import frc.robot.commands.AutoFeedToShooter;
 import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetStartPosition;
+import frc.robot.commands.ToggleAcquirerPiston;
+import frc.robot.commands.TurnTurretToAngle;
+import frc.robot.subsystems.Acquirer;
+import frc.robot.subsystems.AcquirerPiston;
+import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.LimelightVision;
+import frc.robot.subsystems.ShooterRPM;
+import frc.robot.subsystems.Turret;
 
 /**
- * Autonomous command sequence moving the robot from the initiation line to
- * the right trench, and then into shooting position.
+ * Autonomous command sequence moving the robot from the initiation line to the
+ * right trench, and then into shooting position.
  */
 public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
   /**
    * Creates a new InitiationLineToRightTrenchAuto.
    */
-  public InitiationLineToRightTrenchAuto(Drive drive) {
-    super(new SetStartPosition(drive, new Pose2d(3.473, -7.2, new Rotation2d(0))),
+  public InitiationLineToRightTrenchAuto(Drive drive, Acquirer acquirer, Feeder feeder, BallCounter ballCounter,
+      ShooterRPM shooterRPM, Turret turret, LimelightVision limelightVision, AcquirerPiston acquirerPiston) {
+    super(new SetStartPosition(drive, new Pose2d(3.473, -7.2, new Rotation2d(0))), 
+          new ToggleAcquirerPiston(acquirerPiston), 
           new FollowWaypoints(drive,
                               // Starting pose
                               new Pose2d(3.43, -7.2, new Rotation2d(0)),
@@ -29,16 +42,18 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
                               // Ending pose
                               new Pose2d(6.2, -7.2, new Rotation2d(Math.toRadians(-45))),
                               // Drive forward
-                              false),
-          new Delay(0.5), 
+                              false)
+            .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter, 2)), 
           new FollowWaypoints(drive,
                               // Starting pose
                               new Pose2d(6.22, -7.2, new Rotation2d(Math.toRadians(-45))),
                               // Waypoints
                               List.of(new Translation2d(4.648, -4.236)),
                               // Ending pose
-                              new Pose2d(4.549, -2.567, new Rotation2d(Math.toRadians(-90))),
+                              new Pose2d(4.549, -2.567, new Rotation2d(Math.toRadians(-45))),
                               // Drive backward
-                              true));
+                              true)
+            .alongWith(new TurnTurretToAngle(turret, 135)),
+          new AutoShootSequence(2000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
   }
 }

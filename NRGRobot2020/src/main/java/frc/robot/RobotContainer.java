@@ -20,6 +20,7 @@ import frc.robot.commands.ManualHood;
 import frc.robot.commandSequences.AutoDriveToFuelCell;
 import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
+import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.InterruptAll;
@@ -57,22 +58,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-
-  // Create subsystems
-  private final AddressableLEDs leds = new AddressableLEDs();
-  private final Drive drive = new Drive();
-  private final Gearbox gearbox = new Gearbox();
-  private final Acquirer acquirer = new Acquirer();
-  private final AcquirerPiston acquirerPiston = new AcquirerPiston();
-  private final Feeder feeder = new Feeder();
-  private final LimelightVision limelightVision = new LimelightVision();
-  private final Turret turret = new Turret(limelightVision);
-  private final Hood hood = new Hood();
-  public final ShooterRPM shooterRPM = new ShooterRPM();
-  private final RaspberryPiVision raspPi = new RaspberryPiVision();
-  private final Compressor compressor = new Compressor();
-  private final BallCounter ballCounter = new BallCounter();
-
+  
   // Joysticks and JoystickButtons
   private final Joystick leftJoystick = new Joystick(0);
   private final Joystick rightJoystick = new Joystick(1);
@@ -102,6 +88,21 @@ public class RobotContainer {
   // Xbox right trigger - manual shooter rpm
   // Xbox right stick up/down - acquirer, back button + right stick up/down - feeder,
   
+  // Create subsystems
+  private final AddressableLEDs leds = new AddressableLEDs();
+  private final Drive drive = new Drive();
+  private final Gearbox gearbox = new Gearbox();
+  private final Acquirer acquirer = new Acquirer();
+  private final AcquirerPiston acquirerPiston = new AcquirerPiston();
+  private final Feeder feeder = new Feeder();
+  private final LimelightVision limelightVision = new LimelightVision();
+  private final Turret turret = new Turret(limelightVision, xboxController);
+  private final Hood hood = new Hood();
+  public final ShooterRPM shooterRPM = new ShooterRPM();
+  private final RaspberryPiVision raspPi = new RaspberryPiVision();
+  private final Compressor compressor = new Compressor();
+  private final BallCounter ballCounter = new BallCounter();
+
   // Commands
   private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick, xboxController);
   private final ManualAcquirer manualAcquirer = new ManualAcquirer(acquirer, xboxController);
@@ -152,7 +153,7 @@ public class RobotContainer {
     shooterRPM.setDefaultCommand(manualShooter);
     acquirer.setDefaultCommand(manualAcquirer);
     feeder.setDefaultCommand(manualFeeder);
-    turret.setDefaultCommand(manualTurret);
+    // turret.setDefaultCommand(manualTurret);
     hood.setDefaultCommand(manualHood);
     // leds.setDefaultCommand(ledTest);
 
@@ -211,6 +212,7 @@ public class RobotContainer {
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    autoLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToRightTrenchAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
   }
 
   /**

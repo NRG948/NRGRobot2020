@@ -382,7 +382,7 @@ public class Drive extends SubsystemBase {
     commandsLayout.add("Drive 3 meters", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(3));
     commandsLayout.add("Follow S Curve", new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
         List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)), false));
-    commandsLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToRightTrenchAuto(this));
+    // commandsLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToRightTrenchAuto(this));
     commandsLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToLeftTrenchAuto(this));
 
     // Add the DifferentialDrive object and encoders to a list layout in the tab.

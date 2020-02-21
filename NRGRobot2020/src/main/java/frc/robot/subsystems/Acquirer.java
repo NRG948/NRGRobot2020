@@ -48,4 +48,8 @@ public class Acquirer extends SubsystemBase {
         .withSize(2, 4);
     acquirerRawOutputWidget = acquirerLayout.add("Raw Output", 0.0);
   }
+
+public void stop() {
+  acquirerMotor.stopMotor();
+}
 }
