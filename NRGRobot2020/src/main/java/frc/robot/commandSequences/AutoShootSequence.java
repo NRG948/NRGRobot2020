@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoFeedToShooter;
 import frc.robot.commands.AutoTurret;
+import frc.robot.commands.DisableShooterRPM;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.SetApproximateShooterRPM;
 import frc.robot.commands.WaitForBallReady;
@@ -60,6 +61,7 @@ public class AutoShootSequence extends SequentialCommandGroup {
         .andThen(new WaitForMinRPM(rpm, shooterRPM))
         // Release Ball
         .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
+        .andThen(new DisableShooterRPM(shooterRPM))
     );
   }
 }
