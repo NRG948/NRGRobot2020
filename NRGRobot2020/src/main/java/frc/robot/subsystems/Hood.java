@@ -55,7 +55,7 @@ public class Hood extends SubsystemBase {
   @Override
   public void periodic() {
     rawHoodOutputWidget.getEntry().setDouble(hoodEncoder.get());
-    distanceHoodOutputWidget.getEntry().setDouble(hoodEncoder.getDistance());
+    distanceHoodOutputWidget.getEntry().setDouble(getPosition());
     // This method will be called once per scheduler run
   }
 
