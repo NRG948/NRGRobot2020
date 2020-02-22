@@ -160,11 +160,12 @@ public class NRGPreferences {
     // Turret and Hood preferences
     public static final BooleanPrefs ENABLE_TURRET_LOGGING = new BooleanPrefs("TurretLogging", true);
     public static final NumberPrefs SHOOTER_TEST_RPM = new NumberPrefs("ShooterTestRPM", 4000);
-    public static final NumberPrefs TURRET_P_TERM = new NumberPrefs("TurretP", 0.081);
-    public static final NumberPrefs TURRET_I_TERM = new NumberPrefs("TurretI", 0.00016);
-    public static final NumberPrefs TURRET_D_TERM = new NumberPrefs("TurretD", 0.0072);
+    public static final NumberPrefs WAIT_FOR_RPM_OFFSET = new NumberPrefs("WaitForRpmOffset", 300);
+    public static final NumberPrefs TURRET_P_TERM = new NumberPrefs("TurretP", 0.085);
+    public static final NumberPrefs TURRET_I_TERM = new NumberPrefs("TurretI", 0.3);
+    public static final NumberPrefs TURRET_D_TERM = new NumberPrefs("TurretD", 0.01);
     public static final NumberPrefs TURRET_MOTOR_POWER = new NumberPrefs("TurretMotorPower", 0.2);
-    public static final NumberPrefs HOOD_MANUAL_MOTOR_POWER = new NumberPrefs("HoodMotorPower", 0.18);
+    public static final NumberPrefs HOOD_MANUAL_MOTOR_POWER = new NumberPrefs("HoodMotorPower", 0.35);
 
     // Climber preferences
     public static final NumberPrefs CLIMBER_REAR_POWER = new NumberPrefs("ClimberRearPower", 0.95);
@@ -172,8 +173,8 @@ public class NRGPreferences {
     public static final NumberPrefs CLIMBER_ARM_WHEELS_POWER = new NumberPrefs("ClimberArmWheelsPower", 0.5);
 
     // Power Cell intake preferences
-    public static final NumberPrefs FEEDER_POWER = new NumberPrefs("FeederPower", 0.3);
-    public static final NumberPrefs ACQUIRER_POWER = new NumberPrefs("AcquirerPower", 0.3);
+    public static final NumberPrefs FEEDER_POWER = new NumberPrefs("FeederPower", 1.0);
+    public static final NumberPrefs ACQUIRER_POWER = new NumberPrefs("AcquirerPower", 1.0);
 
     // General preferences
     public static final BooleanPrefs USING_PRACTICE_BOT = new BooleanPrefs("UsingPracticeBot", false);

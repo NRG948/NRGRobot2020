@@ -3,11 +3,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ShooterRPM;
+import frc.robot.utilities.NRGPreferences;
 
 public class WaitForMinRPM extends CommandBase {
 
   ShooterRPM shooterRPM;
   double rpm;
+  double rpmOffset;
   /**
    * Creates a new WaitForMinRPM.
    */
@@ -21,6 +23,7 @@ public class WaitForMinRPM extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    rpmOffset = NRGPreferences.WAIT_FOR_RPM_OFFSET.getValue();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -36,6 +39,6 @@ public class WaitForMinRPM extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return shooterRPM.getActualRPM() >= rpm;
+    return shooterRPM.getActualRPM() >= rpm - rpmOffset;
   }
 }
