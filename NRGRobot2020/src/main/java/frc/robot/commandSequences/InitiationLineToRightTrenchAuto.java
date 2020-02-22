@@ -54,8 +54,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
                               new Pose2d(4.549, -2.567, new Rotation2d(Math.toRadians(-45))),
                               // Drive backward
                               true)
-            .alongWith(new TurnTurretToAngle(turret, 100),
-                       new InstantCommand(() -> { limelightVision.turnOnLed(); })),
-          new AutoShootSequence(2000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
+            .alongWith(new TurnTurretToAngle(turret, 100)),
+          new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
   }
 }

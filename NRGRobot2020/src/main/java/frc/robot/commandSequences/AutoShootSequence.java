@@ -34,17 +34,18 @@ public class AutoShootSequence extends SequentialCommandGroup {
 
     super( 
       // Parallel, Raise a close to target and start Turret PID.
-      new SetApproximateShooterRPM(rpm , shooterRPM)
+      // new SetApproximateShooterRPM(rpm , shooterRPM)
+      new MaintainShooterRPM(shooterRPM).atRpm(rpm).setAndExit()
         .alongWith(new AutoTurret(turret, limelightVision))
-        .andThen(new WaitForBallReady(ballCounter))
+        .andThen(new WaitForBallReady(ballCounter).alongWith(new WaitForMinRPM(rpm, shooterRPM)))
       // Start ramping up rpm
-        .andThen(new InstantCommand(() -> { shooterRPM.setFlyWheel(1); }))
+        // .andThen(new InstantCommand(() -> { shooterRPM.setFlyWheel(1); }))
       // Are you at target rpm?
-        .andThen(new WaitForMinRPM(rpm, shooterRPM))
+        // .andThen(new WaitForMinRPM(rpm, shooterRPM))
       // Release Ball
         .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
       // Are you at target rpm?
-        // .andThen(new WaitForMinRPM(rpm, shooterRPM))
+        .andThen(new WaitForMinRPM(rpm, shooterRPM))
       // Release Ball
         .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
       // Are you at target rpm?
@@ -52,7 +53,7 @@ public class AutoShootSequence extends SequentialCommandGroup {
       // Release Ball
         .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
         // Are you at target rpm?
-        // .andThen(new WaitForMinRPM(rpm, shooterRPM))
+        .andThen(new WaitForMinRPM(rpm, shooterRPM))
         // Release Ball
         .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
         // Are you at target rpm?
