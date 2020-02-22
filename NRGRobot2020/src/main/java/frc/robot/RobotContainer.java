@@ -216,16 +216,14 @@ public class RobotContainer {
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     autoLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToRightTrenchAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
     autoLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToShieldGeneratorAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
- 
   }
 
   /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
+   * Pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
     AutoPath path = autoPathChooser.getSelected();
     new SetStartPosition(drive, path.getStartingPosition());
     

@@ -60,8 +60,6 @@ public class AutoShootSequence extends SequentialCommandGroup {
         .andThen(new WaitForMinRPM(rpm, shooterRPM))
         // Release Ball
         .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
-
-      // Feed balls through indexer
     );
   }
 }

@@ -47,11 +47,10 @@ public class AutoFeedToShooter extends CommandBase {
   // Returns true when current ball has been shot and a new ball is ready.
   @Override
   public boolean isFinished() {
-    if(ballCounter.isBallInShootingPosition()) {
+    if (ballCounter.isBallInShootingPosition()) {
       return hasBallBeenShot;
-    } else {
-      hasBallBeenShot = true;
     }
-    return false;
+    hasBallBeenShot = true;
+    return ballCounter.getBallCount() == 0;
   }
 }
