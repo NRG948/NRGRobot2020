@@ -164,7 +164,7 @@ public class NRGPreferences {
     public static final NumberPrefs TURRET_I_TERM = new NumberPrefs("TurretI", 0.00016);
     public static final NumberPrefs TURRET_D_TERM = new NumberPrefs("TurretD", 0.0072);
     public static final NumberPrefs TURRET_MOTOR_POWER = new NumberPrefs("TurretMotorPower", 0.2);
-    public static final NumberPrefs HOOD_MANUAL_MOTOR_POWER = new NumberPrefs("HoodMotorPower", 0.35);
+    public static final NumberPrefs HOOD_MANUAL_MOTOR_POWER = new NumberPrefs("HoodMotorPower", 0.18);
 
     // Climber preferences
     public static final NumberPrefs CLIMBER_REAR_POWER = new NumberPrefs("ClimberRearPower", 0.95);

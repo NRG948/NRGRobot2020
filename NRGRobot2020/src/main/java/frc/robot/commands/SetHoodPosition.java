@@ -14,6 +14,8 @@ public class SetHoodPosition extends CommandBase {
   private Hood hood;
   private double desiredPosition;
   private double currentPosition;
+  private final static double TOLERANCE = 2;
+
   /**
    * Creates a new SetHoodPosition.
    */
@@ -34,9 +36,9 @@ public class SetHoodPosition extends CommandBase {
   public void execute() {
     currentPosition = hood.getPosition();
     if (desiredPosition < currentPosition) {
-      hood.rawHood(-0.5);
+      hood.rawHood(-0.25);
     } else {
-      hood.rawHood(0.5);
+      hood.rawHood(0.25);
     }
   }
 
@@ -49,6 +51,11 @@ public class SetHoodPosition extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Math.abs(hood.getPosition() - desiredPosition) < 5;
+    if (Math.abs(hood.getPosition() - desiredPosition) < TOLERANCE) {
+      hood.hoodEnd();
+      return true;
+    } else {
+      return false;
+    }
   }
 }
