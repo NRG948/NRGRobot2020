@@ -39,7 +39,7 @@ public class BallCounter extends SubsystemBase {
    * Returns true if a ball is in shooting postition
    */
   public boolean isBallInShootingPosition() {
-    return feederBeamBreak.get();
+    return feederBeamBreak.get() == BEAM_BROKEN;
   }
 
   /**
