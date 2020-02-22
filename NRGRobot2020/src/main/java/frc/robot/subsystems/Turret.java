@@ -65,6 +65,7 @@ public class Turret extends SubsystemBase {
    * @param tolerance
    */
   public void turretAnglePIDInit(double desiredAngleX, double maxPower, double tolerance, boolean continuousPID) {
+    this.limelightVision.turnOnLed();
     this.maxPower = maxPower;
 
     double kP = NRGPreferences.TURRET_P_TERM.getValue();
@@ -120,6 +121,7 @@ public class Turret extends SubsystemBase {
     this.turretMotor.stopMotor();
     this.turretPIDController = null;
     continuousPID = false;
+    this.limelightVision.turnOffLed();
     System.out.println("Turret End");
   }
 
