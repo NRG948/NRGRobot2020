@@ -48,8 +48,7 @@ public class InitiationLineToShieldGeneratorAuto extends SequentialCommandGroup 
        
         .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter, 2)),
         new AutoTurnToHeading(drive).toHeading(-75).withTolerance(2).withMaxPower(0.8)
-        .alongWith(new TurnTurretToAngle(turret, 130),
-        new InstantCommand(() -> { limelightVision.turnOnLed(); })),
+        .alongWith(new TurnTurretToAngle(turret, 130)),
         new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
   }
 }
