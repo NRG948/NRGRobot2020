@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.Counter;
 import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
@@ -207,6 +212,7 @@ public class ShooterRPM extends SubsystemBase {
     }
   }
 
+
   // Returns the array of local mins and local maxs
   public String[] getMinMaxArray() {
     return minMaxRPMs.toArray(new String[0]);
@@ -222,5 +228,16 @@ public class ShooterRPM extends SubsystemBase {
     double deltaTime = (currentTime - prevMinMaxTime) / NANOSECS_PER_SEC;
     prevMinMaxTime = currentTime;
     return deltaTime;
+  }
+
+  public void addShuffleBoardTab(){
+    ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
+    
+    ShuffleboardLayout layout = shooterTab.getLayout("Shooter", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 1);
+    layout.add(this.spinMotorEncoder);
+    layout.addNumber("Power", () -> this.motorPower);
+    layout.addNumber("RPM", () -> this.currentRPM);
+
+    shooterTab.addNumber("RPM", () -> this.currentRPM).withWidget(BuiltInWidgets.kGraph).withPosition(2, 0).withSize(6, 4);
   }
 }

@@ -170,6 +170,7 @@ public class RobotContainer {
     turret.initShuffleboard();
     hood.initShuffleboard();
     ballCounter.addShuffleboardTab();
+    shooterRPM.addShuffleBoardTab();
 
     compressor.start();
   }
@@ -183,7 +184,7 @@ public class RobotContainer {
   private void configureButtonBindings() {
     xboxButtonB.whenPressed(new MaintainShooterRPM(shooterRPM));
     xboxLeftBumper.whenPressed(new AutoTurret(turret, limelightVision));
-    xboxRightBumper.whenPressed(new AutoShootSequence(2000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
+    xboxRightBumper.whenPressed(new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
     driveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
     shiftGears.whenPressed(new InstantCommand(() -> { gearbox.toggleGears(); } ));
     activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(acquirerPiston));
