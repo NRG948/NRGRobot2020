@@ -20,6 +20,7 @@ import frc.robot.commands.ManualHood;
 import frc.robot.commandSequences.AutoDriveToFuelCell;
 import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
+import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
@@ -213,6 +214,8 @@ public class RobotContainer {
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     autoLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToRightTrenchAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
+    autoLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToShieldGeneratorAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
+ 
   }
 
   /**
@@ -238,5 +241,6 @@ public class RobotContainer {
     drive.resetOdometry(new Pose2d(0,0, new Rotation2d()));
     shooterRPM.reset();
     turret.resetHeading();
+    hood.reset();
   }
 }

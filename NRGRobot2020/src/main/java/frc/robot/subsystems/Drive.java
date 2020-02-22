@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.utilities.NRGPreferences;
@@ -383,7 +382,7 @@ public class Drive extends SubsystemBase {
     commandsLayout.add("Follow S Curve", new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
         List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)), false));
     // commandsLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToRightTrenchAuto(this));
-    commandsLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToLeftTrenchAuto(this));
+    // commandsLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToLeftTrenchAuto(this));
 
     // Add the DifferentialDrive object and encoders to a list layout in the tab.
     ShuffleboardLayout diffDriveLayout = driveTab.getLayout("Base", BuiltInLayouts.kList).

@@ -26,6 +26,11 @@ public class Hood extends SubsystemBase {
    * Creates a new Hood.
    */
   public Hood() {
+  //hoodEncoder.setDistancePerRotation(TurretConstants.kHoodDistancePerRevolution);
+  }
+
+  public void reset(){
+    hoodEncoder.reset();
   }
 
   //TODO: Add encoders for hard limit
@@ -34,6 +39,11 @@ public class Hood extends SubsystemBase {
     rawHoodOutputWidget.getEntry().setDouble(sentPower);
     hoodMotor.set(sentPower);
   }
+
+  public double getPosition() {
+    return hoodEncoder.get();
+  }
+
   @Override
   public void periodic() {
     rawHoodOutputWidget.getEntry().setDouble(hoodEncoder.get());

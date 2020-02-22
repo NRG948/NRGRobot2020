@@ -55,6 +55,7 @@ public final class Constants {
         public static final int kTurretMotorPort = 3;
         public static final int[] kTurretEncoderPorts = new int[] { 6, 7 };
         public static final int kHoodMotorPort = 2;
+        public static final double kHoodDistancePerRevolution = 10.99;
 
     }
 

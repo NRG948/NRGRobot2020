@@ -44,12 +44,20 @@ public class AutoShootSequence extends SequentialCommandGroup {
       // Release Ball
         .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
       // Are you at target rpm?
-        .andThen(new WaitForMinRPM(rpm, shooterRPM))
+        // .andThen(new WaitForMinRPM(rpm, shooterRPM))
       // Release Ball
         .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
       // Are you at target rpm?
         .andThen(new WaitForMinRPM(rpm, shooterRPM))
       // Release Ball
+        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
+        // Are you at target rpm?
+        // .andThen(new WaitForMinRPM(rpm, shooterRPM))
+        // Release Ball
+        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
+        // Are you at target rpm?
+        .andThen(new WaitForMinRPM(rpm, shooterRPM))
+        // Release Ball
         .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
 
       // Feed balls through indexer

@@ -5,6 +5,7 @@ import java.util.List;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeedToShooter;
@@ -40,20 +41,21 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
                               // Waypoints
                               List.of(new Translation2d(5.068, -6.809)),
                               // Ending pose
-                              new Pose2d(6.2, -7.2, new Rotation2d(Math.toRadians(-45))),
+                              new Pose2d(6.4, -7.3, new Rotation2d(Math.toRadians(-50))),
                               // Drive forward
                               false)
-            .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter, 2)), 
+            .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter, 2).withTimeout(5)), 
           new FollowWaypoints(drive,
                               // Starting pose
-                              new Pose2d(6.22, -7.2, new Rotation2d(Math.toRadians(-45))),
+                              new Pose2d(6.4, -7.3, new Rotation2d(Math.toRadians(-50))),
                               // Waypoints
                               List.of(new Translation2d(4.648, -4.236)),
                               // Ending pose
                               new Pose2d(4.549, -2.567, new Rotation2d(Math.toRadians(-45))),
                               // Drive backward
                               true)
-            .alongWith(new TurnTurretToAngle(turret, 135)),
+            .alongWith(new TurnTurretToAngle(turret, 100),
+                       new InstantCommand(() -> { limelightVision.turnOnLed(); })),
           new AutoShootSequence(2000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
   }
 }
