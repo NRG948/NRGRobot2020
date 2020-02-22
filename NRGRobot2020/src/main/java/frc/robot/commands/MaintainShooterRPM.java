@@ -12,6 +12,7 @@ public class MaintainShooterRPM extends CommandBase {
   private Timer timer = new Timer();
   private double seconds = 20;
   private boolean setAndExit;
+  private boolean usedDefaultGoalRPM = true;
 
   /**
    * Creates a new SetShooterRPM.
@@ -23,6 +24,7 @@ public class MaintainShooterRPM extends CommandBase {
   }
 
   public MaintainShooterRPM atRpm(double goalRPM) {
+    this.usedDefaultGoalRPM = false;
     this.goalRPM = goalRPM;
     return this;
   }
@@ -42,7 +44,7 @@ public class MaintainShooterRPM extends CommandBase {
   public void initialize() {
     timer.reset();
     timer.start();
-    if (Double.isNaN(goalRPM)) {
+    if (usedDefaultGoalRPM) {
       goalRPM = NRGPreferences.SHOOTER_TEST_RPM.getValue();
     }
     shooterRPM.setGoalRPM(goalRPM);
@@ -51,6 +53,7 @@ public class MaintainShooterRPM extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // ShooterRPM.periodic() runs the take-back-half feedback control.
   }
 
   // Returns true when the command should end.
