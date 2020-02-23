@@ -83,6 +83,7 @@ public class RobotContainer {
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
   private JoystickButton xboxLeftBumper = new JoystickButton(xboxController, 5); 
   private JoystickButton xboxRightBumper = new JoystickButton(xboxController, 6);
+  private JoystickButton xboxBackButton = new JoystickButton(xboxController, 7);
 
   // D-pad left/right - turret rotate
   // D-pad up/down - hood up/down
@@ -182,9 +183,11 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+    
     xboxButtonB.whenPressed(new MaintainShooterRPM(shooterRPM));
     xboxLeftBumper.whenPressed(new AutoTurret(turret, limelightVision));
     xboxRightBumper.whenPressed(new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
+    xboxBackButton.whenPressed(new ManualTurret(turret, xboxController));
     driveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
     shiftGears.whenPressed(new InstantCommand(() -> { gearbox.toggleGears(); } ));
     activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(acquirerPiston));

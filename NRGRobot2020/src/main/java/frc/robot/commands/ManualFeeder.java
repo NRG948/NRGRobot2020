@@ -24,11 +24,7 @@ public class ManualFeeder extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (m_xboxController.getBackButton()) {
-      feeder.rawFeeder(m_xboxController.getY(Hand.kRight) * 0.5); 
-    } else {
-      feeder.rawFeeder(0);
-    }
+      feeder.rawFeeder(m_xboxController.getY(Hand.kLeft) * 0.5);
   }
 
   // Called once the command ends or is interrupted.

@@ -26,9 +26,7 @@ public class ManualAcquirer extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (!m_xboxController.getBackButton()) {
-      acquirer.rawAcquirer(m_xboxController.getY(Hand.kRight));
-    }
+    acquirer.rawAcquirer(m_xboxController.getY(Hand.kRight));
   }
 
   // Called once the command ends or is interrupted.
