@@ -25,28 +25,28 @@ public class AutoShootSequence extends SequentialCommandGroup {
 
     super( 
       new MaintainShooterRPM(shooterRPM).atRpm(rpm).setAndExit()
-            .alongWith(new AutoTurret(turret, limelightVision))
-        .andThen(new WaitForBallReady(ballCounter)
-            .alongWith(new WaitForMinRPM(rpm, shooterRPM)))
+        .alongWith(new AutoTurret(turret, limelightVision)),
+      new WaitForBallReady(ballCounter)
+        .alongWith(new WaitForMinRPM(rpm, shooterRPM)),
       // Release Ball
-        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
+      new AutoFeedToShooter(acquirer, feeder, ballCounter),
       // Are you at target rpm?
-        .andThen(new WaitForMinRPM(rpm, shooterRPM))
+      new WaitForMinRPM(rpm, shooterRPM),
       // Release Ball
-        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
+      new AutoFeedToShooter(acquirer, feeder, ballCounter),
       // Are you at target rpm?
-        .andThen(new WaitForMinRPM(rpm, shooterRPM))
+      new WaitForMinRPM(rpm, shooterRPM),
       // Release Ball
-        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
-        // Are you at target rpm?
-        .andThen(new WaitForMinRPM(rpm, shooterRPM))
-        // Release Ball
-        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
-        // Are you at target rpm?
-        .andThen(new WaitForMinRPM(rpm, shooterRPM))
-        // Release Ball
-        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
-        .andThen(new DisableShooterRPM(shooterRPM))
+      new AutoFeedToShooter(acquirer, feeder, ballCounter),
+      // Are you at target rpm?
+      new WaitForMinRPM(rpm, shooterRPM),
+      // Release Ball
+      new AutoFeedToShooter(acquirer, feeder, ballCounter),
+      // Are you at target rpm?
+      new WaitForMinRPM(rpm, shooterRPM),
+      // Release Ball
+      new AutoFeedToShooter(acquirer, feeder, ballCounter),
+      new DisableShooterRPM(shooterRPM)
     );
   }
 }
