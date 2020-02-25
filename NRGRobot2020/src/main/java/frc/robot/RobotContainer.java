@@ -207,26 +207,33 @@ public class RobotContainer {
     driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi));
     interruptAllButton.whenPressed(interruptAll);
   }
-/**
- * Adds buttons to the shuffleboard for the driver
- */
-private void addDriverShuffleboardTab() {
-  ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
-  CameraServer cs = CameraServer.getInstance();
-  HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
-  HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream/mjpg");
-  processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
-  limelightVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
-  MjpegServer switchedVideo = cs.addSwitchedCamera("Switched");
-  switchedVideo.setSource(processedVideo);
+  
+  /**
+   * Adds buttons to the shuffleboard for the driver
+   */
+  private void addDriverShuffleboardTab() {
+    ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
+    CameraServer cs = CameraServer.getInstance();
 
-  ShuffleboardLayout videoToggleLayout = driverTab.getLayout("Video Toggle", BuiltInLayouts.kList).withPosition(0,0).withSize(2, 2);
-  videoToggleLayout.add("Processed", new InstantCommand(() -> switchedVideo.setSource(processedVideo)));
-  videoToggleLayout.add("limelight", new InstantCommand(() -> switchedVideo.setSource(limelightVideo)));  
+    // Initialize the video sources and create a switched camera.
+    HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
+    processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
-  HttpCamera switchedVideo2 = new HttpCamera("Switched", "http://localhost/stream/mjpg");
-  driverTab.add("Switched Video", switchedVideo2).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
-}
+    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream/mjpg");
+    limelightVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
+
+    MjpegServer switchedCamera = cs.addSwitchedCamera("Switched");
+    switchedCamera.setSource(processedVideo);
+
+    // Create a layout and add buttons to select the source of the switched camera.
+    ShuffleboardLayout videoToggleLayout = driverTab.getLayout("Video Toggle", BuiltInLayouts.kList).withPosition(0,0).withSize(2, 2);
+    videoToggleLayout.add("Processed", new InstantCommand(() -> switchedCamera.setSource(processedVideo)));
+    videoToggleLayout.add("limelight", new InstantCommand(() -> switchedCamera.setSource(limelightVideo)));  
+
+    // Add the switched camera to the Shuffleboard tab.
+    HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream/mjpg");
+    driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
+  }
 
   /**
    * Adds the Shuffleboard tab for autonomous selection.
