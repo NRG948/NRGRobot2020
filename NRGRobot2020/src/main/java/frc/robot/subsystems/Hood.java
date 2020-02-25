@@ -38,12 +38,12 @@ public class Hood extends SubsystemBase {
    * @param power motor power, + means forward, - means backwards
    */
   public void rawHood(double power) {
-    power = MathUtil.clamp(power, -0.25, 0.25);
+    power = MathUtil.clamp(power, -0.5, 0.5);
     double hoodPosition = getPosition();
     // Prevent the turret from turning past hard stops
-    if (hoodPosition >= 100 && power > 0 || hoodPosition < 0 && power < 0) {
-      power = 0;
-    }
+    // if (hoodPosition >= 100 && power > 0 || hoodPosition < 0 && power < 0) {
+    //   power = 0;
+    // }
     rawHoodOutputWidget.getEntry().setDouble(power);
     hoodMotor.set(power);
   }
