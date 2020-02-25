@@ -15,6 +15,12 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 public class Hood extends SubsystemBase {
 
+  /**
+   *
+   */
+  private static final int MAX_LIMIT = 100;
+  private static final int LOWER_HARD_STOP = 5;
+  private static final int UPPER_HARD_STOP = 95;
   private Victor hoodMotor = new Victor(TurretConstants.kHoodMotorPort);
   private AnalogInput encoderInput = new AnalogInput(1);
   private AnalogEncoder hoodEncoder = new AnalogEncoder(encoderInput);
@@ -42,15 +48,15 @@ public class Hood extends SubsystemBase {
     power = MathUtil.clamp(power, -0.5, 0.5);
     double hoodPosition = getPosition();
     // Prevent the turret from turning past hard stops
-    // if (hoodPosition >= 100 && power > 0 || hoodPosition < 0 && power < 0) {
-    //   power = 0;
-    // }
+    if (hoodPosition >= UPPER_HARD_STOP && power > 0 || hoodPosition < LOWER_HARD_STOP && power < 0) {
+      power = 0;
+    }
     rawHoodOutputWidget.getEntry().setDouble(power);
     hoodMotor.set(power);
   }
 
   public double getPosition() {
-    return -hoodEncoder.get();
+    return -hoodEncoder.get() * MAX_LIMIT / NRGPreferences.HOOD_MAX_VOLTAGE.getValue();
   }
 
   @Override
