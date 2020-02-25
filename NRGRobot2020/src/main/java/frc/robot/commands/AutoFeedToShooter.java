@@ -10,10 +10,11 @@ public class AutoFeedToShooter extends CommandBase {
   private Acquirer acquirer;
   private Feeder feeder;
   private BallCounter ballCounter;
-  
+
   private double acquirerPower;
   private double feederPower;
   private boolean hasBallBeenShot;
+
   /**
    * Creates a new AutoFeedToShooter.
    */
@@ -44,7 +45,10 @@ public class AutoFeedToShooter extends CommandBase {
   public void end(boolean interrupted) {
   }
 
-  // Returns true when current ball has been shot and a new ball is ready.
+  /**
+   * Returns true when current ball has been shot and a new ball is ready or when
+   * we are out of balls.
+   */
   @Override
   public boolean isFinished() {
     if (ballCounter.isBallInShootingPosition()) {
