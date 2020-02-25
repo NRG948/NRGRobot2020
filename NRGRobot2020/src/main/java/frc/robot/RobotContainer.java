@@ -2,6 +2,10 @@ package frc.robot;
 
 import java.io.IOException;
 
+import edu.wpi.cscore.HttpCamera;
+import edu.wpi.cscore.MjpegServer;
+import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
@@ -164,6 +168,7 @@ public class RobotContainer {
 
     // Configure Shuffleboard Tabs
     this.addAutonomousShuffleboardTab();
+    this.addDriverShuffleboardTab();
     drive.addShuffleBoardTab();
     raspPi.addShuffleBoardTab();
     acquirer.initShuffleboard();
@@ -202,6 +207,26 @@ public class RobotContainer {
     driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi));
     interruptAllButton.whenPressed(interruptAll);
   }
+/**
+ * Adds buttons to the shuffleboard for the driver
+ */
+private void addDriverShuffleboardTab() {
+  ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
+  CameraServer cs = CameraServer.getInstance();
+  HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
+  HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream/mjpg");
+  processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
+  limelightVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
+  MjpegServer switchedVideo = cs.addSwitchedCamera("Switched");
+  switchedVideo.setSource(processedVideo);
+
+  ShuffleboardLayout videoToggleLayout = driverTab.getLayout("Video Toggle", BuiltInLayouts.kList).withPosition(0,0).withSize(2, 2);
+  videoToggleLayout.add("Processed", new InstantCommand(() -> switchedVideo.setSource(processedVideo)));
+  videoToggleLayout.add("limelight", new InstantCommand(() -> switchedVideo.setSource(limelightVideo)));  
+
+  HttpCamera switchedVideo2 = new HttpCamera("Switched", "http://localhost/stream/mjpg");
+  driverTab.add("Switched Video", switchedVideo2).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
+}
 
   /**
    * Adds the Shuffleboard tab for autonomous selection.
