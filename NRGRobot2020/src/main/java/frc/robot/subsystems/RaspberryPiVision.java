@@ -6,9 +6,6 @@ import edu.wpi.cscore.HttpCamera;
 import edu.wpi.cscore.UsbCamera;
 import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -17,9 +14,9 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color8Bit;
-import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.commands.SetRaspberryPiPipeline;
+import frc.robot.utilities.NRGPreferences;
 import frc.robot.vision.FuelCellTarget;
 import frc.robot.vision.LoadingStationTarget;
 import frc.robot.vision.VisionTarget;
@@ -189,6 +186,10 @@ public class RaspberryPiVision extends SubsystemBase {
    * Adds a Shuffleboard tab for the Raspberry Pi subsystem.
    */
   public void addShuffleBoardTab() {
+    if (!NRGPreferences.SHUFFLEBOARD_RASPBERRY_PI_ENABLED.getValue()){
+      return;
+    }
+    
     ShuffleboardTab piTab = Shuffleboard.getTab("RaspberryPi");
 
     // Create a list layout and add the buttons to change the pipeline.

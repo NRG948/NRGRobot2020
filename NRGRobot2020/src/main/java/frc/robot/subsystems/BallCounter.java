@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utilities.NRGPreferences;
 
 public class BallCounter extends SubsystemBase {
 
@@ -66,6 +67,10 @@ public class BallCounter extends SubsystemBase {
   }
 
   public void addShuffleboardTab() {
+    if (!NRGPreferences.SHUFFLEBOARD_BALL_COUNTER_ENABLED.getValue()){
+      return;
+    }
+    
     ShuffleboardTab ballCounterTab = Shuffleboard.getTab("Ball Counter");
     ShuffleboardLayout layout = ballCounterTab.getLayout("Ball Counter", BuiltInLayouts.kList).withPosition(0, 0)
         .withSize(2, 3);

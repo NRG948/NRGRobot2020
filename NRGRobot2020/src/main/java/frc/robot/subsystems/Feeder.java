@@ -1,9 +1,8 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.utilities.NRGPreferences;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -39,6 +38,10 @@ public class Feeder extends SubsystemBase {
   }
 
   public void initShuffleboard(){
+    if (!NRGPreferences.SHUFFLEBOARD_FEEDER_ENABLED.getValue()){
+      return;
+    }
+    
     ShuffleboardTab feederTab = Shuffleboard.getTab("Feeder");
     ShuffleboardLayout feederLayout = feederTab.getLayout("Feeder", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
     feederRawOutputWidget = feederLayout.add("Raw Output", 0.0);

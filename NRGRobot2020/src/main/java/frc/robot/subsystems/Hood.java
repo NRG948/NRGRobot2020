@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.utilities.MathUtil;
+import frc.robot.utilities.NRGPreferences;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -60,6 +61,10 @@ public class Hood extends SubsystemBase {
   }
 
   public void initShuffleboard() {
+    if (!NRGPreferences.SHUFFLEBOARD_HOOD_ENABLED.getValue()){
+      return;
+    }
+    
     ShuffleboardTab hoodTab = Shuffleboard.getTab("Hood");
 
     ShuffleboardLayout hoodLayout = hoodTab.getLayout("Hood", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);

@@ -176,6 +176,18 @@ public class NRGPreferences {
     public static final NumberPrefs FEEDER_POWER = new NumberPrefs("FeederPower", 1.0);
     public static final NumberPrefs ACQUIRER_POWER = new NumberPrefs("AcquirerPower", 1.0);
 
+    // Shuffleboard Tab preferences
+    public static final BooleanPrefs SHUFFLEBOARD_ACQUIRER_ENABLED = new BooleanPrefs("ShuffleboardAcquirerEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_BALL_COUNTER_ENABLED = new BooleanPrefs("ShuffleboardBallCounterEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_CLIMB_ENABLED = new BooleanPrefs("ShuffleboardClimbEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_CP_SPINNER_ENABLED = new BooleanPrefs("ShuffleboardCPSpinnerEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_DRIVE_ENABLED = new BooleanPrefs("ShuffleboardDriveEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_FEEDER_ENABLED = new BooleanPrefs("ShuffleboardFeederEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_HOOD_ENABLED = new BooleanPrefs("ShuffleboardHoodEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_RASPBERRY_PI_ENABLED = new BooleanPrefs("ShuffleboardRaspberryPiEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_SHOOTER_RPM_ENABLED = new BooleanPrefs("ShuffleboardShooterRPMEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_TURRET_ENABLED = new BooleanPrefs("ShuffleboardTurretEnabled", false);
+
     // General preferences
     public static final BooleanPrefs USING_PRACTICE_BOT = new BooleanPrefs("UsingPracticeBot", false);
     public static final BooleanPrefs WRITE_DEFAULT = new BooleanPrefs("WriteDefault", true); 
