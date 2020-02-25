@@ -138,6 +138,10 @@ public class Turret extends SubsystemBase {
    * Turret subsystem.
    */
   public void initShuffleboard() {
+    if (!NRGPreferences.SHUFFLEBOARD_TURRET_ENABLED.getValue()){
+      return;
+    }
+    
     ShuffleboardTab turretTab = Shuffleboard.getTab("Turret");
     ShuffleboardLayout turretLayout = turretTab.getLayout("Turret", BuiltInLayouts.kList).withPosition(0, 0).withSize(2,
         5);

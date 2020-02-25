@@ -369,6 +369,10 @@ public class Drive extends SubsystemBase {
    * Adds a Shuffleboard tab for the drive subsystem.
    */
   public void addShuffleBoardTab() {
+    if (!NRGPreferences.SHUFFLEBOARD_DRIVE_ENABLED.getValue()){
+      return;
+    }
+    
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
 
     // Add test buttons to a layout in the tab

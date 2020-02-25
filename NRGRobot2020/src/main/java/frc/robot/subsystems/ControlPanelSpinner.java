@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ControlPanelConstants;
-
+import frc.robot.utilities.NRGPreferences;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
@@ -101,6 +101,10 @@ public class ControlPanelSpinner extends SubsystemBase {
     }
   }
   public void initShuffleboard(){
+    if (!NRGPreferences.SHUFFLEBOARD_CP_SPINNER_ENABLED.getValue()){
+      return;
+    }
+    
     ShuffleboardTab controlPanelSpinnerTab = Shuffleboard.getTab("Control Panel Spinner");
 
     ShuffleboardLayout controlPanelSpinnerLayout = controlPanelSpinnerTab.getLayout("Control Panel Spinner", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);

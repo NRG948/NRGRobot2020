@@ -231,6 +231,10 @@ public class ShooterRPM extends SubsystemBase {
   }
 
   public void addShuffleBoardTab(){
+    if (!NRGPreferences.SHUFFLEBOARD_SHOOTER_RPM_ENABLED.getValue()){
+      return;
+    }
+    
     ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
     
     ShuffleboardLayout layout = shooterTab.getLayout("Shooter", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 1);
