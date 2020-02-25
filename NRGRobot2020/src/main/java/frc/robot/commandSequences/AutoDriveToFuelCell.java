@@ -7,17 +7,13 @@
 
 package frc.robot.commandSequences;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.AutoDriveOnHeading;
-import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.WaitForNewVisionData;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
-import frc.robot.vision.FuelCellTarget;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:

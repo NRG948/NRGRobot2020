@@ -9,7 +9,6 @@ package frc.robot.vision;
 
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.util.Units;
-import frc.robot.subsystems.RaspberryPiVision;
 
 /**
  * Add your docs here.
