@@ -7,7 +7,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.BallCounter;
@@ -16,7 +15,6 @@ import frc.robot.utilities.NRGPreferences;
 public class AcquireNumberOfBalls extends CommandBase {
   private Acquirer acquirer;
   private BallCounter ballCounter;
-  private Timer timer;
   private double acquirerPower;
   private int numberOfBalls;
   private int targetcount;
