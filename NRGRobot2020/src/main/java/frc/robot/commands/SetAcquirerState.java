@@ -8,15 +8,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.subsystems.AcquirerPiston;
+import frc.robot.subsystems.AcquirerPiston.State;
 
-public class InterruptAll extends CommandBase {
+public class SetAcquirerState extends CommandBase {
+  private AcquirerPiston acquirerPiston;
+  private State state;
   /**
-   * Creates a new InterruptAll.
+   * Creates a new SetAcquirerState.
    */
-  public InterruptAll(Subsystem... requirements) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(requirements);
+  public SetAcquirerState(AcquirerPiston acquirerPiston, State state) {
+    this.acquirerPiston = acquirerPiston;
+    this.state = state;
+    addRequirements(acquirerPiston);
   }
 
   // Called when the command is initially scheduled.
@@ -27,6 +31,7 @@ public class InterruptAll extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    acquirerPiston.setState(state);
   }
 
   // Called once the command ends or is interrupted.

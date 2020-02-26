@@ -26,7 +26,7 @@ public class BallCounter extends SubsystemBase {
   private DigitalInput feederBeamBreak = new DigitalInput(8);
   private boolean acquirerLastState = acquirerBeamBreak.get();
   private boolean feederLastState = feederBeamBreak.get();
-  private int ballCount = 3;
+  private int ballCount = 0;
   private SimpleWidget ballCountWidget;
 
   /**
@@ -41,6 +41,10 @@ public class BallCounter extends SubsystemBase {
    */
   public boolean isBallInShootingPosition() {
     return feederBeamBreak.get() == BEAM_BROKEN;
+  }
+
+  public boolean isBallInAcquirerPosition() {
+    return acquirerBeamBreak.get() == BEAM_BROKEN;
   }
 
   /**
@@ -83,5 +87,9 @@ public class BallCounter extends SubsystemBase {
     if (ballCountWidget != null) {
       ballCountWidget.getEntry().setNumber(ballCount);
     }
+  }
+
+  public void setBallCount(int ballCount) {
+    this.ballCount = ballCount;
   }
 }

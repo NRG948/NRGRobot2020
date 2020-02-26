@@ -32,11 +32,15 @@ import frc.robot.commands.InterruptAll;
 import frc.robot.commands.LEDTest;
 import frc.robot.commands.ManualAcquirer;
 import frc.robot.commands.ToggleAcquirerPiston;
+import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
+import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.MaintainShooterRPM;
+import frc.robot.commands.AcquireNumberOfBalls;
+import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.AutoTurret;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.AcquirerPiston;
@@ -51,6 +55,7 @@ import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.AcquirerPiston.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -190,6 +195,10 @@ public class RobotContainer {
   private void configureButtonBindings() {
     
     xboxButtonB.whenPressed(new MaintainShooterRPM(shooterRPM));
+    xboxButtonX.whenPressed(new SetAcquirerState(this.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(turret, 77)));
+    xboxButtonX.whenHeld(new AutoFeeder(ballCounter, feeder).alongWith(
+        new AcquireNumberOfBalls(acquirer, ballCounter).withAbsoluteCount(5)));
+    xboxButtonX.whenReleased(new SetAcquirerState(this.acquirerPiston, State.RETRACT));
     xboxLeftBumper.whenPressed(new AutoTurret(turret, limelightVision));
     xboxRightBumper.whenPressed(new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
     xboxBackButton.whenPressed(new ManualTurret(turret, xboxController));
@@ -269,5 +278,6 @@ private void addDriverShuffleboardTab() {
     shooterRPM.reset();
     turret.resetHeading();
     hood.reset();
+    // ballCounter.setBallCount(0);
   }
 }

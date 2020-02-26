@@ -44,7 +44,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
                               new Pose2d(6.4, -7.3, new Rotation2d(Math.toRadians(-50))),
                               // Drive forward
                               false)
-            .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter, 2).withTimeout(5)), 
+            .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter).withRelativeCount(2).withTimeout(5)), 
           new FollowWaypoints(drive,
                               // Starting pose
                               new Pose2d(6.4, -7.3, new Rotation2d(Math.toRadians(-50))),
