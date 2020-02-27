@@ -30,6 +30,7 @@ import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetStartPosition;
+import frc.robot.test.IMotorEncoderPair;
 
 public class Drive extends SubsystemBase {
   /**
@@ -406,4 +407,20 @@ public class Drive extends SubsystemBase {
     positionLayout.addNumber("Y", () -> getPose().getTranslation().getY());
     positionLayout.addNumber("Heading", () -> getHeadingContinuous());
   }
+
+   public class MotorEncoderPair implements IMotorEncoderPair{
+     private WPI_VictorSPX motor;
+     private Encoder encoder;
+     public MotorEncoderPair(WPI_VictorSPX motor, Encoder encoder){
+       this.motor = motor;
+       this.encoder = encoder;
+     }
+
+     public void setMotor(double power){
+       motor.set(power);
+     }
+     public double getEncoder(){
+       return encoder.getDistance();
+     }
+   }
 }
