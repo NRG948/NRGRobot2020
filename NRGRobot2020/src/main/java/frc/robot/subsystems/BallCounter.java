@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -14,6 +7,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.NRGPreferences;
 
@@ -54,6 +48,10 @@ public class BallCounter extends SubsystemBase {
     return ballCount;
   }
 
+  public void addToBallCount(int num) {
+    ballCount += num;
+  }
+
   @Override
   public void periodic() {
     boolean acquirerCurrentState = acquirerBeamBreak.get();
@@ -80,6 +78,8 @@ public class BallCounter extends SubsystemBase {
         .withSize(2, 3);
     layout.addBoolean("Acquirer Beam Break", () -> acquirerBeamBreak.get() == BEAM_CONNECTED).withWidget(BuiltInWidgets.kBooleanBox);
     layout.addBoolean("Feeder  Beam Break", () -> feederBeamBreak.get() == BEAM_CONNECTED).withWidget(BuiltInWidgets.kBooleanBox);
+    layout.add("Increment Ball Count", new InstantCommand(() -> this.addToBallCount(1)));
+    layout.add("Decrement Ball Count", new InstantCommand(() -> this.addToBallCount(-1)));
     ballCountWidget = layout.add("Ball Count", (double)ballCount);
   }
 
