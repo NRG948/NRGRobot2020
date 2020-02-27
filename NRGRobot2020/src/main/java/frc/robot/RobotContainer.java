@@ -36,6 +36,7 @@ import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
+import frc.robot.commandSequences.PrepareForMatch;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.MaintainShooterRPM;
@@ -260,6 +261,8 @@ public class RobotContainer {
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     autoLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToRightTrenchAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
     autoLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToShieldGeneratorAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
+    PrepareForMatch pForMatch = new PrepareForMatch(hood, turret, acquirerPiston);
+    autoTab.add("PrepareForMatch", pForMatch);
   }
 
   /**
