@@ -26,6 +26,7 @@ import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
 import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
 import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
+import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.HoldHoodDown;
@@ -112,7 +113,7 @@ public class RobotContainer {
   private final LimelightVision limelightVision = new LimelightVision();
   private final Turret turret = new Turret(limelightVision, xboxController);
   private final Hood hood = new Hood();
-  public final ShooterRPM shooterRPM = new ShooterRPM();
+  private final ShooterRPM shooterRPM = new ShooterRPM();
   private final RaspberryPiVision raspPi = new RaspberryPiVision();
   private final Compressor compressor = new Compressor();
   private final BallCounter ballCounter = new BallCounter();
@@ -129,30 +130,12 @@ public class RobotContainer {
   limelightVision, turret, hood, shooterRPM, raspPi, acquirerPiston );
 
   // Autonomous chooser
-  private SendableChooser<AutoPath> autoPathChooser;
+  private SendableChooser<InitialAutoPath> autoPathChooser;
 
-  private enum AutoPath {
-    INITIATION_LINE_TO_MIDDLE("INITIATION_LINE_TO_MIDDLE.wpilib.json", new Pose2d(3.362, -3.989, new Rotation2d(0))),
-    INITIATION_LINE_TO_LEFT_TRENCH("INITIATION_LINE_TO_LEFT_TRENCH.wpilib.json",
-        new Pose2d(3.3, -0.786, new Rotation2d(0))),
-    INITIATION_LINE_TO_RIGHT_TRENCH("INITIATION_LINE_TO_RIGHT_TRENCH.wpilib.json",
-        new Pose2d(3.473, -7.501, new Rotation2d(0)));
-
-    private final String fileName;
-    private final Pose2d startingPosition;
-
-    private AutoPath(String file, Pose2d position) {
-      fileName = file;
-      startingPosition = position;
-    }
-
-    public String getFile() {
-      return fileName;
-    }
-
-    public Pose2d getStartingPosition() {
-      return startingPosition;
-    }
+  private enum InitialAutoPath {
+    INITIATION_LINE_TO_MIDDLE,
+    INITIATION_LINE_TO_LEFT_TRENCH,
+    INITIATION_LINE_TO_RIGHT_TRENCH;
   }
 
   /**
@@ -256,10 +239,10 @@ public class RobotContainer {
     // Create a list layout and add the autonomous selection widgets
     ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList).withPosition(0, 0).withSize(6, 4);
 
-    autoPathChooser = new SendableChooser<AutoPath>();
-    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_MIDDLE.name(), AutoPath.INITIATION_LINE_TO_MIDDLE);
-    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
-    autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
+    autoPathChooser = new SendableChooser<InitialAutoPath>();
+    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_MIDDLE.name(), InitialAutoPath.INITIATION_LINE_TO_MIDDLE);
+    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
+    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     autoLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToLeftTrenchAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
     autoLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToShieldGeneratorAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
@@ -273,15 +256,17 @@ public class RobotContainer {
    * @return the command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    AutoPath path = autoPathChooser.getSelected();
-    new SetStartPosition(drive, path.getStartingPosition());
-    
-    try {
-      return new FollowPathWeaverFile(drive, path.getFile());
-    } catch (IOException e) {
-      e.printStackTrace();
-      return null;
-    }
+    resetSensors();
+    InitialAutoPath path = autoPathChooser.getSelected();
+    switch(path){
+      case INITIATION_LINE_TO_RIGHT_TRENCH:
+        return new SetStartPosition(drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
+          .andThen(new InitiationLineToRightTrenchAuto(
+            drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
+      default:
+        // TODO move off of Initiation Line
+        return new SetStartPosition(drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
+          }    
   }
 
   public void resetSensors() {

@@ -27,21 +27,24 @@ import frc.robot.subsystems.AcquirerPiston.State;
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
 public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
-  private static final Pose2d INITIAL_POSITION = new Pose2d(3.676, 0.686, new Rotation2d(0));
-  private static final Translation2d FIRST_PATH_WAYPOINT = new Translation2d(4.5, 0.686);
-  private static final Pose2d FIRST_PATH_END_POSITION = new Pose2d(5.784, 0.686, new Rotation2d(0));
+  public static final Pose2d INITIAL_POSITION = new Pose2d(3.676, -0.686, new Rotation2d(0));
+  private static final Translation2d FIRST_PATH_WAYPOINT = new Translation2d(4.5, -0.686);
+  private static final Pose2d FIRST_PATH_END_POSITION = new Pose2d(5.784, -0.686, new Rotation2d(0));
   /**
    * Creates a new InitiationLineToLeftTrenchAuto.
    */
   public InitiationLineToRightTrenchAuto(Drive drive, Acquirer acquirer, Feeder feeder, BallCounter ballCounter,
   ShooterRPM shooterRPM, Turret turret, LimelightVision limelightVision, AcquirerPiston acquirerPiston) {
-    super(new FollowWaypoints(drive,
-                              INITIAL_POSITION,
-                              List.of(FIRST_PATH_WAYPOINT), 
-                              FIRST_PATH_END_POSITION, 
-                              false)
+    super(
+      new FollowWaypoints(drive,
+                          INITIAL_POSITION,
+                          List.of(FIRST_PATH_WAYPOINT), 
+                          FIRST_PATH_END_POSITION, 
+                          false)
         .alongWith(new SetAcquirerState(acquirerPiston, State.EXTEND),
+                   new TurnTurretToAngle(turret, 77),
                    new AcquireNumberOfBalls(acquirer, ballCounter).withRelativeCount(1).withTimeout(3),
-                   new AutoFeeder(ballCounter, feeder)));
+                   new AutoFeeder(ballCounter, feeder)),
+      new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
   }
 }
