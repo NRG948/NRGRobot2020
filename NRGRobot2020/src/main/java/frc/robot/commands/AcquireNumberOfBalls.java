@@ -25,7 +25,6 @@ public class AcquireNumberOfBalls extends CommandBase {
    */
   public AcquireNumberOfBalls(Acquirer acquirer, BallCounter ballCounter) {
     this.acquirer = acquirer;
-    this.numberOfBalls = numberOfBalls;
     this.ballCounter = ballCounter;
     addRequirements(acquirer);
   }
