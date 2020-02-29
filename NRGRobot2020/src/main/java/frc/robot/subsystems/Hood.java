@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class Hood extends SubsystemBase {
 
+  private static final double HOOD_BACK_VOLTAGE_PRACTICE = 3.99;
+  private static final double HOOD_FORWARD_VOLTAGE_PRACTICE = 1.5;
   private static final int MAX_LIMIT = 100;
   private static final int LOWER_HARD_STOP = 1;
   private static final int UPPER_HARD_STOP = 95;
@@ -47,8 +49,10 @@ public class Hood extends SubsystemBase {
     hoodMotor.set(power);
   }
 
+  /** Returns the position of the hood, scaled to be between 0 (full back) and 100 (full forward). */
   public double getPosition() {
-    return hoodEncoder.get() * MAX_LIMIT / NRGPreferences.HOOD_MAX_VOLTAGE.getValue();
+    return MAX_LIMIT * (HOOD_BACK_VOLTAGE_PRACTICE - hoodEncoder.get()) 
+          / (HOOD_BACK_VOLTAGE_PRACTICE - HOOD_FORWARD_VOLTAGE_PRACTICE);
   }
 
   @Override
