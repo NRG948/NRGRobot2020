@@ -38,21 +38,22 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
                               // Starting pose
                               new Pose2d(3.43, -7.2, new Rotation2d(0)),
                               // Waypoints
-                              List.of(new Translation2d(5.068, -6.809)),
+                              List.of(new Translation2d(5.068, -6.6)),
                               // Ending pose
-                              new Pose2d(6.4, -7.4, new Rotation2d(Math.toRadians(-60))),
+                              new Pose2d(6.4, -7.45, new Rotation2d(Math.toRadians(-65))),
                               // Drive forward
                               false)
-            .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter).withRelativeCount(2).withTimeout(3), 
+            .alongWith(new TurnTurretToAngle(turret, 77),
+                       new AcquireNumberOfBalls(acquirer, ballCounter).withRelativeCount(2).withTimeout(3), 
                        new AutoFeeder(ballCounter, feeder)),
           new SetAcquirerState(acquirerPiston, State.RETRACT),
           new FollowWaypoints(drive,
                               // Starting pose
-                              new Pose2d(6.4, -7.3, new Rotation2d(Math.toRadians(-50))),
+                              new Pose2d(6.4, -7.45, new Rotation2d(Math.toRadians(-65))),
                               // Waypoints
                               List.of(new Translation2d(4.648, -4.236)),
                               // Ending pose
-                              new Pose2d(4.549, -2.567, new Rotation2d(Math.toRadians(-45))),
+                              new Pose2d(4.549, -2.867, new Rotation2d(Math.toRadians(-90))),
                               // Drive backward
                               true)
             .alongWith(new TurnTurretToAngle(turret, 100)),
