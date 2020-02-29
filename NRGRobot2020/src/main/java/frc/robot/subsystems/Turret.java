@@ -27,6 +27,9 @@ public class Turret extends SubsystemBase {
   // fictious values.
   private static final double MIN_ENCODER_VALUE = 0;
   private static final double MAX_ENCODER_VALUE = 170;
+  private static final double CAMERA_HORIZONTAL_CORRECTION_PRACTICE = -3;
+  private static final double CAMERA_HORIZONTAL_CORRECTION_COMPETITION = 0;
+  private double cameraHorizontalCorrection;
 
   private final Victor turretMotor = new Victor(TurretConstants.kTurretMotorPort); // Change back to victor when we get
                                                                                    // the actual robot
@@ -37,6 +40,7 @@ public class Turret extends SubsystemBase {
   private XboxController xboxController;
 
   private boolean continuousPID = false;
+  private double skewHorizontalAngle;
 
   private LimelightVision limelightVision;
 
@@ -48,10 +52,26 @@ public class Turret extends SubsystemBase {
     this.xboxController = xboxController;
     turretMotor.setInverted(false);
     turretEncoder.setDistancePerPulse(0.027);
+    cameraHorizontalCorrection = NRGPreferences.USING_PRACTICE_BOT.getValue()
+      ? CAMERA_HORIZONTAL_CORRECTION_PRACTICE : CAMERA_HORIZONTAL_CORRECTION_COMPETITION;
   }
 
   public void resetHeading() {
     turretEncoder.reset();
+  }
+
+  /**
+   * Passes power to turret with hard stop protection.
+   * 
+   * @param power
+   */
+  public void rawTurret(double power) {
+    double encoderAngle = turretEncoder.getDistance();
+    // Prevent the turret from turning past hard stops
+    if (encoderAngle >= MAX_ENCODER_VALUE && power > 0 || encoderAngle < MIN_ENCODER_VALUE && power < 0) {
+      power = 0;
+    }
+    turretMotor.set(power);
   }
 
   public double getHeading() {
@@ -73,7 +93,7 @@ public class Turret extends SubsystemBase {
     double kD = NRGPreferences.TURRET_D_TERM.getValue();
 
     this.turretPIDController = new PIDController(kP, kI, kD);
-    this.turretPIDController.setSetpoint(desiredAngleX);
+    this.turretPIDController.setSetpoint(desiredAngleX + cameraHorizontalCorrection + skewHorizontalAngle);
     this.turretPIDController.setTolerance(tolerance);
 
     this.continuousPID = continuousPID;
@@ -89,20 +109,6 @@ public class Turret extends SubsystemBase {
     double pidOutput = turretPIDController.calculate(limelightAngleX);
     double currentPower = MathUtil.clamp(pidOutput, -1.0, 1.0) * maxPower;
     rawTurret(currentPower);
-  }
-
-  /**
-   * Passes power to turret with hard stop protection.
-   * 
-   * @param power
-   */
-  public void rawTurret(double power) {
-    double encoderAngle = turretEncoder.getDistance();
-    // Prevent the turret from turning past hard stops
-    if (encoderAngle >= MAX_ENCODER_VALUE && power > 0 || encoderAngle < MIN_ENCODER_VALUE && power < 0) {
-      power = 0;
-    }
-    turretMotor.set(power);
   }
 
   /**
@@ -125,6 +131,9 @@ public class Turret extends SubsystemBase {
     System.out.println("Turret End");
   }
 
+  public void setHorizontalSkew(double skewAngle){
+    this.skewHorizontalAngle = skewAngle;
+  }
   @Override
   public void periodic() {
     if (continuousPID) {
