@@ -26,7 +26,7 @@ public class Turret extends SubsystemBase {
   // TODO: min and max values need to be figured out; the values below are
   // fictious values.
   private static final double MIN_ENCODER_VALUE = 0;
-  private static final double MAX_ENCODER_VALUE = 130;
+  private static final double MAX_ENCODER_VALUE = 170;
 
   private final Victor turretMotor = new Victor(TurretConstants.kTurretMotorPort); // Change back to victor when we get
                                                                                    // the actual robot
