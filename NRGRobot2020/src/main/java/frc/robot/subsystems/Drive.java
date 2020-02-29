@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
+import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.commands.AutoTurnToHeading;

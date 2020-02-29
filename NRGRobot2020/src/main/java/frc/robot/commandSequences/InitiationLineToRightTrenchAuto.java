@@ -1,3 +1,4 @@
+
 package frc.robot.commandSequences;
 
 import java.util.List;
@@ -22,41 +23,25 @@ import frc.robot.subsystems.ShooterRPM;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.AcquirerPiston.State;
 
-/**
- * Autonomous command sequence moving the robot from the initiation line to the
- * right trench, and then into shooting position.
- */
+// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
+// information, see:
+// https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
 public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
+  private static final Pose2d INITIAL_POSITION = new Pose2d(3.676, 0.686, new Rotation2d(0));
+  private static final Translation2d FIRST_PATH_WAYPOINT = new Translation2d(4.5, 0.686);
+  private static final Pose2d FIRST_PATH_END_POSITION = new Pose2d(5.784, 0.686, new Rotation2d(0));
   /**
-   * Creates a new InitiationLineToRightTrenchAuto.
+   * Creates a new InitiationLineToLeftTrenchAuto.
    */
   public InitiationLineToRightTrenchAuto(Drive drive, Acquirer acquirer, Feeder feeder, BallCounter ballCounter,
-      ShooterRPM shooterRPM, Turret turret, LimelightVision limelightVision, AcquirerPiston acquirerPiston) {
-    super(new SetStartPosition(drive, new Pose2d(3.676, -7.2, new Rotation2d(0))), 
-          new SetAcquirerState(acquirerPiston, State.EXTEND), 
-          new FollowWaypoints(drive,
-                              // Starting pose
-                              new Pose2d(3.43, -7.2, new Rotation2d(0)),
-                              // Waypoints
-                              List.of(new Translation2d(5.068, -6.6)),
-                              // Ending pose
-                              new Pose2d(6.4, -7.45, new Rotation2d(Math.toRadians(-65))),
-                              // Drive forward
+  ShooterRPM shooterRPM, Turret turret, LimelightVision limelightVision, AcquirerPiston acquirerPiston) {
+    super(new FollowWaypoints(drive,
+                              INITIAL_POSITION,
+                              List.of(FIRST_PATH_WAYPOINT), 
+                              FIRST_PATH_END_POSITION, 
                               false)
-            .alongWith(new TurnTurretToAngle(turret, 77),
-                       new AcquireNumberOfBalls(acquirer, ballCounter).withRelativeCount(2).withTimeout(3), 
-                       new AutoFeeder(ballCounter, feeder)),
-          new SetAcquirerState(acquirerPiston, State.RETRACT),
-          new FollowWaypoints(drive,
-                              // Starting pose
-                              new Pose2d(6.4, -7.45, new Rotation2d(Math.toRadians(-65))),
-                              // Waypoints
-                              List.of(new Translation2d(4.648, -4.236)),
-                              // Ending pose
-                              new Pose2d(4.549, -2.867, new Rotation2d(Math.toRadians(-90))),
-                              // Drive backward
-                              true)
-            .alongWith(new TurnTurretToAngle(turret, 100)),
-          new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
+        .alongWith(new SetAcquirerState(acquirerPiston, State.EXTEND),
+                   new AcquireNumberOfBalls(acquirer, ballCounter).withRelativeCount(1).withTimeout(3),
+                   new AutoFeeder(ballCounter, feeder)));
   }
 }

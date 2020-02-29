@@ -25,7 +25,7 @@ import frc.robot.commandSequences.AutoDriveToFuelCell;
 import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
 import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
-import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
+import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.HoldHoodDown;
@@ -262,7 +262,7 @@ public class RobotContainer {
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), AutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
-    autoLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToRightTrenchAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
+    autoLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToLeftTrenchAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
     autoLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToShieldGeneratorAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
     PrepareForMatch pForMatch = new PrepareForMatch(hood, turret, acquirerPiston);
     autoTab.add("PrepareForMatch", pForMatch);
