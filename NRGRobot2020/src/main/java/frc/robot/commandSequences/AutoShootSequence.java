@@ -1,6 +1,7 @@
 package frc.robot.commandSequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.RobotSubsystems;
 import frc.robot.commands.AutoFeedToShooter;
 import frc.robot.commands.AutoTurret;
 import frc.robot.commands.DisableShooterRPM;
@@ -48,5 +49,9 @@ public class AutoShootSequence extends SequentialCommandGroup {
       new AutoFeedToShooter(acquirer, feeder, ballCounter),
       new DisableShooterRPM(shooterRPM)
     );
+  }
+  
+  public AutoShootSequence(double rpm, RobotSubsystems subsystems){
+    this(rpm, subsystems.shooterRPM, subsystems.turret, subsystems.feeder, subsystems.acquirer, subsystems.ballCounter, subsystems.limelightVision);
   }
 }

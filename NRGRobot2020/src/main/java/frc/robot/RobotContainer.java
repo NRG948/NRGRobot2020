@@ -1,7 +1,5 @@
 package frc.robot;
 
-import java.io.IOException;
-
 import edu.wpi.cscore.HttpCamera;
 import edu.wpi.cscore.MjpegServer;
 import edu.wpi.cscore.VideoSource;
@@ -24,11 +22,8 @@ import frc.robot.commands.ManualHood;
 import frc.robot.commandSequences.AutoDriveToFuelCell;
 import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
-import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
-import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
 import frc.robot.commands.DriveToFuelCell;
-import frc.robot.commands.FollowPathWeaverFile;
 import frc.robot.commands.HoldHoodDown;
 import frc.robot.commands.InterruptAll;
 import frc.robot.commands.LEDTest;
@@ -45,19 +40,7 @@ import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.AutoTurret;
-import frc.robot.subsystems.Acquirer;
-import frc.robot.subsystems.AcquirerPiston;
-import frc.robot.subsystems.AddressableLEDs;
-import frc.robot.subsystems.BallCounter;
-import frc.robot.subsystems.RaspberryPiVision;
-import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Gearbox;
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.LimelightVision;
-import frc.robot.subsystems.ShooterRPM;
 import frc.robot.utilities.NRGPreferences;
-import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.AcquirerPiston.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -104,30 +87,18 @@ public class RobotContainer {
   // Xbox right stick up/down - acquirer, back button + right stick up/down - feeder,
   
   // Create subsystems
-  private final AddressableLEDs leds = new AddressableLEDs();
-  private final Drive drive = new Drive();
-  private final Gearbox gearbox = new Gearbox();
-  private final Acquirer acquirer = new Acquirer();
-  private final AcquirerPiston acquirerPiston = new AcquirerPiston();
-  private final Feeder feeder = new Feeder();
-  private final LimelightVision limelightVision = new LimelightVision();
-  private final Turret turret = new Turret(limelightVision, xboxController);
-  private final Hood hood = new Hood();
-  private final ShooterRPM shooterRPM = new ShooterRPM();
-  private final RaspberryPiVision raspPi = new RaspberryPiVision();
+  private final RobotSubsystems subsystems = new RobotSubsystems();
   private final Compressor compressor = new Compressor();
-  private final BallCounter ballCounter = new BallCounter();
 
   // Commands
-  private final ManualDrive manualDrive = new ManualDrive(drive, leftJoystick, rightJoystick, xboxController);
-  private final ManualAcquirer manualAcquirer = new ManualAcquirer(acquirer, xboxController);
-  private final ManualFeeder manualFeeder = new ManualFeeder(feeder, xboxController);
-  private final ManualTurret manualTurret = new ManualTurret(turret, xboxController);
-  private final ManualHood manualHood = new ManualHood(hood, xboxController);
-  private ManualShooter manualShooter = new ManualShooter(shooterRPM, xboxController);
-  private LEDTest ledTest = new LEDTest(leds);
-  private InterruptAll interruptAll = new InterruptAll(leds, drive, acquirer, feeder,
-  limelightVision, turret, hood, shooterRPM, raspPi, acquirerPiston );
+  private final ManualDrive manualDrive = new ManualDrive(subsystems.drive, leftJoystick, rightJoystick, xboxController);
+  private final ManualAcquirer manualAcquirer = new ManualAcquirer(subsystems.acquirer, xboxController);
+  private final ManualFeeder manualFeeder = new ManualFeeder(subsystems.feeder, xboxController);
+  private final ManualTurret manualTurret = new ManualTurret(subsystems.turret, xboxController);
+  private final ManualHood manualHood = new ManualHood(subsystems.hood, xboxController);
+  private ManualShooter manualShooter = new ManualShooter(subsystems.shooterRPM, xboxController);
+  private LEDTest ledTest = new LEDTest(subsystems.leds);
+  private InterruptAll interruptAll = new InterruptAll(subsystems);
 
   // Autonomous chooser
   private SendableChooser<InitialAutoPath> autoPathChooser;
@@ -146,12 +117,12 @@ public class RobotContainer {
     NRGPreferences.init();
 
     // Set subsystem default commands
-    drive.setDefaultCommand(manualDrive);
-    shooterRPM.setDefaultCommand(manualShooter);
-    acquirer.setDefaultCommand(manualAcquirer);
-    feeder.setDefaultCommand(manualFeeder);
+    subsystems.drive.setDefaultCommand(manualDrive);
+    subsystems.shooterRPM.setDefaultCommand(manualShooter);
+    subsystems.acquirer.setDefaultCommand(manualAcquirer);
+    subsystems.feeder.setDefaultCommand(manualFeeder);
     // turret.setDefaultCommand(manualTurret);
-    hood.setDefaultCommand(manualHood);
+    subsystems.hood.setDefaultCommand(manualHood);
     // leds.setDefaultCommand(ledTest);
 
     // Configure the button bindings
@@ -160,14 +131,14 @@ public class RobotContainer {
     // Configure Shuffleboard Tabs
     this.addAutonomousShuffleboardTab();
     this.addDriverShuffleboardTab();
-    drive.addShuffleBoardTab();
-    raspPi.addShuffleBoardTab();
-    acquirer.initShuffleboard();
-    feeder.initShuffleboard();
-    turret.initShuffleboard();
-    hood.initShuffleboard();
-    ballCounter.addShuffleboardTab();
-    shooterRPM.addShuffleBoardTab();
+    subsystems.drive.addShuffleBoardTab();
+    subsystems.raspPi.addShuffleBoardTab();
+    subsystems.acquirer.initShuffleboard();
+    subsystems.feeder.initShuffleboard();
+    subsystems.turret.initShuffleboard();
+    subsystems.hood.initShuffleboard();
+    subsystems.ballCounter.addShuffleboardTab();
+    subsystems.shooterRPM.addShuffleBoardTab();
 
     compressor.start();
   }
@@ -179,28 +150,28 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings(){
-    xboxButtonB.whenPressed(new MaintainShooterRPM(shooterRPM));
-    xboxButtonX.whenPressed(new SetAcquirerState(this.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(turret, 77)));
-    xboxButtonX.whenHeld(new AutoFeeder(ballCounter, feeder).alongWith(
-      new AcquireNumberOfBalls(acquirer, ballCounter).withAbsoluteCount(5)));
-      xboxButtonX.whenReleased(new SetAcquirerState(this.acquirerPiston, State.RETRACT));
-      xboxLeftBumper.whenPressed(new AutoTurret(turret, limelightVision));
-      xboxRightBumper.whenPressed(new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
-      xboxBackButton.whenPressed(new ManualTurret(turret, xboxController));
-      driveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
-      shiftGears.whenPressed(new InstantCommand(() -> { gearbox.toggleGears(); } ));
-      activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(acquirerPiston));
+    xboxButtonB.whenPressed(new MaintainShooterRPM(subsystems.shooterRPM));
+    xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)));
+    xboxButtonX.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
+      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(5)));
+      xboxButtonX.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
+      xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret, subsystems.limelightVision));
+      xboxRightBumper.whenPressed(new AutoShootSequence(4000, subsystems));
+      xboxBackButton.whenPressed(new ManualTurret(subsystems.turret, xboxController));
+      driveStraight.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
+      shiftGears.whenPressed(new InstantCommand(() -> { subsystems.gearbox.toggleGears(); } ));
+      activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
       resetSensorsButton.whenPressed(new InstantCommand(() -> {
         resetSensors();
       }));
       ledModeButton.whenPressed(new InstantCommand(() -> {
-        limelightVision.toggleLed();
+        subsystems.limelightVision.toggleLed();
       }));
-    driveToBall.whenPressed(new AutoDriveToFuelCell(this.raspPi, this.drive));
-    driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(this.raspPi, this.drive));
-    driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi));
+    driveToBall.whenPressed(new AutoDriveToFuelCell(subsystems.raspPi, subsystems.drive));
+    driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive));
+    driveToBallContinuous.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
     interruptAllButton.whenPressed(interruptAll);
-    holdHoodDownButton.whenHeld(new HoldHoodDown(hood));
+    holdHoodDownButton.whenHeld(new HoldHoodDown(subsystems.hood));
   }
   
   /**
@@ -244,9 +215,7 @@ public class RobotContainer {
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
-    autoLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToLeftTrenchAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
-    autoLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToShieldGeneratorAuto(drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
-    PrepareForMatch pForMatch = new PrepareForMatch(hood, turret, acquirerPiston);
+    PrepareForMatch pForMatch = new PrepareForMatch(subsystems.hood, subsystems.turret, subsystems.acquirerPiston);
     autoTab.add("PrepareForMatch", pForMatch);
   }
 
@@ -260,20 +229,19 @@ public class RobotContainer {
     InitialAutoPath path = autoPathChooser.getSelected();
     switch(path){
       case INITIATION_LINE_TO_RIGHT_TRENCH:
-        return new SetStartPosition(drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
-          .andThen(new InitiationLineToRightTrenchAuto(
-            drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston, hood));
+        return new SetStartPosition(subsystems.drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
+          .andThen(new InitiationLineToRightTrenchAuto(subsystems));
       default:
         // TODO move off of Initiation Line
-        return new SetStartPosition(drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
+        return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
           }    
   }
 
   public void resetSensors() {
-    drive.resetHeading();
-    drive.resetOdometry(new Pose2d(0,0, new Rotation2d()));
-    shooterRPM.reset();
-    turret.resetHeading();
-    hood.reset();
+    subsystems.drive.resetHeading();
+    subsystems.drive.resetOdometry(new Pose2d(0,0, new Rotation2d()));
+    subsystems.shooterRPM.reset();
+    subsystems.turret.resetHeading();
+    subsystems.hood.reset();
   }
 }

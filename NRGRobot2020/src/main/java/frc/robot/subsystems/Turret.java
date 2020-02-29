@@ -11,6 +11,7 @@ import frc.robot.utilities.MathUtil;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.commands.ManualTurret;
+import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.TurnTurretToAngle;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -37,7 +38,6 @@ public class Turret extends SubsystemBase {
       TurretConstants.kTurretEncoderPorts[1]);
   private PIDController turretPIDController;
   private double maxPower;
-  private XboxController xboxController;
 
   private boolean continuousPID = false;
   private double skewHorizontalAngle;
@@ -47,9 +47,8 @@ public class Turret extends SubsystemBase {
   /**
    * Creates the Turret subsystem.
    */
-  public Turret(LimelightVision limelightVision, XboxController xboxController) {
+  public Turret(LimelightVision limelightVision) {
     this.limelightVision = limelightVision;
-    this.xboxController = xboxController;
     turretMotor.setInverted(false);
     turretEncoder.setDistancePerPulse(0.027);
     cameraHorizontalCorrection = NRGPreferences.USING_PRACTICE_BOT.getValue()
@@ -160,7 +159,7 @@ public class Turret extends SubsystemBase {
     turretLayout.addNumber("Raw Output", () -> (turretMotor.get()));
     turretLayout.addBoolean("ContinuousPID", () -> (continuousPID));
     turretLayout.addNumber("Limelight x", () -> (limelightVision.getX()));
-    turretLayout.add("Manual turret", new ManualTurret(this, xboxController));
+    turretLayout.add("Stop angle PID", new StopTurretAnglePID(this));
     turretLayout.add("Turret turn to angle", new TurnTurretToAngle(this, 130));
 
     VideoSource processedVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream/mjpg");
