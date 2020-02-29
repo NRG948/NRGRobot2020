@@ -13,7 +13,6 @@ public class AutoTurret extends CommandBase {
   private final LimelightVision limelightVision;
   private double maxPower;
   private boolean useDefaultMaxPower = true;
-  private int noTargetCount = 0;
 
   /**
    * Creates a new AutoTurret.
@@ -36,8 +35,7 @@ public class AutoTurret extends CommandBase {
     if (useDefaultMaxPower) {
       maxPower = NRGPreferences.TURRET_MOTOR_POWER.getValue();
     }
-    turret.turretAnglePIDInit(0, maxPower, 1, true);
-    noTargetCount = 0;
+    turret.turretAnglePIDInit(-4.5, maxPower, 1, true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -50,10 +48,8 @@ public class AutoTurret extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     boolean hasTarget = limelightVision.getTv()==1;
-    if(interrupted || (!hasTarget && noTargetCount++ >= 5)){
+    if(interrupted || !hasTarget){
       turret.turretAngleEnd();
-    } else if(hasTarget){
-      noTargetCount = 0;
     }
   }
 
