@@ -26,6 +26,8 @@ public class AcquireNumberOfBalls extends CommandBase {
   public AcquireNumberOfBalls(Acquirer acquirer, BallCounter ballCounter) {
     this.acquirer = acquirer;
     this.ballCounter = ballCounter;
+    /* BallCounter is shared between this command and AutoFeeder therfore we do not add it to
+       requirements.*/
     addRequirements(acquirer);
   }
 

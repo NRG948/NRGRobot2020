@@ -21,6 +21,8 @@ public class AutoFeeder extends CommandBase {
   public AutoFeeder(BallCounter ballCounter, Feeder feeder) {
     this.ballCounter = ballCounter;
     this.feeder = feeder;
+   /* BallCounter is shared between this command and AcquireNumberOfBalls therfore we do not add it to
+      requirements.*/
     addRequirements(feeder);
   }
 
