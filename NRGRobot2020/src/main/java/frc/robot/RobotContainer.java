@@ -262,7 +262,7 @@ public class RobotContainer {
       case INITIATION_LINE_TO_RIGHT_TRENCH:
         return new SetStartPosition(drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
           .andThen(new InitiationLineToRightTrenchAuto(
-            drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston));
+            drive, acquirer, feeder, ballCounter, shooterRPM, turret, limelightVision, acquirerPiston, hood));
       default:
         // TODO move off of Initiation Line
         return new SetStartPosition(drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));

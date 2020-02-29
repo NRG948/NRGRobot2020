@@ -11,13 +11,17 @@ import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetAcquirerState;
+import frc.robot.commands.SetHoodPosition;
+import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.SetStartPosition;
+import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.AcquirerPiston;
 import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
 import frc.robot.subsystems.Turret;
@@ -34,7 +38,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
    * Creates a new InitiationLineToLeftTrenchAuto.
    */
   public InitiationLineToRightTrenchAuto(Drive drive, Acquirer acquirer, Feeder feeder, BallCounter ballCounter,
-  ShooterRPM shooterRPM, Turret turret, LimelightVision limelightVision, AcquirerPiston acquirerPiston) {
+  ShooterRPM shooterRPM, Turret turret, LimelightVision limelightVision, AcquirerPiston acquirerPiston, Hood hood) {
     super(
       new FollowWaypoints(drive,
                           INITIAL_POSITION,
@@ -43,8 +47,13 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
                           false)
         .alongWith(new SetAcquirerState(acquirerPiston, State.EXTEND),
                    new TurnTurretToAngle(turret, 77),
+                   new SetHoodPosition(hood, 72),
                    new AcquireNumberOfBalls(acquirer, ballCounter).withRelativeCount(1).withTimeout(3),
                    new AutoFeeder(ballCounter, feeder)),
-      new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
+      new SetLimelightHorizontalSkew(turret, -2.0),
+      new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision), 
+      new SetAcquirerState(acquirerPiston, State.RETRACT)
+        .alongWith(new StopTurretAnglePID(turret))
+      );
   }
 }
