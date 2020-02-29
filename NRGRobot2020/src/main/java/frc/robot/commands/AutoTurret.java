@@ -11,6 +11,7 @@ import frc.robot.utilities.NRGPreferences;
 public class AutoTurret extends CommandBase {
   private final Turret turret;
   private final LimelightVision limelightVision;
+  private double skewAngle;
   private double maxPower;
   private boolean useDefaultMaxPower = true;
 
@@ -29,13 +30,18 @@ public class AutoTurret extends CommandBase {
     return this;
   }
 
+  public AutoTurret withSkew(double skewAngle){
+    this.skewAngle = skewAngle;
+    return this;
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     if (useDefaultMaxPower) {
       maxPower = NRGPreferences.TURRET_MOTOR_POWER.getValue();
     }
-    turret.turretAnglePIDInit(-4.5, maxPower, 1, true);
+    turret.turretAnglePIDInit(skewAngle, maxPower, 1, true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -47,8 +53,7 @@ public class AutoTurret extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    boolean hasTarget = limelightVision.getTv()==1;
-    if(interrupted || !hasTarget){
+    if(interrupted){
       turret.turretAngleEnd();
     }
   }
