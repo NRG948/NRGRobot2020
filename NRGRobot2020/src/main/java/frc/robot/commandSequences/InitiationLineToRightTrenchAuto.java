@@ -7,9 +7,10 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AcquireNumberOfBalls;
+import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.FollowWaypoints;
+import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetStartPosition;
-import frc.robot.commands.ToggleAcquirerPiston;
 import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.AcquirerPiston;
@@ -19,6 +20,7 @@ import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.ShooterRPM;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.AcquirerPiston.State;
 
 /**
  * Autonomous command sequence moving the robot from the initiation line to the
@@ -31,7 +33,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
   public InitiationLineToRightTrenchAuto(Drive drive, Acquirer acquirer, Feeder feeder, BallCounter ballCounter,
       ShooterRPM shooterRPM, Turret turret, LimelightVision limelightVision, AcquirerPiston acquirerPiston) {
     super(new SetStartPosition(drive, new Pose2d(3.473, -7.2, new Rotation2d(0))), 
-          new ToggleAcquirerPiston(acquirerPiston), 
+          new SetAcquirerState(acquirerPiston, State.EXTEND), 
           new FollowWaypoints(drive,
                               // Starting pose
                               new Pose2d(3.43, -7.2, new Rotation2d(0)),
@@ -41,7 +43,9 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
                               new Pose2d(6.4, -7.3, new Rotation2d(Math.toRadians(-50))),
                               // Drive forward
                               false)
-            .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter).withRelativeCount(2).withTimeout(5)), 
+            .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter).withRelativeCount(2).withTimeout(5), 
+                       new AutoFeeder(ballCounter, feeder)),
+          new SetAcquirerState(acquirerPiston, State.RETRACT),
           new FollowWaypoints(drive,
                               // Starting pose
                               new Pose2d(6.4, -7.3, new Rotation2d(Math.toRadians(-50))),

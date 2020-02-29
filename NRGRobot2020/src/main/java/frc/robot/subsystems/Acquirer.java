@@ -48,9 +48,10 @@ public class Acquirer extends SubsystemBase {
     final ShuffleboardLayout acquirerLayout = acquirerTab.getLayout("Acquirer", BuiltInLayouts.kList).withPosition(0, 0)
         .withSize(2, 4);
     acquirerRawOutputWidget = acquirerLayout.add("Raw Output", 0.0);
+    acquirerLayout.addNumber("Raw Output", () -> acquirerMotor.get());
   }
 
-public void stop() {
-  acquirerMotor.stopMotor();
-}
+  public void stop() {
+    acquirerMotor.stopMotor();
+  }
 }

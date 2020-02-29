@@ -153,6 +153,8 @@ public class NRGPreferences {
     public static final BooleanPrefs TELEOP_SQUARE_INPUTS = new BooleanPrefs("TeleopSquareInputs", true); 
     public static final BooleanPrefs DRIVE_SQUARE_INPUTS = new BooleanPrefs("DriveSquareInputs", false);
     public static final BooleanPrefs DRIVE_USE_XBOX_CONTROL = new BooleanPrefs("DriveUseXboxControl", false);
+
+    public static final NumberPrefs DRIVE_COLLISION_THRESHOLD = new NumberPrefs("DriveCollisionThreshold", 0.5); 
     
     // Vision subsystem preferences
     public static final NumberPrefs CAMERA_DISTANCE_SCALE = new NumberPrefs("CameraDistanceScale", 1.0);

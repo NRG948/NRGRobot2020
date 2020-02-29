@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants.DriveConstants;
@@ -30,6 +32,7 @@ import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetStartPosition;
+import frc.robot.test.IMotorEncoderPair;
 
 public class Drive extends SubsystemBase {
   /**
@@ -69,6 +72,10 @@ public class Drive extends SubsystemBase {
   private PIDController drivePIDController;
   private PIDController turnPIDController;
   private boolean turnSquareInputs;
+  private double lastWorldAccelX;
+  private double lastWorldAccelY;
+  private boolean detectCollisions = false;
+  private int collisionCount;
 
   public Drive() {
     leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
@@ -136,6 +143,11 @@ public class Drive extends SubsystemBase {
     double rightDistance = rightEncoder.getDistance();
 
     odometry.update(gyroAngle, leftDistance, rightDistance);
+
+    if(this.detectCollisions && collisionDetected()) {
+      CommandScheduler.getInstance().cancelAll();
+      ++ this.collisionCount;
+    }
   }
 
   /**
@@ -405,5 +417,41 @@ public class Drive extends SubsystemBase {
     positionLayout.addNumber("X", () -> getPose().getTranslation().getX());
     positionLayout.addNumber("Y", () -> getPose().getTranslation().getY());
     positionLayout.addNumber("Heading", () -> getHeadingContinuous());
+    
+    // Add collision detection to a layout tab
+    ShuffleboardLayout collisionLayout = driveTab.getLayout("Collision", BuiltInLayouts.kList).
+      withPosition(6, 2).withSize(2, 2);
+    collisionLayout.addNumber("Collision Count", () -> this.collisionCount);
+    collisionLayout.add("Enable", new InstantCommand(() -> this.setDetectCollisions(true)));
+    collisionLayout.add("Disable", new InstantCommand(() -> this.setDetectCollisions(false)));
   }
+
+  private boolean collisionDetected() {
+    double currentWorldAccelX = this.navx.getWorldLinearAccelX();
+    double currentWorldAccelY = this.navx.getWorldLinearAccelY();
+    double currentJerkX = currentWorldAccelX - this.lastWorldAccelX;
+    double currentJerkY = currentWorldAccelY - this.lastWorldAccelY;
+    double currentJerk = Math.sqrt(currentJerkX * currentJerkX + currentJerkY * currentJerkY);
+    return currentJerk >= NRGPreferences.DRIVE_COLLISION_THRESHOLD.getValue();
+  }
+
+  public void setDetectCollisions(boolean detectCollisions) {
+    this.detectCollisions = detectCollisions;
+  }
+
+   public class MotorEncoderPair implements IMotorEncoderPair{
+     private WPI_VictorSPX motor;
+     private Encoder encoder;
+     public MotorEncoderPair(WPI_VictorSPX motor, Encoder encoder){
+       this.motor = motor;
+       this.encoder = encoder;
+     }
+
+     public void setMotor(double power){
+       motor.set(power);
+     }
+     public double getEncoder(){
+       return encoder.getDistance();
+     }
+   }
 }
