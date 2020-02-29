@@ -15,18 +15,12 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 public class Hood extends SubsystemBase {
 
-  /**
-   *
-   */
   private static final int MAX_LIMIT = 100;
   private static final int LOWER_HARD_STOP = 1;
   private static final int UPPER_HARD_STOP = 95;
   private Victor hoodMotor = new Victor(TurretConstants.kHoodMotorPort);
   private AnalogInput encoderInput = new AnalogInput(1);
   private AnalogEncoder hoodEncoder = new AnalogEncoder(encoderInput);
-
-  private SimpleWidget rawHoodOutputWidget;
-  private SimpleWidget distanceHoodOutputWidget;
 
   /**
    * Creates a new Hood.
@@ -51,18 +45,15 @@ public class Hood extends SubsystemBase {
     if (hoodPosition >= UPPER_HARD_STOP && power > 0 || hoodPosition < LOWER_HARD_STOP && power < 0) {
       power = 0;
     }
-    rawHoodOutputWidget.getEntry().setDouble(power);
     hoodMotor.set(power);
   }
 
   public double getPosition() {
-    return -hoodEncoder.get() * MAX_LIMIT / NRGPreferences.HOOD_MAX_VOLTAGE.getValue();
+    return hoodEncoder.get() * MAX_LIMIT / NRGPreferences.HOOD_MAX_VOLTAGE.getValue();
   }
 
   @Override
   public void periodic() {
-    rawHoodOutputWidget.getEntry().setDouble(hoodEncoder.get());
-    distanceHoodOutputWidget.getEntry().setDouble(getPosition());
     // This method will be called once per scheduler run
   }
 
@@ -74,8 +65,9 @@ public class Hood extends SubsystemBase {
     ShuffleboardTab hoodTab = Shuffleboard.getTab("Hood");
 
     ShuffleboardLayout hoodLayout = hoodTab.getLayout("Hood", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
-    rawHoodOutputWidget = hoodLayout.add("Raw Output", 0.0);
-    distanceHoodOutputWidget = hoodLayout.add("Distance", 0.0);
+    hoodLayout.addNumber("Raw Output", () -> this.hoodMotor.get());
+    hoodLayout.addNumber("Position", () -> this.getPosition());
+    hoodLayout.add("Encoder", this.hoodEncoder);
   }
 
   public void hoodEnd() {

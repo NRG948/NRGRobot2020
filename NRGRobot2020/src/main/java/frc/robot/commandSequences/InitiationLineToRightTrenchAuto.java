@@ -32,7 +32,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
    */
   public InitiationLineToRightTrenchAuto(Drive drive, Acquirer acquirer, Feeder feeder, BallCounter ballCounter,
       ShooterRPM shooterRPM, Turret turret, LimelightVision limelightVision, AcquirerPiston acquirerPiston) {
-    super(new SetStartPosition(drive, new Pose2d(3.473, -7.2, new Rotation2d(0))), 
+    super(new SetStartPosition(drive, new Pose2d(3.676, -7.2, new Rotation2d(0))), 
           new SetAcquirerState(acquirerPiston, State.EXTEND), 
           new FollowWaypoints(drive,
                               // Starting pose
@@ -40,10 +40,10 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
                               // Waypoints
                               List.of(new Translation2d(5.068, -6.809)),
                               // Ending pose
-                              new Pose2d(6.4, -7.3, new Rotation2d(Math.toRadians(-50))),
+                              new Pose2d(6.4, -7.4, new Rotation2d(Math.toRadians(-60))),
                               // Drive forward
                               false)
-            .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter).withRelativeCount(2).withTimeout(5), 
+            .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter).withRelativeCount(2).withTimeout(3), 
                        new AutoFeeder(ballCounter, feeder)),
           new SetAcquirerState(acquirerPiston, State.RETRACT),
           new FollowWaypoints(drive,
