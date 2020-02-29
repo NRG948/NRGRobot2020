@@ -15,7 +15,6 @@ import frc.robot.utilities.NRGPreferences;
 public class AutoFeeder extends CommandBase {
   private BallCounter ballCounter;
   private Feeder feeder;
-  private int count;
   /**
    * Creates a new AutoFeeder.
    */
@@ -28,7 +27,7 @@ public class AutoFeeder extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    this.count = ballCounter.getBallCount();
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
