@@ -20,7 +20,7 @@ public class BallCounter extends SubsystemBase {
   private DigitalInput feederBeamBreak = new DigitalInput(8);
   private boolean acquirerLastState = acquirerBeamBreak.get();
   private boolean feederLastState = feederBeamBreak.get();
-  private int ballCount = 0;
+  private int ballCount = 3;
   private SimpleWidget ballCountWidget;
 
   /**
