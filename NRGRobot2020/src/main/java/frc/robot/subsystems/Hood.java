@@ -31,7 +31,7 @@ public class Hood extends SubsystemBase {
   }
 
   public void reset() {
-    hoodEncoder.reset();
+    //hoodEncoder.reset();
   }
 
   /**
@@ -68,6 +68,7 @@ public class Hood extends SubsystemBase {
     hoodLayout.addNumber("Raw Output", () -> this.hoodMotor.get());
     hoodLayout.addNumber("Position", () -> this.getPosition());
     hoodLayout.add("Encoder", this.hoodEncoder);
+    hoodLayout.add("Analog Input", this.encoderInput);
   }
 
   public void hoodEnd() {
