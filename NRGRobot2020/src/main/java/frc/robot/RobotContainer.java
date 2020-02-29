@@ -28,6 +28,7 @@ import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowPathWeaverFile;
+import frc.robot.commands.HoldHoodDown;
 import frc.robot.commands.InterruptAll;
 import frc.robot.commands.LEDTest;
 import frc.robot.commands.ManualAcquirer;
@@ -37,6 +38,7 @@ import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
 import frc.robot.commands.SetAcquirerState;
+import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AcquireNumberOfBalls;
@@ -79,6 +81,7 @@ public class RobotContainer {
 
   private JoystickButton shiftGears = new JoystickButton(rightJoystick, 1);
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
+  private JoystickButton holdHoodDownButton = new JoystickButton(rightJoystick, 4);
   private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
   private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 6);
   private JoystickButton activateAcquirerPiston = new JoystickButton(rightJoystick, 10);
@@ -192,29 +195,29 @@ public class RobotContainer {
    * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings() {
-    
+  private void configureButtonBindings(){
     xboxButtonB.whenPressed(new MaintainShooterRPM(shooterRPM));
     xboxButtonX.whenPressed(new SetAcquirerState(this.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(turret, 77)));
     xboxButtonX.whenHeld(new AutoFeeder(ballCounter, feeder).alongWith(
-        new AcquireNumberOfBalls(acquirer, ballCounter).withAbsoluteCount(5)));
-    xboxButtonX.whenReleased(new SetAcquirerState(this.acquirerPiston, State.RETRACT));
-    xboxLeftBumper.whenPressed(new AutoTurret(turret, limelightVision));
-    xboxRightBumper.whenPressed(new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
-    xboxBackButton.whenPressed(new ManualTurret(turret, xboxController));
-    driveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
-    shiftGears.whenPressed(new InstantCommand(() -> { gearbox.toggleGears(); } ));
-    activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(acquirerPiston));
-    resetSensorsButton.whenPressed(new InstantCommand(() -> {
-      resetSensors();
-    }));
-    ledModeButton.whenPressed(new InstantCommand(() -> {
-      limelightVision.toggleLed();
-    }));
+      new AcquireNumberOfBalls(acquirer, ballCounter).withAbsoluteCount(5)));
+      xboxButtonX.whenReleased(new SetAcquirerState(this.acquirerPiston, State.RETRACT));
+      xboxLeftBumper.whenPressed(new AutoTurret(turret, limelightVision));
+      xboxRightBumper.whenPressed(new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
+      xboxBackButton.whenPressed(new ManualTurret(turret, xboxController));
+      driveStraight.whenHeld(new ManualDriveStraight(drive, leftJoystick));
+      shiftGears.whenPressed(new InstantCommand(() -> { gearbox.toggleGears(); } ));
+      activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(acquirerPiston));
+      resetSensorsButton.whenPressed(new InstantCommand(() -> {
+        resetSensors();
+      }));
+      ledModeButton.whenPressed(new InstantCommand(() -> {
+        limelightVision.toggleLed();
+      }));
     driveToBall.whenPressed(new AutoDriveToFuelCell(this.raspPi, this.drive));
     driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(this.raspPi, this.drive));
     driveToBallContinuous.whenPressed(new DriveToFuelCell(drive, raspPi));
     interruptAllButton.whenPressed(interruptAll);
+    holdHoodDownButton.whenHeld(new HoldHoodDown(hood));
   }
   
   /**
@@ -285,6 +288,5 @@ public class RobotContainer {
     shooterRPM.reset();
     turret.resetHeading();
     hood.reset();
-    // ballCounter.setBallCount(0);
   }
 }

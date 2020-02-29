@@ -19,7 +19,7 @@ public class Hood extends SubsystemBase {
    *
    */
   private static final int MAX_LIMIT = 100;
-  private static final int LOWER_HARD_STOP = 5;
+  private static final int LOWER_HARD_STOP = 1;
   private static final int UPPER_HARD_STOP = 95;
   private Victor hoodMotor = new Victor(TurretConstants.kHoodMotorPort);
   private AnalogInput encoderInput = new AnalogInput(1);
