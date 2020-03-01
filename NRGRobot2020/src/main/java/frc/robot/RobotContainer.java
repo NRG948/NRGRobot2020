@@ -151,7 +151,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings(){
     xboxButtonB.whenPressed(new MaintainShooterRPM(subsystems.shooterRPM));
-    xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)));
+    xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)).alongWith(new DriveToFuelCell(subsystems.drive, subsystems.raspPi)));
     xboxButtonX.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
       new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(5)));
       xboxButtonX.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
@@ -167,7 +167,7 @@ public class RobotContainer {
       ledModeButton.whenPressed(new InstantCommand(() -> {
         subsystems.limelightVision.toggleLed();
       }));
-    driveToBall.whenPressed(new AutoDriveToFuelCell(subsystems.raspPi, subsystems.drive));
+    driveToBall.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
     driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive));
     driveToBallContinuous.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
     interruptAllButton.whenPressed(interruptAll);
