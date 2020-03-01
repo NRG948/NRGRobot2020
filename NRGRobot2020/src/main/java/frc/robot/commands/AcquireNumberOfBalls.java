@@ -10,14 +10,15 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.BallCounter;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 
 public class AcquireNumberOfBalls extends CommandBase {
   private Acquirer acquirer;
   private BallCounter ballCounter;
-  private double acquirerPower;
   private int numberOfBalls;
-  private int targetcount;
+  private double acquirerPower;
+  private int targetCount;
   private boolean absoluteCount;
 
   /**
@@ -47,10 +48,11 @@ public class AcquireNumberOfBalls extends CommandBase {
   @Override
   public void initialize() {
     acquirerPower = NRGPreferences.ACQUIRER_POWER.getValue();
-    targetcount = numberOfBalls;
+    targetCount = numberOfBalls;
     if (!absoluteCount) {
-      targetcount += ballCounter.getBallCount();
+      targetCount += ballCounter.getBallCount();
     }
+    Logger.commandInit(this, String.format("%d balls", targetCount));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -63,11 +65,12 @@ public class AcquireNumberOfBalls extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     acquirer.stop();
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (targetcount <= ballCounter.getBallCount());
+    return (targetCount <= ballCounter.getBallCount());
   }
 }
