@@ -32,7 +32,7 @@ public class HoldHoodDown extends CommandBase {
   @Override
   public void execute() {
     currentPosition = hood.getPosition();
-    if (currentPosition != 1) {
+    if (currentPosition > 2) {
       hood.rawHood(-0.25);
     } else {
       hood.rawHood(0);
