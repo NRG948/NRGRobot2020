@@ -37,11 +37,12 @@ public class AutoDriveToLoadingStation extends SequentialCommandGroup {
         new InstantCommand(() -> {
           LoadingStationTarget target = raspberryPiVision.getLoadingTarget();
           if (target != null) {
+            double heading = drive.getHeading();
             Pose2d start = drive.getPose();
             System.out.println("Start " + start);
-            Translation2d finalPoint = target.getFinalPoint();
+            Translation2d finalPoint = target.getFinalPoint(heading);
             System.out.println("Final " + finalPoint);
-            Translation2d waypoint = target.getWaypoint();
+            Translation2d waypoint = target.getWaypoint(heading);
             System.out.println("Waypoint " + waypoint);
             Pose2d end = new Pose2d(start.getTranslation().plus(finalPoint), new Rotation2d());
             new FollowWaypoints(drive, start, List.of(waypoint), end, false).schedule();
