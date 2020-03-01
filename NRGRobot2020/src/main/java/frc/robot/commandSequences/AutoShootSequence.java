@@ -27,8 +27,7 @@ public class AutoShootSequence extends SequentialCommandGroup {
     super( 
       new MaintainShooterRPM(shooterRPM).atRpm(rpm).setAndExit()
         .alongWith(new AutoTurret(turret, limelightVision)),
-      new WaitForBallReady(ballCounter)
-        .alongWith(new WaitForMinRPM(rpm, shooterRPM)),
+      new WaitForMinRPM(rpm, shooterRPM),
       // Release Ball
       new AutoFeedToShooter(acquirer, feeder, ballCounter),
       // Are you at target rpm?
