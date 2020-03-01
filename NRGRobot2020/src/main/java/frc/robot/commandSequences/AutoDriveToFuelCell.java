@@ -8,11 +8,14 @@
 package frc.robot.commandSequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.RobotSubsystems;
+import frc.robot.commands.AcquireNumberOfBalls;
+import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.DriveToFuelCell;
+import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.WaitForNewVisionData;
-import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.RaspberryPiVision;
+import frc.robot.subsystems.AcquirerPiston.State;
 import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -22,10 +25,15 @@ public class AutoDriveToFuelCell extends SequentialCommandGroup {
   /**
    * Creates a new AutoDriveToFuelCell.
    */
-  public AutoDriveToFuelCell(RaspberryPiVision raspberryPiVision, Drive drive) {
+  public AutoDriveToFuelCell(RobotSubsystems subsystems, int ballCount) {
 
-    super(new SetRaspberryPiPipeline(raspberryPiVision, PipelineRunner.FUEL_CELL),
-        new WaitForNewVisionData(raspberryPiVision), 
-        new DriveToFuelCell(drive, raspberryPiVision));
+    super(new SetRaspberryPiPipeline(subsystems.raspPi, PipelineRunner.FUEL_CELL)
+          .alongWith(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND)),
+        new WaitForNewVisionData(subsystems.raspPi), 
+        new DriveToFuelCell(subsystems.drive, subsystems.raspPi)
+          .raceWith(new AutoFeeder(subsystems.ballCounter, subsystems.feeder),
+                    new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withRelativeCount(ballCount)),
+        new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT)
+    );
   }
 }

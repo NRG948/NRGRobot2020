@@ -21,6 +21,7 @@ public class AutoTurret extends CommandBase {
   public AutoTurret(Turret turret, LimelightVision limelightVision) {
     this.turret = turret;
     this.limelightVision = limelightVision;
+    this.skewAngle = 0;
     addRequirements(turret);
   }
 
