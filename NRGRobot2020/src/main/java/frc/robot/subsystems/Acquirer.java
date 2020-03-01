@@ -20,6 +20,7 @@ public class Acquirer extends SubsystemBase {
 
   private double sentPower;
   private SimpleWidget acquirerRawOutputWidget;
+  
 
   private static final double MAX_ACQUIRER_POWER = 1;
 
