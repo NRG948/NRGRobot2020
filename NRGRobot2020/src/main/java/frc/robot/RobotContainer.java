@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.commands.ManualDriveStraight;
 import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualHood;
@@ -151,7 +152,7 @@ public class RobotContainer {
    */
   private void configureButtonBindings(){
     xboxButtonB.whenPressed(new MaintainShooterRPM(subsystems.shooterRPM));
-    xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)));
+    xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)).alongWith(new DriveToFuelCell(subsystems.drive, subsystems.raspPi)));
     xboxButtonX.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
       new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(5)));
       xboxButtonX.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
@@ -167,8 +168,8 @@ public class RobotContainer {
       ledModeButton.whenPressed(new InstantCommand(() -> {
         subsystems.limelightVision.toggleLed();
       }));
-    driveToBall.whenPressed(new AutoDriveToFuelCell(subsystems.raspPi, subsystems.drive));
-    driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive));
+    driveToBall.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
+    driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
     driveToBallContinuous.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
     interruptAllButton.whenPressed(interruptAll);
     holdHoodDownButton.whenHeld(new HoldHoodDown(subsystems.hood));
@@ -199,6 +200,13 @@ public class RobotContainer {
     // Add the switched camera to the Shuffleboard tab.
     HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream/mjpg");
     driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
+    
+    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 0);
+    loadingStationLayout.add("Drive to right feeder", new AutoDriveToLoadingStation(
+        subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(22)));
+    loadingStationLayout.add("Drive to left feeder", new AutoDriveToLoadingStation(
+      subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(-22)));
+    loadingStationLayout.add("Drive to center feeder", new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
   }
 
   /**

@@ -44,21 +44,21 @@ public class LoadingStationTarget implements VisionTarget{
    * @return the change in inches for x, y value from starting odometry value to
    *         final point.
    */
-  public Translation2d getFinalPoint() {
+  public Translation2d getFinalPoint(double heading, double xOffset, double yOffset) {
     double distanceMeters = Units.inchesToMeters(distance);
-    double angleRadians = Math.toRadians(angle);
-    return new Translation2d(distanceMeters * Math.cos(angleRadians) - Units.inchesToMeters(6), 
-            distanceMeters * Math.sin(angleRadians));
+    double angleRadians = Math.toRadians(angle + heading);
+    return new Translation2d(distanceMeters * Math.cos(angleRadians) - Units.inchesToMeters(6) + xOffset, 
+            distanceMeters * Math.sin(angleRadians) + yOffset);
   }
 
   /**
    * @return the change in inches for x, y value from starting odometry value to
    *         the waypoint.
    */
-  public Translation2d getWaypoint() {
+  public Translation2d getWaypoint(double heading, double xOffset, double yOffset) {
     double distanceMeters = Units.inchesToMeters(distance);
-    double angleRadians = Math.toRadians(angle);
-    return new Translation2d(distanceMeters * Math.cos(angleRadians) - Units.inchesToMeters(36), 
-            distanceMeters * Math.sin(angleRadians));
+    double angleRadians = Math.toRadians(angle + heading);
+    return new Translation2d(distanceMeters * Math.cos(angleRadians) - Units.inchesToMeters(36) + xOffset, 
+            distanceMeters * Math.sin(angleRadians) + yOffset);
   }
 }

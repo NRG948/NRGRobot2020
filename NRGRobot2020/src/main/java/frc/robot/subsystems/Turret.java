@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.cscore.HttpCamera;
 import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.XboxController;
@@ -133,11 +134,16 @@ public class Turret extends SubsystemBase {
   public void setHorizontalSkew(double skewAngle){
     this.skewHorizontalAngle = skewAngle;
   }
+
   @Override
   public void periodic() {
     if (continuousPID) {
-      double currentAngle = limelightVision.getX();
-      this.turretAngleToExecute(currentAngle);
+      if (DriverStation.getInstance().isDisabled()) {
+        this.turretAngleEnd();
+      } else {
+        double currentAngle = limelightVision.getX();
+        this.turretAngleToExecute(currentAngle);
+      }
     }
   }
 
