@@ -63,7 +63,7 @@ public class DriveToFuelCell extends CommandBase {
       ballNotFoundCounter = 0;
       double distanceToTarget = ballTarget.getDistanceInInches();
       double angleToTarget = ballTarget.getAngleInDegrees();
-      double turnPower = angleToTarget / (IMAGE_FOV_DEGREES * 1.2);
+      double turnPower = angleToTarget / (IMAGE_FOV_DEGREES * 2.0);
       double drivePower = MathUtil.clamp((distanceToTarget / INCHES_TO_SLOW), 0.1, maxPower);
       drive.arcadeDrive(drivePower, -turnPower);
       SmartDashboard.putNumber("DriveToBall/turnPower", turnPower);
