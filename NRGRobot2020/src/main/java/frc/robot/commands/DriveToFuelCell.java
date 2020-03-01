@@ -20,6 +20,7 @@ public class DriveToFuelCell extends CommandBase {
   private static final double IMAGE_FOV_DEGREES = 64.4;
   private static final double INCHES_TO_SLOW = 20;
   private int ballNotFoundCounter = 0;
+  private boolean useDefaultMaxPower = true;
 
   /**
    * Constructs an instance of this class.
@@ -41,13 +42,14 @@ public class DriveToFuelCell extends CommandBase {
    */
   public DriveToFuelCell withMaxPower(double maxPower) {
     this.maxPower = maxPower;
+    this.useDefaultMaxPower = false;
     return this;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (maxPower == Double.NaN) {
+    if (useDefaultMaxPower) {
       maxPower = NRGPreferences.DRIVE_TO_BALL_MAXPOWER.getValue();
     }
     ballNotFound = false;
@@ -61,11 +63,9 @@ public class DriveToFuelCell extends CommandBase {
       ballNotFoundCounter = 0;
       double distanceToTarget = ballTarget.getDistanceInInches();
       double angleToTarget = ballTarget.getAngleInDegrees();
-      double turnPower = angleToTarget / IMAGE_FOV_DEGREES;
+      double turnPower = angleToTarget / (IMAGE_FOV_DEGREES * 1.2);
       double drivePower = MathUtil.clamp((distanceToTarget / INCHES_TO_SLOW), 0.1, maxPower);
       drive.arcadeDrive(drivePower, -turnPower);
-      SmartDashboard.putNumber("DriveToBall/Distance", distanceToTarget);
-      SmartDashboard.putNumber("DriveToBall/Angle", angleToTarget);
       SmartDashboard.putNumber("DriveToBall/turnPower", turnPower);
       SmartDashboard.putNumber("DriveToBall/drivePower", drivePower);
     } else {
