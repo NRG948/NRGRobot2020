@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.Turret;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 
 /**
@@ -43,6 +44,7 @@ public class AutoTurret extends CommandBase {
       maxPower = NRGPreferences.TURRET_MOTOR_POWER.getValue();
     }
     turret.turretAnglePIDInit(skewAngle, maxPower, 1, true);
+    Logger.commandInit(this, String.format("skew:%4.1f toler:%4.1f", skewAngle, 1.0));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -50,19 +52,19 @@ public class AutoTurret extends CommandBase {
   public void execute() {
     //Turret.periodic sends power to the motors using a subsystem PIDController
   }
-
+  
+  // Command always exits immediately but leaves PID running.
+  @Override
+  public boolean isFinished() {
+    return true;
+  }
+  
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     if(interrupted){
       turret.turretAngleEnd();
     }
-  }
-
-  // Command always exits immediately but leaves PID running.
-  @Override
-  public boolean isFinished() {
-    return true;
-    // return turret.turretAngleOnTarget();
+    Logger.commandEnd(this);
   }
 }
