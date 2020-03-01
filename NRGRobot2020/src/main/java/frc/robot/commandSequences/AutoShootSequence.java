@@ -22,11 +22,11 @@ public class AutoShootSequence extends SequentialCommandGroup {
   /**
    * Shoots up to 5 balls in an autonoumous mode.
    */
-  public AutoShootSequence(double rpm, ShooterRPM shooterRPM, Turret turret, Feeder feeder, Acquirer acquirer, BallCounter ballCounter, LimelightVision limelightVision) {
+  public AutoShootSequence(double rpm, ShooterRPM shooterRPM, Turret turret, Feeder feeder, Acquirer acquirer, BallCounter ballCounter) {
 
     super( 
       new MaintainShooterRPM(shooterRPM).atRpm(rpm).setAndExit()
-        .alongWith(new AutoTurret(turret, limelightVision)),
+        .alongWith(new AutoTurret(turret)),
       new WaitForMinRPM(rpm, shooterRPM),
       // Release Ball
       new AutoFeedToShooter(acquirer, feeder, ballCounter),
@@ -51,6 +51,6 @@ public class AutoShootSequence extends SequentialCommandGroup {
   }
   
   public AutoShootSequence(double rpm, RobotSubsystems subsystems){
-    this(rpm, subsystems.shooterRPM, subsystems.turret, subsystems.feeder, subsystems.acquirer, subsystems.ballCounter, subsystems.limelightVision);
+    this(rpm, subsystems.shooterRPM, subsystems.turret, subsystems.feeder, subsystems.acquirer, subsystems.ballCounter);
   }
 }

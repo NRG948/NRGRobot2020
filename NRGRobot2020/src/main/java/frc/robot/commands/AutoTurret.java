@@ -1,7 +1,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.LimelightVision;
 import frc.robot.subsystems.Turret;
 import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
@@ -11,7 +10,6 @@ import frc.robot.utilities.NRGPreferences;
  */
 public class AutoTurret extends CommandBase {
   private final Turret turret;
-  private final LimelightVision limelightVision;
   private double skewAngle;
   private double maxPower;
   private boolean useDefaultMaxPower = true;
@@ -19,9 +17,8 @@ public class AutoTurret extends CommandBase {
   /**
    * Creates a new AutoTurret.
    */
-  public AutoTurret(Turret turret, LimelightVision limelightVision) {
+  public AutoTurret(Turret turret) {
     this.turret = turret;
-    this.limelightVision = limelightVision;
     this.skewAngle = 0;
     addRequirements(turret);
   }
