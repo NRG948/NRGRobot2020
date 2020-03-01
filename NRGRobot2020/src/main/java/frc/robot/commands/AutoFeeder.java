@@ -8,36 +8,45 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.RobotSubsystems;
+import frc.robot.subsystems.BallCounter;
+import frc.robot.subsystems.Feeder;
+import frc.robot.utilities.NRGPreferences;
 
-public class InterruptAll extends CommandBase {
+public class AutoFeeder extends CommandBase {
+  private BallCounter ballCounter;
+  private Feeder feeder;
   /**
-   * Creates a new InterruptAll.
+   * Creates a new AutoFeeder.
    */
-  public InterruptAll(RobotSubsystems subsystems) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystems.getAll());
+  public AutoFeeder(BallCounter ballCounter, Feeder feeder) {
+    this.ballCounter = ballCounter;
+    this.feeder = feeder;
+   /* BallCounter is shared between this command and AcquireNumberOfBalls therfore we do not add it to
+      requirements.*/
+    addRequirements(feeder);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    feeder.rawFeeder(NRGPreferences.FEEDER_POWER.getValue());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    feeder.rawFeeder(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return ballCounter.isBallInShootingPosition();
   }
 }

@@ -1,3 +1,4 @@
+
 package frc.robot.commandSequences;
 
 import java.util.List;
@@ -5,56 +6,60 @@ import java.util.List;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.RobotSubsystems;
 import frc.robot.commands.AcquireNumberOfBalls;
-import frc.robot.commands.AutoFeedToShooter;
-import frc.robot.commands.Delay;
+import frc.robot.commands.AutoFeeder;
+import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.FollowWaypoints;
-import frc.robot.commands.SetStartPosition;
-import frc.robot.commands.ToggleAcquirerPiston;
+import frc.robot.commands.MaintainShooterRPM;
+import frc.robot.commands.SetAcquirerState;
+import frc.robot.commands.SetHoodPosition;
+import frc.robot.commands.SetLimelightHorizontalSkew;
+import frc.robot.commands.SetRaspberryPiPipeline;
+import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.TurnTurretToAngle;
-import frc.robot.subsystems.Acquirer;
-import frc.robot.subsystems.AcquirerPiston;
-import frc.robot.subsystems.BallCounter;
-import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.LimelightVision;
-import frc.robot.subsystems.ShooterRPM;
-import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.AcquirerPiston.State;
+import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
 
-/**
- * Autonomous command sequence moving the robot from the initiation line to the
- * right trench, and then into shooting position.
- */
+// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
+// information, see:
+// https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
 public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
+  public static final Pose2d INITIAL_POSITION = new Pose2d(3.676, -0.686, new Rotation2d(0));
+  private static final Translation2d FIRST_PATH_WAYPOINT = new Translation2d(4.5, -0.686);
+  private static final Pose2d FIRST_PATH_END_POSITION = new Pose2d(5.784, -0.686, new Rotation2d(0));
+  private static final Pose2d SECOND_PATH_START_POSITION = new Pose2d(9.245, -0.686, new Rotation2d(0));
+  private static final Translation2d SECOND_PATH_WAYPOINT = new Translation2d(8.245, -0.686);
+  private static final Pose2d SECOND_PATH_END_POSITION = new Pose2d( 6.745, -1.3, new Rotation2d(0));
   /**
-   * Creates a new InitiationLineToRightTrenchAuto.
+   * Creates a new InitiationLineToLeftTrenchAuto.
    */
-  public InitiationLineToRightTrenchAuto(Drive drive, Acquirer acquirer, Feeder feeder, BallCounter ballCounter,
-      ShooterRPM shooterRPM, Turret turret, LimelightVision limelightVision, AcquirerPiston acquirerPiston) {
-    super(new SetStartPosition(drive, new Pose2d(3.473, -7.2, new Rotation2d(0))), 
-          new ToggleAcquirerPiston(acquirerPiston), 
-          new FollowWaypoints(drive,
-                              // Starting pose
-                              new Pose2d(3.43, -7.2, new Rotation2d(0)),
-                              // Waypoints
-                              List.of(new Translation2d(5.068, -6.809)),
-                              // Ending pose
-                              new Pose2d(6.4, -7.3, new Rotation2d(Math.toRadians(-50))),
-                              // Drive forward
-                              false)
-            .alongWith(new AcquireNumberOfBalls(acquirer, ballCounter, 2).withTimeout(5)), 
-          new FollowWaypoints(drive,
-                              // Starting pose
-                              new Pose2d(6.4, -7.3, new Rotation2d(Math.toRadians(-50))),
-                              // Waypoints
-                              List.of(new Translation2d(4.648, -4.236)),
-                              // Ending pose
-                              new Pose2d(4.549, -2.567, new Rotation2d(Math.toRadians(-45))),
-                              // Drive backward
-                              true)
-            .alongWith(new TurnTurretToAngle(turret, 100)),
-          new AutoShootSequence(4000, shooterRPM, turret, feeder, acquirer, ballCounter, limelightVision));
+  public InitiationLineToRightTrenchAuto(RobotSubsystems subsystems) {
+    super(
+      new FollowWaypoints(subsystems.drive,
+                          INITIAL_POSITION,
+                          List.of(FIRST_PATH_WAYPOINT), 
+                          FIRST_PATH_END_POSITION, 
+                          false)
+        .alongWith(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND),
+                   new SetRaspberryPiPipeline(subsystems.raspPi, PipelineRunner.FUEL_CELL),
+                   new TurnTurretToAngle(subsystems.turret, 77),
+                   new SetHoodPosition(subsystems.hood, 72),
+                   new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withRelativeCount(1).withTimeout(3),
+                   new AutoFeeder(subsystems.ballCounter, subsystems.feeder),
+                   new MaintainShooterRPM(subsystems.shooterRPM).atRpm(2500).setAndExit()),
+      new SetLimelightHorizontalSkew(subsystems.turret, -3),
+      new AutoShootSequence(4000, subsystems),
+      new AutoDriveToFuelCell(subsystems,3).alongWith(new SetHoodPosition(subsystems.hood ,2)),
+      new FollowWaypoints(subsystems.drive,
+                          SECOND_PATH_START_POSITION,
+                          List.of(SECOND_PATH_WAYPOINT),
+                          SECOND_PATH_END_POSITION,
+                          true),
+      new SetHoodPosition(subsystems.hood,72),
+      new AutoShootSequence(4200, subsystems),
+      new StopTurretAnglePID(subsystems.turret)
+      );
   }
 }

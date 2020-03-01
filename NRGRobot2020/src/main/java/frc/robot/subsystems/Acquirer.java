@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 /**
  * Subsystem which controls the vectoring ball intake rollers that extends
@@ -19,8 +18,8 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 public class Acquirer extends SubsystemBase {
 
   private double sentPower;
-  private SimpleWidget acquirerRawOutputWidget;
   
+
 
   private static final double MAX_ACQUIRER_POWER = 1;
 
@@ -32,7 +31,6 @@ public class Acquirer extends SubsystemBase {
 
   public void rawAcquirer(final double power) {
     sentPower = MathUtil.clamp(power, -MAX_ACQUIRER_POWER, MAX_ACQUIRER_POWER);
-    acquirerRawOutputWidget.getEntry().setDouble(sentPower);
     acquirerMotor.set(sentPower);
   }
 
@@ -48,10 +46,10 @@ public class Acquirer extends SubsystemBase {
     final ShuffleboardTab acquirerTab = Shuffleboard.getTab("Acquirer");
     final ShuffleboardLayout acquirerLayout = acquirerTab.getLayout("Acquirer", BuiltInLayouts.kList).withPosition(0, 0)
         .withSize(2, 4);
-    acquirerRawOutputWidget = acquirerLayout.add("Raw Output", 0.0);
+    acquirerLayout.addNumber("Raw Output", () -> acquirerMotor.get());
   }
 
-public void stop() {
-  acquirerMotor.stopMotor();
-}
+  public void stop() {
+    acquirerMotor.stopMotor();
+  }
 }

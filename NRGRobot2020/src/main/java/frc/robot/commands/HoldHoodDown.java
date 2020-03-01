@@ -8,36 +8,46 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import frc.robot.RobotSubsystems;
+import frc.robot.subsystems.Hood;
 
-public class InterruptAll extends CommandBase {
+public class HoldHoodDown extends CommandBase {
+  private final Hood hood;
+  private double currentPosition;
+  private double previousPosition;
   /**
-   * Creates a new InterruptAll.
+   * Creates a new HoldAcquirerDown.
    */
-  public InterruptAll(RobotSubsystems subsystems) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(subsystems.getAll());
+  public HoldHoodDown(Hood hood) {
+    this.hood = hood;
+    addRequirements(hood);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    previousPosition = hood.getPosition();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    currentPosition = hood.getPosition();
+    if (currentPosition > 2) {
+      hood.rawHood(-0.25);
+    } else {
+      hood.rawHood(0);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
+  public void end(final boolean interrupted) {
+    new SetHoodPosition(hood, previousPosition);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

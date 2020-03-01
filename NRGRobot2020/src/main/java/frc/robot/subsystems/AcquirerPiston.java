@@ -21,6 +21,11 @@ public class AcquirerPiston extends SubsystemBase {
       acquirerSolenoid.set(state == State.EXTEND ? Value.kForward : Value.kReverse); 
     }
 
+    public void setState(State state) {
+      acquirerSolenoid.set(state == State.EXTEND ? Value.kForward : Value.kReverse);
+      this.state = state;
+    }
+
   @Override
   public void periodic() {
   }

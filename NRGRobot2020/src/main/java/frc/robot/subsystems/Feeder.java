@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 /**
  * Subsystem which commands the ball feeder.
@@ -18,7 +17,6 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 public class Feeder extends SubsystemBase {
 
   private Victor feederMotor = new Victor(5);
-  private SimpleWidget feederRawOutputWidget;  
 
   /**
    * Creates the Feeder subsystem.
@@ -28,7 +26,6 @@ public class Feeder extends SubsystemBase {
   }
 
   public void rawFeeder(double power){
-    feederRawOutputWidget.getEntry().setDouble(power);
     feederMotor.set(power);
   }
 
@@ -44,6 +41,6 @@ public class Feeder extends SubsystemBase {
     
     ShuffleboardTab feederTab = Shuffleboard.getTab("Feeder");
     ShuffleboardLayout feederLayout = feederTab.getLayout("Feeder", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
-    feederRawOutputWidget = feederLayout.add("Raw Output", 0.0);
+    feederLayout.addNumber("Raw Output", () -> this.feederMotor.get());
   }
 }

@@ -11,22 +11,17 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 public class Hood extends SubsystemBase {
 
-  /**
-   *
-   */
+  private static final double HOOD_BACK_VOLTAGE_PRACTICE = 3.99;
+  private static final double HOOD_FORWARD_VOLTAGE_PRACTICE = 1.5;
   private static final int MAX_LIMIT = 100;
-  private static final int LOWER_HARD_STOP = 5;
+  private static final int LOWER_HARD_STOP = 1;
   private static final int UPPER_HARD_STOP = 95;
   private Victor hoodMotor = new Victor(TurretConstants.kHoodMotorPort);
   private AnalogInput encoderInput = new AnalogInput(1);
   private AnalogEncoder hoodEncoder = new AnalogEncoder(encoderInput);
-
-  private SimpleWidget rawHoodOutputWidget;
-  private SimpleWidget distanceHoodOutputWidget;
 
   /**
    * Creates a new Hood.
@@ -37,7 +32,7 @@ public class Hood extends SubsystemBase {
   }
 
   public void reset() {
-    hoodEncoder.reset();
+    //hoodEncoder.reset();
   }
 
   /**
@@ -51,18 +46,17 @@ public class Hood extends SubsystemBase {
     if (hoodPosition >= UPPER_HARD_STOP && power > 0 || hoodPosition < LOWER_HARD_STOP && power < 0) {
       power = 0;
     }
-    rawHoodOutputWidget.getEntry().setDouble(power);
     hoodMotor.set(power);
   }
 
+  /** Returns the position of the hood, scaled to be between 0 (full back) and 100 (full forward). */
   public double getPosition() {
-    return -hoodEncoder.get() * MAX_LIMIT / NRGPreferences.HOOD_MAX_VOLTAGE.getValue();
+    return MAX_LIMIT * (HOOD_BACK_VOLTAGE_PRACTICE - hoodEncoder.get()) 
+          / (HOOD_BACK_VOLTAGE_PRACTICE - HOOD_FORWARD_VOLTAGE_PRACTICE);
   }
 
   @Override
   public void periodic() {
-    rawHoodOutputWidget.getEntry().setDouble(hoodEncoder.get());
-    distanceHoodOutputWidget.getEntry().setDouble(getPosition());
     // This method will be called once per scheduler run
   }
 
@@ -74,8 +68,10 @@ public class Hood extends SubsystemBase {
     ShuffleboardTab hoodTab = Shuffleboard.getTab("Hood");
 
     ShuffleboardLayout hoodLayout = hoodTab.getLayout("Hood", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
-    rawHoodOutputWidget = hoodLayout.add("Raw Output", 0.0);
-    distanceHoodOutputWidget = hoodLayout.add("Distance", 0.0);
+    hoodLayout.addNumber("Raw Output", () -> this.hoodMotor.get());
+    hoodLayout.addNumber("Position", () -> this.getPosition());
+    hoodLayout.add("Encoder", this.hoodEncoder);
+    hoodLayout.add("Analog Input", this.encoderInput);
   }
 
   public void hoodEnd() {

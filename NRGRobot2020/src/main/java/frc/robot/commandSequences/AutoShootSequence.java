@@ -1,6 +1,7 @@
 package frc.robot.commandSequences;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.RobotSubsystems;
 import frc.robot.commands.AutoFeedToShooter;
 import frc.robot.commands.AutoTurret;
 import frc.robot.commands.DisableShooterRPM;
@@ -25,28 +26,31 @@ public class AutoShootSequence extends SequentialCommandGroup {
 
     super( 
       new MaintainShooterRPM(shooterRPM).atRpm(rpm).setAndExit()
-            .alongWith(new AutoTurret(turret, limelightVision))
-        .andThen(new WaitForBallReady(ballCounter)
-            .alongWith(new WaitForMinRPM(rpm, shooterRPM)))
+        .alongWith(new AutoTurret(turret, limelightVision)),
+      new WaitForMinRPM(rpm, shooterRPM),
       // Release Ball
-        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
+      new AutoFeedToShooter(acquirer, feeder, ballCounter),
       // Are you at target rpm?
-        .andThen(new WaitForMinRPM(rpm, shooterRPM))
+      new WaitForMinRPM(rpm, shooterRPM),
       // Release Ball
-        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
+      new AutoFeedToShooter(acquirer, feeder, ballCounter),
       // Are you at target rpm?
-        .andThen(new WaitForMinRPM(rpm, shooterRPM))
+      new WaitForMinRPM(rpm, shooterRPM),
       // Release Ball
-        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
-        // Are you at target rpm?
-        .andThen(new WaitForMinRPM(rpm, shooterRPM))
-        // Release Ball
-        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
-        // Are you at target rpm?
-        .andThen(new WaitForMinRPM(rpm, shooterRPM))
-        // Release Ball
-        .andThen(new AutoFeedToShooter(acquirer, feeder, ballCounter))
-        .andThen(new DisableShooterRPM(shooterRPM))
+      new AutoFeedToShooter(acquirer, feeder, ballCounter),
+      // Are you at target rpm?
+      new WaitForMinRPM(rpm, shooterRPM),
+      // Release Ball
+      new AutoFeedToShooter(acquirer, feeder, ballCounter),
+      // Are you at target rpm?
+      new WaitForMinRPM(rpm, shooterRPM),
+      // Release Ball
+      new AutoFeedToShooter(acquirer, feeder, ballCounter),
+      new DisableShooterRPM(shooterRPM)
     );
+  }
+  
+  public AutoShootSequence(double rpm, RobotSubsystems subsystems){
+    this(rpm, subsystems.shooterRPM, subsystems.turret, subsystems.feeder, subsystems.acquirer, subsystems.ballCounter, subsystems.limelightVision);
   }
 }

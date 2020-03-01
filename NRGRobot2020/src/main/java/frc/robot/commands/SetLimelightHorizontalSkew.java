@@ -1,23 +1,25 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.ShooterRPM;
+import frc.robot.subsystems.Turret;
 
-public class DisableShooterRPM extends CommandBase {
+public class SetLimelightHorizontalSkew extends CommandBase {
+  private Turret turret;
+  private double skew;
 
-  ShooterRPM shooterRPM;
   /**
-   * Creates a new DisableShooterRPM.
+   * Creates a new SetLimelightHorizontalSkew.
    */
-  public DisableShooterRPM(ShooterRPM shooterRPM) {
-    this.shooterRPM = shooterRPM;
-    addRequirements(shooterRPM);
+  public SetLimelightHorizontalSkew(Turret turret, double skew) {
+    this.turret = turret;
+    this.skew = skew;
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooterRPM.disableTakeBackHalf();
+    turret.setHorizontalSkew(this.skew);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -28,7 +30,6 @@ public class DisableShooterRPM extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("DisableShooterRPM end");
   }
 
   // Returns true when the command should end.

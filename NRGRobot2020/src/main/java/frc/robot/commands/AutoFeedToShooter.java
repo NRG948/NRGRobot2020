@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.Feeder;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 
 public class AutoFeedToShooter extends CommandBase {
@@ -28,6 +29,7 @@ public class AutoFeedToShooter extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Logger.commandInit(this);
     acquirerPower = NRGPreferences.ACQUIRER_POWER.getValue();
     feederPower = NRGPreferences.FEEDER_POWER.getValue();
     hasBallBeenShot = false;
@@ -39,12 +41,7 @@ public class AutoFeedToShooter extends CommandBase {
     acquirer.rawAcquirer(acquirerPower);
     feeder.rawFeeder(feederPower);
   }
-
-  // Called once the command ends or is interrupted.
-  @Override
-  public void end(boolean interrupted) {
-  }
-
+  
   /**
    * Returns true when current ball has been shot and a new ball is ready or when
    * we are out of balls.
@@ -56,5 +53,11 @@ public class AutoFeedToShooter extends CommandBase {
     }
     hasBallBeenShot = true;
     return ballCounter.getBallCount() == 0;
+  }
+  
+  // Called once the command ends or is interrupted.
+  @Override
+  public void end(boolean interrupted) {
+    Logger.commandEnd(this);
   }
 }

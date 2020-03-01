@@ -7,35 +7,52 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.BallCounter;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 
 public class AcquireNumberOfBalls extends CommandBase {
   private Acquirer acquirer;
   private BallCounter ballCounter;
-  private Timer timer;
-  private double acquirerPower;
   private int numberOfBalls;
-  private int targetcount;
+  private double acquirerPower;
+  private int targetCount;
+  private boolean absoluteCount;
 
   /**
    * Creates a new AcquirerForSeconds.
    */
-  public AcquireNumberOfBalls(Acquirer acquirer, BallCounter ballCounter, int numberOfBalls) {
+  public AcquireNumberOfBalls(Acquirer acquirer, BallCounter ballCounter) {
     this.acquirer = acquirer;
-    this.numberOfBalls = numberOfBalls;
     this.ballCounter = ballCounter;
+    /* BallCounter is shared between this command and AutoFeeder therfore we do not add it to
+       requirements.*/
     addRequirements(acquirer);
+  }
+
+  public AcquireNumberOfBalls withAbsoluteCount(int numberOfBalls) {
+    this.absoluteCount = true;
+    this.numberOfBalls = numberOfBalls;
+    return this;
+  }
+
+  public AcquireNumberOfBalls withRelativeCount(int numberOfBalls) {
+    this.absoluteCount = false;
+    this.numberOfBalls = numberOfBalls;
+    return this;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     acquirerPower = NRGPreferences.ACQUIRER_POWER.getValue();
-    targetcount = ballCounter.getBallCount() + numberOfBalls;
+    targetCount = numberOfBalls;
+    if (!absoluteCount) {
+      targetCount += ballCounter.getBallCount();
+    }
+    Logger.commandInit(this, String.format("%d balls", targetCount));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,11 +65,12 @@ public class AcquireNumberOfBalls extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     acquirer.stop();
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return (targetcount <= ballCounter.getBallCount());
+    return (targetCount <= ballCounter.getBallCount());
   }
 }
