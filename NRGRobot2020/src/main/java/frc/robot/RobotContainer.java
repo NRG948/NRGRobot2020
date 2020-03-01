@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.commands.ManualDriveStraight;
 import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualHood;
@@ -168,7 +169,7 @@ public class RobotContainer {
         subsystems.limelightVision.toggleLed();
       }));
     driveToBall.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
-    driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive));
+    driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
     driveToBallContinuous.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
     interruptAllButton.whenPressed(interruptAll);
     holdHoodDownButton.whenHeld(new HoldHoodDown(subsystems.hood));
@@ -199,6 +200,13 @@ public class RobotContainer {
     // Add the switched camera to the Shuffleboard tab.
     HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream/mjpg");
     driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
+    
+    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 0);
+    loadingStationLayout.add("Drive to right feeder", new AutoDriveToLoadingStation(
+        subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(22)));
+    loadingStationLayout.add("Drive to left feeder", new AutoDriveToLoadingStation(
+      subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(-22)));
+    loadingStationLayout.add("Drive to center feeder", new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
   }
 
   /**

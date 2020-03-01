@@ -29,7 +29,8 @@ public class AutoDriveToLoadingStation extends SequentialCommandGroup {
   /**
    * Creates a new AutoDriveToLoadingStation.
    */
-  public AutoDriveToLoadingStation(RaspberryPiVision raspberryPiVision, Drive drive) {
+  public AutoDriveToLoadingStation(RaspberryPiVision raspberryPiVision, Drive drive, 
+      double xOffset, double yOffset) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     super(new SetRaspberryPiPipeline(raspberryPiVision, PipelineRunner.LOADING_STATION),
@@ -40,9 +41,9 @@ public class AutoDriveToLoadingStation extends SequentialCommandGroup {
             double heading = drive.getHeading();
             Pose2d start = drive.getPose();
             System.out.println("Start " + start);
-            Translation2d finalPoint = target.getFinalPoint(heading);
+            Translation2d finalPoint = target.getFinalPoint(heading, xOffset, yOffset);
             System.out.println("Final " + finalPoint);
-            Translation2d waypoint = target.getWaypoint(heading);
+            Translation2d waypoint = target.getWaypoint(heading, xOffset, yOffset);
             System.out.println("Waypoint " + waypoint);
             Pose2d end = new Pose2d(start.getTranslation().plus(finalPoint), new Rotation2d());
             new FollowWaypoints(drive, start, List.of(waypoint), end, false).schedule();
