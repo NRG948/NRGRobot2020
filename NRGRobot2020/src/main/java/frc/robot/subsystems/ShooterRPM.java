@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.Counter;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Victor;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
@@ -161,7 +162,11 @@ public class ShooterRPM extends SubsystemBase {
   public void periodic() {
     calculateCurrentRPM();
     if(isTakeBackHalfEnabled){
-      updateRPM();
+      if (DriverStation.getInstance().isDisabled()) {
+        this.disableTakeBackHalf();
+      } else{
+        updateRPM();
+      }
     }
     if (turretLoggingEnabled) {
       trackMinMaxRPM(30);
