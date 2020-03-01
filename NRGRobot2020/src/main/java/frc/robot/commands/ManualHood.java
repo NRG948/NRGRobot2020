@@ -7,9 +7,11 @@ import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 
 public class ManualHood extends CommandBase {
-  Hood hood;
-  private double power = 0;
+
+  private final Hood hood;
   private final XboxController m_xboxController;
+  private double power = 0;
+
   /**
    * Creates a new ManualHood.
    */
@@ -28,24 +30,22 @@ public class ManualHood extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_xboxController.getPOV() == 0){
+    if(m_xboxController.getPOV() == 0) {
       power = NRGPreferences.HOOD_MANUAL_MOTOR_POWER.getValue();
-    }
-    else if(m_xboxController.getPOV() == 180){
+    } else if (m_xboxController.getPOV() == 180) {
       power = -NRGPreferences.HOOD_MANUAL_MOTOR_POWER.getValue();
-    }
-    else{
+    } else {
       power = 0;
     }
     hood.rawHood(power);
   }
   
-  // Returns true when the command should end.
+  // Manual commands never end.
   @Override
   public boolean isFinished() {
     return false;
   }
-  
+
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
