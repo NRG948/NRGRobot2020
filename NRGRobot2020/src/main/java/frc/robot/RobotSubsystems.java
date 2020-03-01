@@ -27,7 +27,7 @@ public class RobotSubsystems {
   public final LimelightVision limelightVision = new LimelightVision();
   public final Turret turret = new Turret(limelightVision);
   public final Hood hood = new Hood();
-  public final ShooterRPM shooterRPM = new ShooterRPM();
+  public final ShooterRPM shooterRPM = new ShooterRPM(limelightVision);
   public final RaspberryPiVision raspPi = new RaspberryPiVision();
   public final BallCounter ballCounter = new BallCounter();
 
