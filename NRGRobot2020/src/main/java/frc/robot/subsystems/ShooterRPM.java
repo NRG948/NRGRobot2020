@@ -155,7 +155,7 @@ public class ShooterRPM extends SubsystemBase {
   }
 
   /** Estimates the flywheel motor power needed to maintain a given RPM rate. */
-  private double guessMotorOutputForRPM(double RPM) {
+  public double guessMotorOutputForRPM(double RPM) {
     // TODO: replace this dumb linear estimate with something more accurate.
     return MathUtil.clamp(RPM / MAX_RPM, 0, 1);
   }
