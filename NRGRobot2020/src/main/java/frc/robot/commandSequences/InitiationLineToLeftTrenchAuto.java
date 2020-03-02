@@ -11,7 +11,6 @@ import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetAcquirerState;
-import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.subsystems.AcquirerPiston.State;
 
@@ -55,8 +54,7 @@ public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
    */
   public InitiationLineToLeftTrenchAuto(RobotSubsystems subsystems) {
     // Start on the initiation line, centered between two opponent's balls (A)
-    super(new SetStartPosition(subsystems.drive, INITIAL_POSITION), 
-          new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND), 
+    super(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND), 
           new FollowWaypoints(subsystems.drive,
                               INITIAL_POSITION, // Starting pose  (B)
                               FIRST_PATH_WAYPOINTS,  // Waypoints (C)
