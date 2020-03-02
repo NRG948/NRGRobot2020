@@ -256,20 +256,21 @@ public class ShooterRPM extends SubsystemBase {
 
   /** Sends important subsystem data to the SmartDashboard for monitoring and deubgging. */
   public void updateDashBoard() {
-    SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.get());
-    SmartDashboard.putNumber("ShooterRPM/Distance", spinMotorEncoder.getDistance());
-    SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM);
-    SmartDashboard.putNumber("ShooterRPM/error", error);
-    SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
+    // SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.get());
+    // SmartDashboard.putNumber("ShooterRPM/Distance", spinMotorEncoder.getDistance());
+    // SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM);
+    // SmartDashboard.putNumber("ShooterRPM/error", error);
+    // SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
   }
 
   public void addShuffleBoardTab() {
     if (!NRGPreferences.SHUFFLEBOARD_SHOOTER_RPM_ENABLED.getValue()) {
       return;
     }
+    
     ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
     ShuffleboardLayout layout = shooterTab.getLayout("Shooter", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 1);
-    layout.add(this.spinMotorEncoder);
+    layout.add("Encoder", this.spinMotorEncoder);
     layout.addNumber("Power", () -> this.motorPower);
     layout.addNumber("RPM", () -> this.currentRPM);
     shooterTab.addNumber("RPM", () -> this.currentRPM).withWidget(BuiltInWidgets.kGraph).withPosition(2, 0).withSize(6, 4);
