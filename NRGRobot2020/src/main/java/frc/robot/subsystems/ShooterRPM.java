@@ -267,9 +267,9 @@ public class ShooterRPM extends SubsystemBase {
     if (!NRGPreferences.SHUFFLEBOARD_SHOOTER_RPM_ENABLED.getValue()) {
       return;
     }
-    
+
     ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
-    ShuffleboardLayout layout = shooterTab.getLayout("Shooter", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 1);
+    ShuffleboardLayout layout = shooterTab.getLayout("Shooter", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
     layout.add("Encoder", this.spinMotorEncoder);
     layout.addNumber("Power", () -> this.motorPower);
     layout.addNumber("RPM", () -> this.currentRPM);
