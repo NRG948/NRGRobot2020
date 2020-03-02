@@ -57,8 +57,12 @@ public class ShooterRPM extends SubsystemBase {
   private long prevTime = 0;
   private long prevMinMaxTime = 0;
   private boolean turretLoggingEnabled;
+  private double MIN_RPM = 0;
+  private boolean isContinuousRPMEnabled = false;
+  private LimelightVision limelightVision;
  
-  public ShooterRPM() {
+  public ShooterRPM(LimelightVision limelightVision) {
+    this.limelightVision = limelightVision;
     spinMotorEncoder.setDistancePerPulse(1 / TICKS_PER_FLYWHEEL_REVOLUTION);
     spinMotor1.setInverted(true);
     spinMotor2.setInverted(true);
@@ -215,6 +219,12 @@ public class ShooterRPM extends SubsystemBase {
         System.out.println(s);
       }
     }
+  }
+
+  public double limeLightDistanceToRPM(LimelightVision limelightVision){
+    double distance = limelightVision.getDistance();
+    double RPM  = MathUtil.clamp(2.3778 * distance + 2770.3, MAX_RPM, MIN_RPM);
+    return RPM;
   }
 
 

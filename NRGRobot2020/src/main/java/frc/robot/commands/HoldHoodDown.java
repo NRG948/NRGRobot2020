@@ -1,19 +1,14 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Hood;
+import frc.robot.utilities.Logger;
 
 public class HoldHoodDown extends CommandBase {
+
   private final Hood hood;
-  private double currentPosition;
-  private double previousPosition;
+  private double positionToRestore;
+
   /**
    * Creates a new HoldAcquirerDown.
    */
@@ -25,29 +20,30 @@ public class HoldHoodDown extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    previousPosition = hood.getPosition();
+    Logger.commandInit(this);
+    positionToRestore = hood.getPosition();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    currentPosition = hood.getPosition();
-    if (currentPosition != 1) {
-      hood.rawHood(-0.25);
+    if (hood.getPosition() > 2) {
+      hood.rawHood(-0.25); // lower the hood
     } else {
       hood.rawHood(0);
     }
+  }
+  
+  // Manual commands never end, they only get interrupted.
+  @Override
+  public boolean isFinished() {
+    return false;
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(final boolean interrupted) {
-    new SetHoodPosition(hood, previousPosition);
-  }
-
-  // Returns true when the command should end.
-  @Override
-  public boolean isFinished() {
-    return false;
+    new SetHoodPosition(hood, positionToRestore).schedule();
+    Logger.commandEnd(this, String.format("returning hood to pos: %3.1f", positionToRestore));
   }
 }
