@@ -37,6 +37,7 @@ public class MaintainShooterRPM extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    shooterRPM.enableAutoRPM(false);
     if (useDefaultGoalRPM) {
       goalRPM = NRGPreferences.SHOOTER_TEST_RPM.getValue();
     }

@@ -5,18 +5,20 @@ import frc.robot.subsystems.ShooterRPM;
 
 public class AutoRPM extends CommandBase {
   private final ShooterRPM shooterRPM;
+  private final boolean enable;
   /**
    * Creates a new AutoRPM.
    */
-  public AutoRPM(ShooterRPM shooterRPM) {
+  public AutoRPM(ShooterRPM shooterRPM, boolean enable) {
     this.shooterRPM = shooterRPM;
+    this.enable = enable;
     addRequirements(shooterRPM);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooterRPM.enableAutoRPM(true);
+    shooterRPM.enableAutoRPM(enable);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
