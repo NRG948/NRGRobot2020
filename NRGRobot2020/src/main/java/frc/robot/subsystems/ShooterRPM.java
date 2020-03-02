@@ -60,7 +60,7 @@ public class ShooterRPM extends SubsystemBase {
   private long prevTime = 0;
   private long prevMinMaxTime = 0;
   private boolean turretLoggingEnabled;
-  private boolean autoRpmEnabled = false;
+  private boolean isAutoRpmEnabled = false;
   private Average distanceAverager = new Average(5);
  
   public ShooterRPM(LimelightVision limelightVision) {
@@ -98,7 +98,7 @@ public class ShooterRPM extends SubsystemBase {
   }
 
   /** Updates the flywheel motor controllers using Take-Back-Half closed-loop control. */
-  public void updateRPM() {
+  public void updateMotorPowerToSeekGoalRpm() {
     error = goalRPM - currentRPM; // calculate the error
     motorPower += GAIN * error; // integrate the error
     motorPower = MathUtil.clamp(motorPower, 0, 1);
@@ -111,7 +111,12 @@ public class ShooterRPM extends SubsystemBase {
   }
 
   public void enableAutoRPM(boolean enable) {
-    autoRpmEnabled = enable;
+    if (enable) {
+      isAutoRpmEnabled = enable;
+      isTakeBackHalfEnabled = enable;
+    } else {
+      disableTakeBackHalf();
+    }
   }
 
   /** Sets the target speed of the shooter flywheel in revolutions per minute. */
@@ -177,10 +182,10 @@ public class ShooterRPM extends SubsystemBase {
       if (DriverStation.getInstance().isDisabled()) {
         this.disableTakeBackHalf();
       } else {
-        if (autoRpmEnabled) {
-          autoSetGoalRPM();
+        if (isAutoRpmEnabled) {
+          autoSetGoalRPM(); // Continuously adjust RPM based on Limelight distance.
         }
-        updateRPM();
+        updateMotorPowerToSeekGoalRpm();
       }
     }
     if (turretLoggingEnabled) {
