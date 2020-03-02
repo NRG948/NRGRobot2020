@@ -23,6 +23,7 @@ import frc.robot.commands.ManualHood;
 import frc.robot.commandSequences.AutoDriveToFuelCell;
 import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
+import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.HoldHoodDown;
@@ -235,14 +236,19 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     resetSensors();
     InitialAutoPath path = autoPathChooser.getSelected();
-    switch(path){
+    switch (path) {
       case INITIATION_LINE_TO_RIGHT_TRENCH:
         return new SetStartPosition(subsystems.drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
           .andThen(new InitiationLineToRightTrenchAuto(subsystems));
+
+      case INITIATION_LINE_TO_LEFT_TRENCH:
+        return new SetStartPosition(subsystems.drive, InitiationLineToLeftTrenchAuto.INITIAL_POSITION)
+          .andThen(new InitiationLineToLeftTrenchAuto(subsystems));
+
       default:
         // TODO move off of Initiation Line
         return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
-          }    
+    }    
   }
 
   public void resetSensors() {
