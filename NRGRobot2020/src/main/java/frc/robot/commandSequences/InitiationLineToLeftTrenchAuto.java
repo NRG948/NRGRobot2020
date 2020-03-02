@@ -15,39 +15,41 @@ import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.subsystems.AcquirerPiston.State;
 
-/*
-  Use arrows to mark robot positions and (aquirer) orientations: ↑↓←→↖↗↙↘
-  
-       ╱═════════════╤═════════════════════╤═════════════╲  
-      ╱       ⁞      │              ░░░₀   │      ⁞       ╲ 
-     ╱        ⁞      │   ○   ○   ○  ░░░↖D  │      ←A       ╲ 
-    ╱         ⁞      │              ░░░⁰   │      ⁞         ╲
-   ╱          ⁞      └─────────────────────┘↖     ⁞          ╲
-T ║╲          ⁞                                   ⁞          ╱║ L
-g ║ }         ⁞         ₀ ⁰                       ⁞         { ║ d
-t ║╱          ⁞       ₀                 ₀         ⁞          ╲║ r
-  ║           ⁞        ₀                 ₀        ⁞           ║
-  ║           ⁞         ₀                 ₀     ↑F⁞           ║
-L ║╲          ⁞                                   ⁞          ╱║ T
-d ║ }         ⁞                       ₀ ⁰         ⁞         { ║ g
-r ║╱          ⁞                                   ⁞          ╲║ t
-   ╲          ⁞      ┌─────────────────────┐      ⁞          ╱
-    ╲         ⁞      │   ₀░░░              │      ⁞         ╱
-     ╲        ⁞      │    ░░░  ○   ○   ○   │      ⁞        ╱
-      ╲       ⁞      │   ⁰░░░              │      ⁞       ╱
-       ╲═════════════╧═════════════════════╧═════════════╱
-*/
-
 /**
  * Autonomous command sequence moving the robot from the initiation line to the
  * left (aka opponent) trench, and then into shooting position.
+ *
+ * Use arrows to mark robot positions and (acquirer) orientations: <>^v\/
+ *   
+ *        /-------------------------------------------------\  
+ *       /       ¦      ¦              ¦¦¦◦   ¦      ¦       \ 
+ *      /        ¦      ¦   ◦   ◦   ◦  ¦¦¦^D  ¦     <B        \ 
+ *     /         ¦      ¦              ¦¦¦◦   ¦      ¦         \
+ *    /          ¦      +---------------------+\C    ¦          \
+ * T ¦\          ¦           ◦                       ¦          /¦ L
+ * g ¦ }         ¦         ◦                         ¦         { ¦ d
+ * t ¦/          ¦                         ◦         ¦          \¦ r
+ *   ¦           ¦        ◦                 ◦        ¦           ¦
+ *   ¦           ¦         ◦                 ◦       ¦           ¦
+ * L ¦\          ¦          ◦                        ¦          /¦ T
+ * d ¦ }         ¦                         ◦       ^F¦         { ¦ g
+ * r ¦/          ¦                       ◦           ¦          \¦ t
+ *    \          ¦      +---------------------+      ¦          /
+ *     \         ¦      ¦   ◦¦¦¦              ¦      ¦         /
+ *      \        ¦      ¦    ¦¦¦  ◦   ◦   ◦   ¦      ¦        /
+ *       \       ¦      ¦   ◦¦¦¦              ¦      ¦       /
+ *        \-------------------------------------------------/
  */
 public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
   /**
    *
    */
   public static final Pose2d INITIAL_POSITION = new Pose2d(3.676, -7.2, new Rotation2d(0));
-
+  private static final Pose2d FIRST_PATH_END_POSITION = new Pose2d(6.4, -7.45, new Rotation2d(Math.toRadians(-65)));
+  private static final List<Translation2d> FIRST_PATH_WAYPOINTS = List.of(new Translation2d(5.068, -6.6));
+  private static final List<Translation2d> SECOND_PATH_WAYPOINTS = List.of(new Translation2d(4.648, -4.236));
+  private static final Pose2d SECOND_PATH_END_POSITION = new Pose2d(4.549, -2.867, new Rotation2d(Math.toRadians(-90)));
+  
   /**
    * Creates a new InitiationLineToRightTrenchAuto.
    */
@@ -57,23 +59,23 @@ public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
           new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND), 
           new FollowWaypoints(subsystems.drive,
                               INITIAL_POSITION, // Starting pose  (B)
-                              List.of(new Translation2d(5.068, -6.6)),  // Waypoints (C)
-                              new Pose2d(6.4, -7.45, new Rotation2d(Math.toRadians(-65))), // Ending pose (D)
+                              FIRST_PATH_WAYPOINTS,  // Waypoints (C)
+                              FIRST_PATH_END_POSITION, // Ending pose (D)
                               false)  // Drive forward
             // while driving, also make sure we're ready to load more balls
-                // turn turret to maximize carrying capacity
+            // turn turret to maximize carrying capacity
             .alongWith(new TurnTurretToAngle(subsystems.turret, 77),
-                // we hope to pick up 2 ball, but give up after 3 seconds
+                       // we hope to pick up 2 ball, but give up after 3 seconds
                        new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withRelativeCount(2).withTimeout(3), 
-                // make sure our starting state has the initial ball breaking the beam
+                       // make sure our starting state has the initial ball breaking the beam
                        new AutoFeeder(subsystems.ballCounter, subsystems.feeder)),
           // retract aquirer before driving to next point
           new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT),
           // drive to ideal shooting position (F)
           new FollowWaypoints(subsystems.drive,
-                              new Pose2d(6.4, -7.45, new Rotation2d(Math.toRadians(-65))),  // Starting pose (D)
-                              List.of(new Translation2d(4.648, -4.236)),  // Waypoints (E)
-                              new Pose2d(4.549, -2.867, new Rotation2d(Math.toRadians(-90))),  // Ending pose (F)
+                              FIRST_PATH_END_POSITION,  // Starting pose (D)
+                              SECOND_PATH_WAYPOINTS,  // Waypoints (E)
+                              SECOND_PATH_END_POSITION,  // Ending pose (F)
                               true)  // Drive backward
             // turn turret in the rough direction of the target
             .alongWith(new TurnTurretToAngle(subsystems.turret, 100)),
