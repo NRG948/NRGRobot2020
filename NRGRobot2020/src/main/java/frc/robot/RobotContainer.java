@@ -203,7 +203,8 @@ public class RobotContainer {
     HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream/mjpg");
     driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
     
-    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 0);
+    // TODO Remove temporary buttons to test drive to feeder.
+    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 2);
     loadingStationLayout.add("Drive to right feeder", new AutoDriveToLoadingStation(
         subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(22)));
     loadingStationLayout.add("Drive to left feeder", new AutoDriveToLoadingStation(
