@@ -42,6 +42,13 @@ import frc.robot.subsystems.AcquirerPiston.State;
  */
 public class InitiationLineToShieldGeneratorAuto extends SequentialCommandGroup {
   /**
+   *
+   */
+  public static final Pose2d INITIAL_POSITION = new Pose2d( 3.3, -0.786, new Rotation2d(0));
+  private static final List<Translation2d> FIRST_PATH_WAYPOINTS = List.of(new Translation2d(4.821, -1.553));
+  private static final Pose2d FIRST_PATH_END_POSITION = new Pose2d(6.107, -2.987, new Rotation2d(Math.toRadians(-120)));
+
+  /**
    * Creates a new InitiationLineToLeftTrenchAuto.
    */
   public InitiationLineToShieldGeneratorAuto(RobotSubsystems subsystems) {
@@ -51,11 +58,11 @@ public class InitiationLineToShieldGeneratorAuto extends SequentialCommandGroup 
       new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND),
       new FollowWaypoints(subsystems.drive,
                           // Starting pose (A)
-                          new Pose2d( 3.3, -0.786, new Rotation2d(0)),
+                          INITIAL_POSITION,
                           // Waypoint (B)
-                          List.of(new Translation2d(4.821, -1.553)),
+                          FIRST_PATH_WAYPOINTS,
                           // Ending pose (C)
-                          new Pose2d(6.107, -2.987, new Rotation2d(Math.toRadians(-120))),
+                          FIRST_PATH_END_POSITION,
                           // Drive forward
                           false)
           .alongWith(new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withRelativeCount(2).withTimeout(5), 
