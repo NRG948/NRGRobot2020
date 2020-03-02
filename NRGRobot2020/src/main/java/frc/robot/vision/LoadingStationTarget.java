@@ -9,6 +9,7 @@ package frc.robot.vision;
 
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.util.Units;
+import frc.robot.utilities.NRGPreferences;
 
 /**
  * Add your docs here.
@@ -20,7 +21,7 @@ public class LoadingStationTarget implements VisionTarget{
     private double angle;
 
     public LoadingStationTarget(double distance, double angle, double skew) {
-        this.distance = distance;
+        this.distance = distance * NRGPreferences.LOADING_STATION_DISTANCE_FUDGE.getValue();
         this.angle = angle;
         this.skew = skew;
     }
@@ -58,7 +59,8 @@ public class LoadingStationTarget implements VisionTarget{
   public Translation2d getWaypoint(double heading, double xOffset, double yOffset) {
     double distanceMeters = Units.inchesToMeters(distance);
     double angleRadians = Math.toRadians(angle + heading);
-    return new Translation2d(distanceMeters * Math.cos(angleRadians) - Units.inchesToMeters(36) + xOffset, 
+    // We multiply the x-distance by 0.7 to create a waypoint, even if the robot is close to the target
+    return new Translation2d(0.7 * (distanceMeters * Math.cos(angleRadians) - Units.inchesToMeters(6) + xOffset), 
             distanceMeters * Math.sin(angleRadians) + yOffset);
   }
 }

@@ -8,7 +8,6 @@ import frc.robot.commands.DisableShooterRPM;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.WaitForMinRPM;
 
-
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html

@@ -18,6 +18,8 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 public class Acquirer extends SubsystemBase {
 
   private double sentPower;
+  
+
 
   private static final double MAX_ACQUIRER_POWER = 1;
 

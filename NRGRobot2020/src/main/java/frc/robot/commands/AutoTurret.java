@@ -6,7 +6,7 @@ import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 
 /**
- * Enables Turret PID and leaves it running after command exits.
+ * Enables the Turret PID and leaves it running after this command exits.
  */
 public class AutoTurret extends CommandBase {
   private final Turret turret;
@@ -23,12 +23,14 @@ public class AutoTurret extends CommandBase {
     addRequirements(turret);
   }
 
+  /** Optionally sets the maximum power used to rotate the turret. */
   public AutoTurret withMaxPower(double maxPower) {
     this.maxPower = maxPower;
     this.useDefaultMaxPower = false;
     return this;
   }
 
+  /** Optionally sets an angular skew to use while centering the turret on the Limelight target. */
   public AutoTurret withSkew(double skewAngle){
     this.skewAngle = skewAngle;
     return this;
