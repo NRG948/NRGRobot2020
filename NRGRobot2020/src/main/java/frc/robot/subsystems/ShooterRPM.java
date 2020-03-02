@@ -31,6 +31,7 @@ import frc.robot.utilities.NRGPreferences;
 public class ShooterRPM extends SubsystemBase {
 
   private static final double GAIN = 0.0008;
+  private static final double MIN_RPM = 0;
   private static final double MAX_RPM = 5100; // figure out actual max rpm
   private static final double TICKS_PER_FLYWHEEL_REVOLUTION = 645;
   private static final double NANOSECS_PER_SEC = 1000 * 1000 * 1000;
@@ -39,6 +40,7 @@ public class ShooterRPM extends SubsystemBase {
   private final Victor spinMotor1 = new Victor(ShooterConstants.kSpinMotor1Port);
   private final Victor spinMotor2 = new Victor(ShooterConstants.kSpinMotor2Port);
   private final Counter spinMotorEncoder = new Counter(ShooterConstants.kSpinEncoderPort);
+  private final LimelightVision limelightVision;
 
   private double goalRPM = 0;  // The desired RPM for the shooter wheels
   private double error = 0;  // The most recent RPM error
@@ -58,9 +60,7 @@ public class ShooterRPM extends SubsystemBase {
   private long prevTime = 0;
   private long prevMinMaxTime = 0;
   private boolean turretLoggingEnabled;
-  private double MIN_RPM = 0;
   private boolean autoRpmEnabled = false;
-  private LimelightVision limelightVision;
   private Average distanceAverager = new Average(5);
  
   public ShooterRPM(LimelightVision limelightVision) {
@@ -93,7 +93,7 @@ public class ShooterRPM extends SubsystemBase {
     prevTime = currentTime;
   }
 
-  public double getActualRPM(){
+  public double getActualRPM() {
     return currentRPM;
   }
 
@@ -143,14 +143,14 @@ public class ShooterRPM extends SubsystemBase {
     setGoalRPM(distanceAverager.averaged());
   } 
   
-  public double limelightDistanceToRPM() {
+  private double limelightDistanceToRPM() {
     double distance = limelightVision.getDistance();
-    double rpm = MathUtil.clamp(2.3778 * distance + 2770.3, MAX_RPM, MIN_RPM);
+    double rpm = MathUtil.clamp(2.3778 * distance + 2770.3, MIN_RPM, MAX_RPM);
     return rpm;
   }
 
   /** Estimates the flywheel motor power needed to maintain a given RPM rate. */
-  public double guessMotorOutputForRPM(double RPM) {
+  private double guessMotorOutputForRPM(double RPM) {
     // TODO: replace this dumb linear estimate with something more accurate.
     return MathUtil.clamp(RPM / MAX_RPM, 0, 1);
   }
@@ -179,7 +179,6 @@ public class ShooterRPM extends SubsystemBase {
       } else {
         if (autoRpmEnabled) {
           autoSetGoalRPM();
-          setGoalRPM(limelightDistanceToRPM());
         }
         updateRPM();
       }
@@ -201,7 +200,7 @@ public class ShooterRPM extends SubsystemBase {
     lastMotorPower = 0;
   }
 
-  public void disableTakeBackHalf(){
+  public void disableTakeBackHalf() {
     reset();
   }
 
@@ -259,18 +258,15 @@ public class ShooterRPM extends SubsystemBase {
     SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
   }
 
-  public void addShuffleBoardTab(){
-    if (!NRGPreferences.SHUFFLEBOARD_SHOOTER_RPM_ENABLED.getValue()){
+  public void addShuffleBoardTab() {
+    if (!NRGPreferences.SHUFFLEBOARD_SHOOTER_RPM_ENABLED.getValue()) {
       return;
     }
-    
     ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
-    
     ShuffleboardLayout layout = shooterTab.getLayout("Shooter", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 1);
     layout.add(this.spinMotorEncoder);
     layout.addNumber("Power", () -> this.motorPower);
     layout.addNumber("RPM", () -> this.currentRPM);
-
     shooterTab.addNumber("RPM", () -> this.currentRPM).withWidget(BuiltInWidgets.kGraph).withPosition(2, 0).withSize(6, 4);
   }
 }
