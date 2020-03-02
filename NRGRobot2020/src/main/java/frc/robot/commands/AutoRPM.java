@@ -20,6 +20,7 @@ public class AutoRPM extends CommandBase {
   @Override
   public void initialize() {
     shooterRPM.enableAutoRPM(enable);
+    shooterRPM.setGoalRPM(1000); // Get the shooter wheel started
     Logger.commandInit(this, "enable: " + enable);
   }
 
