@@ -146,23 +146,25 @@ public class NRGPreferences {
     public static final NumberPrefs ENCODER_CPR = new NumberPrefs("EncoderCPR", 1050);
     
     public static final NumberPrefs DRIVE_STRAIGHT_MAXPOWER = new NumberPrefs("DriveStraightMaxPower", .5);
-    public static final NumberPrefs DRIVE_TO_BALL_MAXPOWER = new NumberPrefs("DriveToBallMaxPower", 0.5);
+    public static final NumberPrefs DRIVE_TO_BALL_MAXPOWER = new NumberPrefs("DriveToBallMaxPower", 0.4);
 
     public static final BooleanPrefs PATHS_SQUARE_INPUTS = new BooleanPrefs("PathsSquareInputs", false); 
     public static final BooleanPrefs TURN_SQUARE_INPUTS = new BooleanPrefs("TurnSquareInputs", false);
     public static final BooleanPrefs TELEOP_SQUARE_INPUTS = new BooleanPrefs("TeleopSquareInputs", true); 
     public static final BooleanPrefs DRIVE_SQUARE_INPUTS = new BooleanPrefs("DriveSquareInputs", false);
     public static final BooleanPrefs DRIVE_USE_XBOX_CONTROL = new BooleanPrefs("DriveUseXboxControl", false);
+    public static final BooleanPrefs DRIVE_ACQUIRER_IS_FRONT = new BooleanPrefs("DriveAcquirerIsFront", true);
 
     public static final NumberPrefs DRIVE_COLLISION_THRESHOLD = new NumberPrefs("DriveCollisionThreshold", 0.5); 
     
     // Vision subsystem preferences
     public static final NumberPrefs CAMERA_DISTANCE_SCALE = new NumberPrefs("CameraDistanceScale", 1.0);
+    public static final NumberPrefs LOADING_STATION_DISTANCE_FUDGE = new NumberPrefs("LoadingStationDistanceFudge", 1.09);
 
     // Turret and Hood preferences
     public static final BooleanPrefs ENABLE_TURRET_LOGGING = new BooleanPrefs("TurretLogging", true);
     public static final NumberPrefs SHOOTER_TEST_RPM = new NumberPrefs("ShooterTestRPM", 4000);
-    public static final NumberPrefs WAIT_FOR_RPM_OFFSET = new NumberPrefs("WaitForRpmOffset", 300);
+    public static final NumberPrefs WAIT_FOR_RPM_OFFSET = new NumberPrefs("WaitForRpmOffset", 120.0);
     public static final NumberPrefs TURRET_P_TERM = new NumberPrefs("TurretP", 0.085);
     public static final NumberPrefs TURRET_I_TERM = new NumberPrefs("TurretI", 0.3);
     public static final NumberPrefs TURRET_D_TERM = new NumberPrefs("TurretD", 0.01);
@@ -180,16 +182,16 @@ public class NRGPreferences {
     public static final NumberPrefs ACQUIRER_POWER = new NumberPrefs("AcquirerPower", 1.0);
 
     // Shuffleboard Tab preferences
-    public static final BooleanPrefs SHUFFLEBOARD_ACQUIRER_ENABLED = new BooleanPrefs("ShuffleboardAcquirerEnabled", true);
-    public static final BooleanPrefs SHUFFLEBOARD_BALL_COUNTER_ENABLED = new BooleanPrefs("ShuffleboardBallCounterEnabled", true);
-    public static final BooleanPrefs SHUFFLEBOARD_CLIMB_ENABLED = new BooleanPrefs("ShuffleboardClimbEnabled", true);
-    public static final BooleanPrefs SHUFFLEBOARD_CP_SPINNER_ENABLED = new BooleanPrefs("ShuffleboardCPSpinnerEnabled", true);
-    public static final BooleanPrefs SHUFFLEBOARD_DRIVE_ENABLED = new BooleanPrefs("ShuffleboardDriveEnabled", true);
-    public static final BooleanPrefs SHUFFLEBOARD_FEEDER_ENABLED = new BooleanPrefs("ShuffleboardFeederEnabled", true);
-    public static final BooleanPrefs SHUFFLEBOARD_HOOD_ENABLED = new BooleanPrefs("ShuffleboardHoodEnabled", true);
-    public static final BooleanPrefs SHUFFLEBOARD_RASPBERRY_PI_ENABLED = new BooleanPrefs("ShuffleboardRaspberryPiEnabled", true);
-    public static final BooleanPrefs SHUFFLEBOARD_SHOOTER_RPM_ENABLED = new BooleanPrefs("ShuffleboardShooterRPMEnabled", true);
-    public static final BooleanPrefs SHUFFLEBOARD_TURRET_ENABLED = new BooleanPrefs("ShuffleboardTurretEnabled", true);
+    public static final BooleanPrefs SHUFFLEBOARD_ACQUIRER_ENABLED = new BooleanPrefs("ShuffleboardAcquirerEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_BALL_COUNTER_ENABLED = new BooleanPrefs("ShuffleboardBallCounterEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_CLIMB_ENABLED = new BooleanPrefs("ShuffleboardClimbEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_CP_SPINNER_ENABLED = new BooleanPrefs("ShuffleboardCPSpinnerEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_DRIVE_ENABLED = new BooleanPrefs("ShuffleboardDriveEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_FEEDER_ENABLED = new BooleanPrefs("ShuffleboardFeederEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_HOOD_ENABLED = new BooleanPrefs("ShuffleboardHoodEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_RASPBERRY_PI_ENABLED = new BooleanPrefs("ShuffleboardRaspberryPiEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_SHOOTER_RPM_ENABLED = new BooleanPrefs("ShuffleboardShooterRPMEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_TURRET_ENABLED = new BooleanPrefs("ShuffleboardTurretEnabled", false);
 
     // General preferences
     public static final BooleanPrefs USING_PRACTICE_BOT = new BooleanPrefs("UsingPracticeBot", false);
