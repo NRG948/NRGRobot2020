@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ShooterRPM;
+import frc.robot.utilities.Logger;
 
 public class AutoRPM extends CommandBase {
   private final ShooterRPM shooterRPM;
@@ -19,6 +20,7 @@ public class AutoRPM extends CommandBase {
   @Override
   public void initialize() {
     shooterRPM.enableAutoRPM(enable);
+    Logger.commandInit(this, "enable: " + enable);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -29,6 +31,7 @@ public class AutoRPM extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.
