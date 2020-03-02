@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.utilities.Average;
 import frc.robot.utilities.MathUtil;
 import frc.robot.utilities.NRGPreferences;
 
@@ -58,8 +59,9 @@ public class ShooterRPM extends SubsystemBase {
   private long prevMinMaxTime = 0;
   private boolean turretLoggingEnabled;
   private double MIN_RPM = 0;
-  private boolean isContinuousRPMEnabled = false;
+  private boolean autoRpmEnabled = false;
   private LimelightVision limelightVision;
+  private Average distanceAverager = new Average(5);
  
   public ShooterRPM(LimelightVision limelightVision) {
     this.limelightVision = limelightVision;
@@ -108,6 +110,10 @@ public class ShooterRPM extends SubsystemBase {
     setFlyWheel(motorPower);
   }
 
+  public void enableAutoRPM(boolean enable) {
+    autoRpmEnabled = enable;
+  }
+
   /** Sets the target speed of the shooter flywheel in revolutions per minute. */
   public void setGoalRPM(double newGoalRPM) {
     if (newGoalRPM == 0) {
@@ -132,6 +138,17 @@ public class ShooterRPM extends SubsystemBase {
     goalRPM = newGoalRPM;
   }
 
+  private void autoSetGoalRPM() {
+    distanceAverager.add(limelightDistanceToRPM());
+    setGoalRPM(distanceAverager.averaged());
+  } 
+  
+  public double limelightDistanceToRPM() {
+    double distance = limelightVision.getDistance();
+    double rpm = MathUtil.clamp(2.3778 * distance + 2770.3, MAX_RPM, MIN_RPM);
+    return rpm;
+  }
+
   /** Estimates the flywheel motor power needed to maintain a given RPM rate. */
   public double guessMotorOutputForRPM(double RPM) {
     // TODO: replace this dumb linear estimate with something more accurate.
@@ -152,23 +169,18 @@ public class ShooterRPM extends SubsystemBase {
     lastMotorPower = power;
   }
 
-  /** Sends important subsystem data to the SmartDashboard for monitoring and deubgging. */
-  public void updateDashBoard() {
-    SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.get());
-    SmartDashboard.putNumber("ShooterRPM/Distance", spinMotorEncoder.getDistance());
-    SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM);
-    SmartDashboard.putNumber("ShooterRPM/error", error);
-    SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
-  }
-
   // This method will be called once per scheduler run
   @Override
   public void periodic() {
     calculateCurrentRPM();
-    if(isTakeBackHalfEnabled){
+    if (isTakeBackHalfEnabled) {
       if (DriverStation.getInstance().isDisabled()) {
         this.disableTakeBackHalf();
-      } else{
+      } else {
+        if (autoRpmEnabled) {
+          autoSetGoalRPM();
+          setGoalRPM(limelightDistanceToRPM());
+        }
         updateRPM();
       }
     }
@@ -221,13 +233,6 @@ public class ShooterRPM extends SubsystemBase {
     }
   }
 
-  public double limeLightDistanceToRPM(LimelightVision limelightVision){
-    double distance = limelightVision.getDistance();
-    double RPM  = MathUtil.clamp(2.3778 * distance + 2770.3, MAX_RPM, MIN_RPM);
-    return RPM;
-  }
-
-
   // Returns the array of local mins and local maxs
   public String[] getMinMaxArray() {
     return minMaxRPMs.toArray(new String[0]);
@@ -243,6 +248,15 @@ public class ShooterRPM extends SubsystemBase {
     double deltaTime = (currentTime - prevMinMaxTime) / NANOSECS_PER_SEC;
     prevMinMaxTime = currentTime;
     return deltaTime;
+  }
+
+  /** Sends important subsystem data to the SmartDashboard for monitoring and deubgging. */
+  public void updateDashBoard() {
+    SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.get());
+    SmartDashboard.putNumber("ShooterRPM/Distance", spinMotorEncoder.getDistance());
+    SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM);
+    SmartDashboard.putNumber("ShooterRPM/error", error);
+    SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
   }
 
   public void addShuffleBoardTab(){

@@ -44,14 +44,19 @@ r ║╱          ⁞                                   ⁞          ╲║ t
  */
 public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
   /**
+   *
+   */
+  public static final Pose2d INITIAL_POSITION = new Pose2d(3.676, -7.2, new Rotation2d(0));
+
+  /**
    * Creates a new InitiationLineToRightTrenchAuto.
    */
   public InitiationLineToLeftTrenchAuto(RobotSubsystems subsystems) {
     // Start on the initiation line, centered between two opponent's balls (A)
-    super(new SetStartPosition(subsystems.drive, new Pose2d(3.676, -7.2, new Rotation2d(0))), 
+    super(new SetStartPosition(subsystems.drive, INITIAL_POSITION), 
           new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND), 
           new FollowWaypoints(subsystems.drive,
-                              new Pose2d(3.43, -7.2, new Rotation2d(0)), // Starting pose  (B)
+                              INITIAL_POSITION, // Starting pose  (B)
                               List.of(new Translation2d(5.068, -6.6)),  // Waypoints (C)
                               new Pose2d(6.4, -7.45, new Rotation2d(Math.toRadians(-65))), // Ending pose (D)
                               false)  // Drive forward
