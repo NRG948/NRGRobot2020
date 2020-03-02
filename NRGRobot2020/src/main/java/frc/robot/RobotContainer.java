@@ -25,6 +25,7 @@ import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
 import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
+import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.HoldHoodDown;
 import frc.robot.commands.InterruptAll;
@@ -106,9 +107,9 @@ public class RobotContainer {
   private SendableChooser<InitialAutoPath> autoPathChooser;
 
   private enum InitialAutoPath {
-    INITIATION_LINE_TO_MIDDLE,
     INITIATION_LINE_TO_LEFT_TRENCH,
-    INITIATION_LINE_TO_RIGHT_TRENCH;
+    INITIATION_LINE_TO_RIGHT_TRENCH,
+    INITIATION_LINE_TO_SHIELD_GENERATOR
   }
 
   /**
@@ -220,9 +221,9 @@ public class RobotContainer {
     ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList).withPosition(0, 0).withSize(6, 4);
 
     autoPathChooser = new SendableChooser<InitialAutoPath>();
-    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_MIDDLE.name(), InitialAutoPath.INITIATION_LINE_TO_MIDDLE);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
+    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR.name(), InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     PrepareForMatch pForMatch = new PrepareForMatch(subsystems.hood, subsystems.turret, subsystems.acquirerPiston);
     autoTab.add("PrepareForMatch", pForMatch);
@@ -244,6 +245,10 @@ public class RobotContainer {
       case INITIATION_LINE_TO_LEFT_TRENCH:
         return new SetStartPosition(subsystems.drive, InitiationLineToLeftTrenchAuto.INITIAL_POSITION)
           .andThen(new InitiationLineToLeftTrenchAuto(subsystems));
+
+      case INITIATION_LINE_TO_SHIELD_GENERATOR:
+        return new SetStartPosition(subsystems.drive, InitiationLineToShieldGeneratorAuto.INITIAL_POSITION)
+          .andThen(new InitiationLineToShieldGeneratorAuto(subsystems));
 
       default:
         // TODO move off of Initiation Line
