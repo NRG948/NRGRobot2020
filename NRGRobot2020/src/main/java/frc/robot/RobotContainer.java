@@ -188,7 +188,7 @@ public class RobotContainer {
     HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
     processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
-    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream/mjpg");
+    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpg");
     limelightVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
     MjpegServer switchedCamera = cs.addSwitchedCamera("Switched");
@@ -200,7 +200,7 @@ public class RobotContainer {
     videoToggleLayout.add("limelight", new InstantCommand(() -> switchedCamera.setSource(limelightVideo)));  
 
     // Add the switched camera to the Shuffleboard tab.
-    HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream/mjpg");
+    HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream.mjpg");
     driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
     
     // TODO Remove temporary buttons to test drive to feeder.
