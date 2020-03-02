@@ -145,8 +145,8 @@ public class ShooterRPM extends SubsystemBase {
   
   public double limelightDistanceToRPM() {
     double distance = limelightVision.getDistance();
-    double RPM  = MathUtil.clamp(2.3778 * distance + 2770.3, MAX_RPM, MIN_RPM);
-    return RPM;
+    double rpm = MathUtil.clamp(2.3778 * distance + 2770.3, MAX_RPM, MIN_RPM);
+    return rpm;
   }
 
   /** Estimates the flywheel motor power needed to maintain a given RPM rate. */
@@ -173,7 +173,7 @@ public class ShooterRPM extends SubsystemBase {
   @Override
   public void periodic() {
     calculateCurrentRPM();
-    if(isTakeBackHalfEnabled){
+    if (isTakeBackHalfEnabled) {
       if (DriverStation.getInstance().isDisabled()) {
         this.disableTakeBackHalf();
       } else {
