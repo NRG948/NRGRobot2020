@@ -36,8 +36,7 @@ public class NRGPreferences {
         // implement getValue(), returning the appropriate data type,
         // and also toString() with consistent formatting. 
 
-        void printIfNotDefault()
-        {
+        void printIfNotDefault() {
             if (!isDefault())
                 System.out.println(this);
         }
@@ -201,11 +200,23 @@ public class NRGPreferences {
 
     public static void init() {
         if (NRGPreferences.WRITE_DEFAULT.getValue()) {
+            // Overwrite the preferences with default values.
             System.out.println("WRITING DEFAULT PREFERENCES");
             NRGPreferences.allPrefValues.forEach(p -> p.writeDefaultValue());
             NRGPreferences.WRITE_DEFAULT.setValue(false);
         } else {
-            NRGPreferences.allPrefValues.forEach(p -> p.printIfNotDefault());
+            System.out.println("INITIALIZING PREFERENCES");
+            Preferences preferences = Preferences.getInstance();
+
+            NRGPreferences.allPrefValues.forEach(p -> {
+                // If the key is not currently in the preferences file, write its default value.
+                // Otherwise, print its current value if not equal to the default.
+                if (!preferences.containsKey(p.getKey())) {
+                    p.writeDefaultValue();
+                } else {
+                    p.printIfNotDefault();
+                }
+            });
         }
 
     }
