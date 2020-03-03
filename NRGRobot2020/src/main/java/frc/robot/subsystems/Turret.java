@@ -103,10 +103,10 @@ public class Turret extends SubsystemBase {
   /**
    * Updates turret motor power based on output from the PID controller.
    * 
-   * @param limelightAngleX from limelight is used to calculate power
+   * @param angle The current angle of the turret or angle to target from the limelight.
    */
-  public void turretAngleToExecute(double limelightAngleX) {
-    double pidOutput = turretPIDController.calculate(limelightAngleX);
+  public void turretAngleToExecute(double angle) {
+    double pidOutput = turretPIDController.calculate(angle);
     double currentPower = MathUtil.clamp(pidOutput, -1.0, 1.0) * maxPower;
     rawTurret(currentPower);
   }
@@ -157,8 +157,9 @@ public class Turret extends SubsystemBase {
     }
     
     ShuffleboardTab turretTab = Shuffleboard.getTab("Turret");
-    ShuffleboardLayout turretLayout = turretTab.getLayout("Turret", BuiltInLayouts.kList).withPosition(0, 0).withSize(2,
-        5);
+    ShuffleboardLayout turretLayout = turretTab.getLayout("Turret", BuiltInLayouts.kList)
+      .withPosition(0, 0)
+      .withSize(2, 5);
     turretLayout.add("Encoder", turretEncoder);
     turretLayout.addNumber("PID Position Error",
         () -> (turretPIDController != null) ? turretPIDController.getPositionError() : 0.0);
@@ -170,7 +171,7 @@ public class Turret extends SubsystemBase {
 
     VideoSource processedVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream/mjpg");
 
-    turretTab.add("Processed Video", processedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0)
+    turretTab.add("Limelight", processedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0)
         .withSize(4, 3);
   }
 }
