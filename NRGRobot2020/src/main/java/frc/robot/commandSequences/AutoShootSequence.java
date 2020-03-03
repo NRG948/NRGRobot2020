@@ -3,6 +3,7 @@ package frc.robot.commandSequences;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotSubsystems;
 import frc.robot.commands.AutoFeedToShooter;
+import frc.robot.commands.AutoRPM;
 import frc.robot.commands.AutoTurret;
 import frc.robot.commands.DisableShooterRPM;
 import frc.robot.commands.MaintainShooterRPM;
@@ -17,7 +18,8 @@ public class AutoShootSequence extends SequentialCommandGroup {
    */
   public AutoShootSequence(double rpm, RobotSubsystems subsystems){
     super( 
-      new MaintainShooterRPM(subsystems.shooterRPM).atRpm(rpm).setAndExit()
+      // new MaintainShooterRPM(subsystems.shooterRPM).atRpm(rpm).setAndExit()
+      new AutoRPM(subsystems.shooterRPM, true)
         .alongWith(new AutoTurret(subsystems.turret)),
       new WaitForMinRPM(rpm, subsystems.shooterRPM),
       // Release Ball

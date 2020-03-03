@@ -1,19 +1,21 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class LimelightVision extends SubsystemBase {
-  public static final String kDefaultAuto = "Default";
-  public static final String kCustomAuto = "My Auto";
-  public String m_autoSelected;
-  public final SendableChooser<String> m_chooser = new SendableChooser<>();
-  public final double visionAngle = 22; // limelight mounting angle
-  public final double h2 = 83.75; // height of high target
-  public final double h1 = 38; // mounting height
+  public final double TARGET_HEIGHT = 83.75; // height of high target in inches
+  public final double LIMELIGHT_MOUNTING_HEIGHT = 24.0; // mounting height in inches
+  public final double LIMELIGHT_MOUNTING_ANGLE = Math.toRadians(22); // limelight mounting angle
+  public final double LIMELIGHT_CENTER_Y = 240/2; 
+  public final double LIMELIGHT_HALF_FOV_Y = Math.toRadians(49.7/2);
   NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
   NetworkTableEntry tx = table.getEntry("tx");
   NetworkTableEntry ty = table.getEntry("ty");
@@ -61,7 +63,13 @@ public class LimelightVision extends SubsystemBase {
   }
 
   public double getDistance() {
-    return (h2 - h1) / Math.tan(Math.toRadians(visionAngle + ty.getDouble(0)));
+    // return 4822.0 / tshort.getDouble(0.0) - 5.0664;
+    // return (TARGET_HEIGHT - LIMELIGHT_MOUNTING_HEIGHT) / Math.tan(LIMELIGHT_MOUNTING_ANGLE + Math.toRadians(getAngle())); 
+    return (LIMELIGHT_CENTER_Y / Math.tan(LIMELIGHT_HALF_FOV_Y) / Math.cos(Math.toRadians(getAngle()))) * (17.0 / tshort.getDouble(0.000001));
+  }
+
+  public double getAngle() {
+    return ty.getDouble(0.0);
   }
 
   public double getWidth() {
@@ -83,5 +91,16 @@ public class LimelightVision extends SubsystemBase {
   @Override
   public void periodic() {
     // post to smart dashboard periodically
+  }
+
+  public void addShuffleboardTab(){
+    ShuffleboardTab limelightTab = Shuffleboard.getTab("Limelight");
+    ShuffleboardLayout limelightLayout = limelightTab.getLayout("Limelight", BuiltInLayouts.kList);
+    limelightLayout.addNumber("tshort", () -> tshort.getDouble(0.0));
+    limelightLayout.addNumber("ty", () -> ty.getDouble(0.0));
+    limelightLayout.addNumber("Distance", this::getDistance);
+    limelightLayout.addNumber("Angle", this::getAngle);
+    limelightLayout.addNumber("Distance (alt)", () -> 4822.0 / tshort.getDouble(0.0) - 5.0664);
+    limelightLayout.addNumber("Distance (alt1)", () -> (LIMELIGHT_CENTER_Y / Math.tan(LIMELIGHT_HALF_FOV_Y) / Math.cos(Math.toRadians(getAngle()))) * (17.0 / tshort.getDouble(0.000001)));
   }
 }
