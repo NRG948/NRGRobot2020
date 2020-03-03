@@ -27,7 +27,6 @@ import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
 import frc.robot.commands.DriveToFuelCell;
-import frc.robot.commands.HoldHoodDown;
 import frc.robot.commands.InterruptAll;
 import frc.robot.commands.LEDTest;
 import frc.robot.commands.ManualAcquirer;
@@ -146,7 +145,8 @@ public class RobotContainer {
     subsystems.hood.initShuffleboard();
     subsystems.ballCounter.addShuffleboardTab();
     subsystems.shooterRPM.addShuffleBoardTab();
-
+    subsystems.limelightVision.addShuffleboardTab();
+    
     compressor.start();
   }
 
@@ -180,7 +180,7 @@ public class RobotContainer {
     interruptAllButton.whenPressed(interruptAll);
     holdHoodDownButton.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
         .andThen(new SetHoodPosition(subsystems.hood, 2)));
-    holdHoodDownButton.whenReleased(new SetHoodPosition(subsystems.hood, originalHoodPosition));
+    holdHoodDownButton.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
   }
   
   /**
