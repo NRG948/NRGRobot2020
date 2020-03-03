@@ -112,8 +112,8 @@ public class ShooterRPM extends SubsystemBase {
 
   public void enableAutoRPM(boolean enable) {
     if (enable) {
-      isAutoRpmEnabled = enable;
-      isTakeBackHalfEnabled = enable;
+      isAutoRpmEnabled = true;
+      isTakeBackHalfEnabled = true;
     } else {
       disableTakeBackHalf();
     }
@@ -197,6 +197,7 @@ public class ShooterRPM extends SubsystemBase {
   /** Resets the ShooterRPM subsystem to its initial state. */
   public void reset() {
     isTakeBackHalfEnabled = false;
+    isAutoRpmEnabled = false;
     prevEncoder = 0;
     spinMotorEncoder.reset();
     spinMotor1.disable();
