@@ -25,6 +25,7 @@ import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
 import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
+import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
 import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.HoldHoodDown;
 import frc.robot.commands.InterruptAll;
@@ -110,9 +111,9 @@ public class RobotContainer {
   private SendableChooser<InitialAutoPath> autoPathChooser;
 
   private enum InitialAutoPath {
-    INITIATION_LINE_TO_MIDDLE,
     INITIATION_LINE_TO_LEFT_TRENCH,
-    INITIATION_LINE_TO_RIGHT_TRENCH;
+    INITIATION_LINE_TO_RIGHT_TRENCH,
+    INITIATION_LINE_TO_SHIELD_GENERATOR
   }
 
   /**
@@ -193,7 +194,7 @@ public class RobotContainer {
     HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
     processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
-    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream/mjpg");
+    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpg");
     limelightVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
     MjpegServer switchedCamera = cs.addSwitchedCamera("Switched");
@@ -205,10 +206,11 @@ public class RobotContainer {
     videoToggleLayout.add("limelight", new InstantCommand(() -> switchedCamera.setSource(limelightVideo)));  
 
     // Add the switched camera to the Shuffleboard tab.
-    HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream/mjpg");
+    HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream.mjpg");
     driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
     
-    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 0);
+    // TODO Remove temporary buttons to test drive to feeder.
+    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 2);
     loadingStationLayout.add("Drive to right feeder", new AutoDriveToLoadingStation(
         subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(22)));
     loadingStationLayout.add("Drive to left feeder", new AutoDriveToLoadingStation(
@@ -226,9 +228,9 @@ public class RobotContainer {
     ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList).withPosition(0, 0).withSize(6, 4);
 
     autoPathChooser = new SendableChooser<InitialAutoPath>();
-    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_MIDDLE.name(), InitialAutoPath.INITIATION_LINE_TO_MIDDLE);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
+    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR.name(), InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     PrepareForMatch pForMatch = new PrepareForMatch(subsystems.hood, subsystems.turret, subsystems.acquirerPiston);
     autoTab.add("PrepareForMatch", pForMatch);
@@ -250,6 +252,10 @@ public class RobotContainer {
       case INITIATION_LINE_TO_LEFT_TRENCH:
         return new SetStartPosition(subsystems.drive, InitiationLineToLeftTrenchAuto.INITIAL_POSITION)
           .andThen(new InitiationLineToLeftTrenchAuto(subsystems));
+
+      case INITIATION_LINE_TO_SHIELD_GENERATOR:
+        return new SetStartPosition(subsystems.drive, InitiationLineToShieldGeneratorAuto.INITIAL_POSITION)
+          .andThen(new InitiationLineToShieldGeneratorAuto(subsystems));
 
       default:
         // TODO move off of Initiation Line

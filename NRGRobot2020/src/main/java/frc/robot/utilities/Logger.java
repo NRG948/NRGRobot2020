@@ -14,12 +14,12 @@ public class Logger {
     private static long beginTeleop;
 
     public static void autoStarted() {
-        System.out.println("<<<<<<<<<<<<<<<<<<< Auto Mode >>>>>>>>>>>>>>>>>>>>\n");
+        System.out.println("\n<<<<<<<<<<<<<<<<<<< Auto Mode >>>>>>>>>>>>>>>>>>>>\n");
         beginAuto = System.nanoTime();
     }
 
     public static void teleopStarted() {
-        System.out.println("<<<<<<<<<<<<<<<<<<< Teleop Mode >>>>>>>>>>>>>>>>>>>>\n");
+        System.out.println("\n<<<<<<<<<<<<<<<<<<< Teleop Mode >>>>>>>>>>>>>>>>>>>>\n");
         beginTeleop = System.nanoTime();
     }
 
@@ -29,7 +29,7 @@ public class Logger {
 
     public static void commandInit(Command command, String details) {
         logModeAndTime(); 
-        System.out.printf("%s Init %s", command.getName(), details);
+        System.out.printf("%s Init %s\n", command.getName(), details);
     }
 
     public static void commandEnd(Command command) {
@@ -38,25 +38,25 @@ public class Logger {
 
     public static void commandEnd(Command command, String details) {
         logModeAndTime();
-        System.out.printf("%s End %s", command.getName(), details);
+        System.out.printf("%s End %s\n", command.getName(), details);
     }
 
     private static void logModeAndTime() {
-        if (ds.isAutonomous()){
+        if (ds.isAutonomous()) {
             System.out.print("A ");
             logTimeSince(beginAuto);
-        } else if(ds.isOperatorControl()){
+        } else if (ds.isOperatorControl()) {
             System.out.print("O ");
             logTimeSince(beginTeleop);
-        } else if(ds.isTest()){
+        } else if (ds.isTest()) {
             System.out.print("T ");
-        } else{
+        } else {
             System.out.print("D ");
         }
     }
 
     private static void logTimeSince(long beginTime) {
         double deltaTime = (System.nanoTime() - beginTime) / 1000000000;
-        System.out.printf("%6.3f", deltaTime);
+        System.out.printf("%6.3f ", deltaTime);
     }
 }

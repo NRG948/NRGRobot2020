@@ -31,6 +31,7 @@ import frc.robot.utilities.NRGPreferences;
 public class ShooterRPM extends SubsystemBase {
 
   private static final double GAIN = 0.0008;
+  private static final double MIN_RPM = 0;
   private static final double MAX_RPM = 5100; // figure out actual max rpm
   private static final double TICKS_PER_FLYWHEEL_REVOLUTION = 645;
   private static final double NANOSECS_PER_SEC = 1000 * 1000 * 1000;
@@ -39,6 +40,7 @@ public class ShooterRPM extends SubsystemBase {
   private final Victor spinMotor1 = new Victor(ShooterConstants.kSpinMotor1Port);
   private final Victor spinMotor2 = new Victor(ShooterConstants.kSpinMotor2Port);
   private final Counter spinMotorEncoder = new Counter(ShooterConstants.kSpinEncoderPort);
+  private final LimelightVision limelightVision;
 
   private double goalRPM = 0;  // The desired RPM for the shooter wheels
   private double error = 0;  // The most recent RPM error
@@ -58,9 +60,7 @@ public class ShooterRPM extends SubsystemBase {
   private long prevTime = 0;
   private long prevMinMaxTime = 0;
   private boolean turretLoggingEnabled;
-  private double MIN_RPM = 0;
-  private boolean autoRpmEnabled = false;
-  private LimelightVision limelightVision;
+  private boolean isAutoRpmEnabled = false;
   private Average distanceAverager = new Average(5);
  
   public ShooterRPM(LimelightVision limelightVision) {
@@ -93,12 +93,12 @@ public class ShooterRPM extends SubsystemBase {
     prevTime = currentTime;
   }
 
-  public double getActualRPM(){
+  public double getActualRPM() {
     return currentRPM;
   }
 
   /** Updates the flywheel motor controllers using Take-Back-Half closed-loop control. */
-  public void updateRPM() {
+  public void updateMotorPowerToSeekGoalRpm() {
     error = goalRPM - currentRPM; // calculate the error
     motorPower += GAIN * error; // integrate the error
     motorPower = MathUtil.clamp(motorPower, 0, 1);
@@ -111,7 +111,12 @@ public class ShooterRPM extends SubsystemBase {
   }
 
   public void enableAutoRPM(boolean enable) {
-    autoRpmEnabled = enable;
+    if (enable) {
+      isAutoRpmEnabled = enable;
+      isTakeBackHalfEnabled = enable;
+    } else {
+      disableTakeBackHalf();
+    }
   }
 
   /** Sets the target speed of the shooter flywheel in revolutions per minute. */
@@ -143,9 +148,9 @@ public class ShooterRPM extends SubsystemBase {
     setGoalRPM(distanceAverager.averaged());
   } 
   
-  public double limelightDistanceToRPM() {
+  private double limelightDistanceToRPM() {
     double distance = limelightVision.getDistance();
-    double rpm = MathUtil.clamp(2.3778 * distance + 2770.3, MAX_RPM, MIN_RPM);
+    double rpm = MathUtil.clamp(2.3778 * distance + 2770.3, MIN_RPM, MAX_RPM);
     return rpm;
   }
 
@@ -177,11 +182,10 @@ public class ShooterRPM extends SubsystemBase {
       if (DriverStation.getInstance().isDisabled()) {
         this.disableTakeBackHalf();
       } else {
-        if (autoRpmEnabled) {
-          autoSetGoalRPM();
-          setGoalRPM(limelightDistanceToRPM());
+        if (isAutoRpmEnabled) {
+          autoSetGoalRPM(); // Continuously adjust RPM based on Limelight distance.
         }
-        updateRPM();
+        updateMotorPowerToSeekGoalRpm();
       }
     }
     if (turretLoggingEnabled) {
@@ -201,7 +205,7 @@ public class ShooterRPM extends SubsystemBase {
     lastMotorPower = 0;
   }
 
-  public void disableTakeBackHalf(){
+  public void disableTakeBackHalf() {
     reset();
   }
 
@@ -252,25 +256,23 @@ public class ShooterRPM extends SubsystemBase {
 
   /** Sends important subsystem data to the SmartDashboard for monitoring and deubgging. */
   public void updateDashBoard() {
-    SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.get());
-    SmartDashboard.putNumber("ShooterRPM/Distance", spinMotorEncoder.getDistance());
-    SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM);
-    SmartDashboard.putNumber("ShooterRPM/error", error);
-    SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
+    // SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.get());
+    // SmartDashboard.putNumber("ShooterRPM/Distance", spinMotorEncoder.getDistance());
+    // SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM);
+    // SmartDashboard.putNumber("ShooterRPM/error", error);
+    // SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
   }
 
-  public void addShuffleBoardTab(){
-    if (!NRGPreferences.SHUFFLEBOARD_SHOOTER_RPM_ENABLED.getValue()){
+  public void addShuffleBoardTab() {
+    if (!NRGPreferences.SHUFFLEBOARD_SHOOTER_RPM_ENABLED.getValue()) {
       return;
     }
-    
+
     ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
-    
-    ShuffleboardLayout layout = shooterTab.getLayout("Shooter", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 1);
-    layout.add(this.spinMotorEncoder);
+    ShuffleboardLayout layout = shooterTab.getLayout("Shooter", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
+    layout.add("Encoder", this.spinMotorEncoder);
     layout.addNumber("Power", () -> this.motorPower);
     layout.addNumber("RPM", () -> this.currentRPM);
-
     shooterTab.addNumber("RPM", () -> this.currentRPM).withWidget(BuiltInWidgets.kGraph).withPosition(2, 0).withSize(6, 4);
   }
 }

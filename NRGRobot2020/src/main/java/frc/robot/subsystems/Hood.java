@@ -20,7 +20,7 @@ public class Hood extends SubsystemBase {
   private static final double HOOD_BACK_VOLTAGE_PRACTICE = 3.99;
   private static final double HOOD_VOLTAGE_RANGE_PRACTICE = HOOD_BACK_VOLTAGE_PRACTICE - 1.5;
   private static final double HOOD_BACK_VOLTAGE_COMPETITION = 3.99;  // TODO: measure this!
-  private static final double HOOD_VOLTAGE_RANGE_COMPETITION = HOOD_BACK_VOLTAGE_PRACTICE - 1.5;
+  private static final double HOOD_VOLTAGE_RANGE_COMPETITION = HOOD_BACK_VOLTAGE_PRACTICE - 1.5; // TODO: verify
 
   private static final int MAX_LIMIT = 100;
   private static final int LOWER_HARD_STOP = 1;

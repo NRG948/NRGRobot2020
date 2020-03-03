@@ -42,14 +42,15 @@ public class AutoTurret extends CommandBase {
     if (useDefaultMaxPower) {
       maxPower = NRGPreferences.TURRET_MOTOR_POWER.getValue();
     }
-    turret.turretAnglePIDInit(skewAngle, maxPower, 1, true);
-    Logger.commandInit(this, String.format("skew:%4.1f toler:%4.1f", skewAngle, 1.0));
+    double toleranceDegrees = 1.0;
+    turret.turretAnglePIDInit(skewAngle, maxPower, toleranceDegrees, true);
+    Logger.commandInit(this, String.format("skew:%4.1f toler:%4.1f", skewAngle, toleranceDegrees));
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //Turret.periodic sends power to the motors using a subsystem PIDController
+    // Turret.periodic sends power to the motors using a subsystem PIDController
   }
   
   // Command always exits immediately but leaves PID running.
