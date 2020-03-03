@@ -44,6 +44,7 @@ import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.AutoTurret;
 import frc.robot.utilities.NRGPreferences;
+import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.AcquirerPiston.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -57,7 +58,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  
+
   // Joysticks and JoystickButtons
   private final Joystick leftJoystick = new Joystick(0);
   private final Joystick rightJoystick = new Joystick(1);
@@ -80,21 +81,24 @@ public class RobotContainer {
   private JoystickButton xboxButtonB = new JoystickButton(xboxController, 2); // B Button
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
-  private JoystickButton xboxLeftBumper = new JoystickButton(xboxController, 5); 
+  private JoystickButton xboxLeftBumper = new JoystickButton(xboxController, 5);
   private JoystickButton xboxRightBumper = new JoystickButton(xboxController, 6);
   private JoystickButton xboxBackButton = new JoystickButton(xboxController, 7);
-
+  private JoystickButton xboxButton8 = new JoystickButton(xboxController, 8);
+  private JoystickButton xboxButton9 = new JoystickButton(xboxController, 9);
   // D-pad left/right - turret rotate
   // D-pad up/down - hood up/down
   // Xbox right trigger - manual shooter rpm
-  // Xbox right stick up/down - acquirer, back button + right stick up/down - feeder,
-  
+  // Xbox right stick up/down - acquirer, back button + right stick up/down -
+  // feeder,
+
   // Create subsystems
   private final RobotSubsystems subsystems = new RobotSubsystems();
   private final Compressor compressor = new Compressor();
 
   // Commands
-  private final ManualDrive manualDrive = new ManualDrive(subsystems.drive, leftJoystick, rightJoystick, xboxController);
+  private final ManualDrive manualDrive = new ManualDrive(subsystems.drive, leftJoystick, rightJoystick,
+      xboxController);
   private final ManualAcquirer manualAcquirer = new ManualAcquirer(subsystems.acquirer, xboxController);
   private final ManualFeeder manualFeeder = new ManualFeeder(subsystems.feeder, xboxController);
   private final ManualTurret manualTurret = new ManualTurret(subsystems.turret, xboxController);
@@ -107,9 +111,7 @@ public class RobotContainer {
   private SendableChooser<InitialAutoPath> autoPathChooser;
 
   private enum InitialAutoPath {
-    INITIATION_LINE_TO_LEFT_TRENCH,
-    INITIATION_LINE_TO_RIGHT_TRENCH,
-    INITIATION_LINE_TO_SHIELD_GENERATOR
+    INITIATION_LINE_TO_LEFT_TRENCH, INITIATION_LINE_TO_RIGHT_TRENCH, INITIATION_LINE_TO_SHIELD_GENERATOR
   }
 
   /**
@@ -161,6 +163,14 @@ public class RobotContainer {
       xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret));
       xboxRightBumper.whenPressed(new AutoShootSequence(4000, subsystems));
       xboxBackButton.whenPressed(new ManualTurret(subsystems.turret, xboxController));
+      xboxButtonA.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
+      xboxButton9.whenPressed(new InstantCommand(() -> { 
+        if(xboxController.getRawButtonPressed(8)) {
+          subsystems.ballCounter.addToBallCount(-1);
+        } else {
+        subsystems.ballCounter.addToBallCount(1);
+        }
+      }));
       driveStraight.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
       shiftGears.whenPressed(new InstantCommand(() -> { subsystems.gearbox.toggleGears(); } ));
       activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
