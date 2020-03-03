@@ -12,11 +12,9 @@ public class NRGPreferences {
 
     private static final LinkedList<BasePrefs> allPrefValues = new LinkedList<BasePrefs>();
 
-    abstract static class BasePrefs
-    {
+    abstract static class BasePrefs {
         protected String key;
         protected Object defaultValue;
-
 
         protected BasePrefs(String key, Object defaultValue) {
             this.key = key;
@@ -34,7 +32,7 @@ public class NRGPreferences {
 
         // Although not explicitly abstract, each derived class MUST
         // implement getValue(), returning the appropriate data type,
-        // and also toString() with consistent formatting. 
+        // and also toString() with consistent formatting.
 
         void printIfNotDefault() {
             if (!isDefault())
@@ -42,14 +40,13 @@ public class NRGPreferences {
         }
     }
 
-    public static class NumberPrefs extends BasePrefs
-    {
+    public static class NumberPrefs extends BasePrefs {
         protected NumberPrefs(String key, double defaultValue) {
             super(key, defaultValue);
         }
 
         public double getValue() {
-            return Preferences.getInstance().getDouble(key, (double)defaultValue);
+            return Preferences.getInstance().getDouble(key, (double) defaultValue);
         }
 
         public void setValue(double newValue) {
@@ -57,11 +54,11 @@ public class NRGPreferences {
         }
 
         void writeDefaultValue() {
-            Preferences.getInstance().putDouble(key, (double)defaultValue);
+            Preferences.getInstance().putDouble(key, (double) defaultValue);
         }
 
         boolean isDefault() {
-            return getValue() == (double)defaultValue;
+            return getValue() == (double) defaultValue;
         }
 
         public String toString() {
@@ -69,14 +66,13 @@ public class NRGPreferences {
         }
     }
 
-    public static class BooleanPrefs extends BasePrefs
-    {
+    public static class BooleanPrefs extends BasePrefs {
         protected BooleanPrefs(String key, boolean defaultValue) {
             super(key, defaultValue);
         }
 
         public boolean getValue() {
-            return Preferences.getInstance().getBoolean(key, (boolean)defaultValue);
+            return Preferences.getInstance().getBoolean(key, (boolean) defaultValue);
         }
 
         public void setValue(boolean newValue) {
@@ -84,11 +80,11 @@ public class NRGPreferences {
         }
 
         void writeDefaultValue() {
-            Preferences.getInstance().putBoolean(key, (boolean)defaultValue);
+            Preferences.getInstance().putBoolean(key, (boolean) defaultValue);
         }
 
         boolean isDefault() {
-            return getValue() == (boolean)defaultValue;
+            return getValue() == (boolean) defaultValue;
         }
 
         public String toString() {
@@ -96,14 +92,13 @@ public class NRGPreferences {
         }
     }
 
-    public static class StringPrefs extends BasePrefs
-    {
+    public static class StringPrefs extends BasePrefs {
         protected StringPrefs(String key, String defaultValue) {
             super(key, defaultValue);
         }
 
         public String getValue() {
-            return Preferences.getInstance().getString(key, (String)defaultValue);
+            return Preferences.getInstance().getString(key, (String) defaultValue);
         }
 
         public void setValue(String newValue) {
@@ -111,11 +106,11 @@ public class NRGPreferences {
         }
 
         void writeDefaultValue() {
-            Preferences.getInstance().putString(key, (String)defaultValue);
+            Preferences.getInstance().putString(key, (String) defaultValue);
         }
 
         boolean isDefault() {
-            return getValue() == (String)defaultValue;
+            return getValue() == (String) defaultValue;
         }
 
         public String toString() {
@@ -126,7 +121,7 @@ public class NRGPreferences {
     // Drive subsystem preferences
     public static final NumberPrefs DRIVE_P_TERM = new NumberPrefs("DriveP", 1.11);
     public static final NumberPrefs DRIVE_I_TERM = new NumberPrefs("DriveI", 0);
-    public static final NumberPrefs DRIVE_D_TERM = new NumberPrefs("DriveD", 0.0285); 
+    public static final NumberPrefs DRIVE_D_TERM = new NumberPrefs("DriveD", 0.0285);
 
     public static final NumberPrefs TURN_P_TERM = new NumberPrefs("TurnP", 0.081);
     public static final NumberPrefs TURN_I_TERM = new NumberPrefs("TurnI", 0.00016);
@@ -136,26 +131,26 @@ public class NRGPreferences {
     public static final NumberPrefs DISTANCE_DRIVE_I_TERM = new NumberPrefs("DistanceDriveI", 0.0125);
     public static final NumberPrefs DISTANCE_DRIVE_D_TERM = new NumberPrefs("DistanceDriveD", 0.0075);
     public static final NumberPrefs DISTANCE_TOLERANCE = new NumberPrefs("DistanceTolerance", 0.75);
-    
+
     public static final NumberPrefs PATH_KS_TERM = new NumberPrefs("PathKS", 0.98);
     public static final NumberPrefs PATH_KV_TERM = new NumberPrefs("PathKV", 0.543);
     public static final NumberPrefs PATH_KA_TERM = new NumberPrefs("PathKA", 0.00337);
 
     public static final NumberPrefs TRACK_WIDTH_METERS = new NumberPrefs("TrackWidthMeters", Units.inchesToMeters(25.0));
     public static final NumberPrefs ENCODER_CPR = new NumberPrefs("EncoderCPR", 1050);
-    
+
     public static final NumberPrefs DRIVE_STRAIGHT_MAXPOWER = new NumberPrefs("DriveStraightMaxPower", .5);
     public static final NumberPrefs DRIVE_TO_BALL_MAXPOWER = new NumberPrefs("DriveToBallMaxPower", 0.4);
 
-    public static final BooleanPrefs PATHS_SQUARE_INPUTS = new BooleanPrefs("PathsSquareInputs", false); 
+    public static final BooleanPrefs PATHS_SQUARE_INPUTS = new BooleanPrefs("PathsSquareInputs", false);
     public static final BooleanPrefs TURN_SQUARE_INPUTS = new BooleanPrefs("TurnSquareInputs", false);
-    public static final BooleanPrefs TELEOP_SQUARE_INPUTS = new BooleanPrefs("TeleopSquareInputs", true); 
+    public static final BooleanPrefs TELEOP_SQUARE_INPUTS = new BooleanPrefs("TeleopSquareInputs", true);
     public static final BooleanPrefs DRIVE_SQUARE_INPUTS = new BooleanPrefs("DriveSquareInputs", false);
     public static final BooleanPrefs DRIVE_USE_XBOX_CONTROL = new BooleanPrefs("DriveUseXboxControl", false);
     public static final BooleanPrefs DRIVE_ACQUIRER_IS_FRONT = new BooleanPrefs("DriveAcquirerIsFront", true);
 
-    public static final NumberPrefs DRIVE_COLLISION_THRESHOLD = new NumberPrefs("DriveCollisionThreshold", 0.5); 
-    
+    public static final NumberPrefs DRIVE_COLLISION_THRESHOLD = new NumberPrefs("DriveCollisionThreshold", 0.5);
+
     // Vision subsystem preferences
     public static final NumberPrefs CAMERA_DISTANCE_SCALE = new NumberPrefs("CameraDistanceScale", 1.0);
     public static final NumberPrefs LOADING_STATION_DISTANCE_FUDGE = new NumberPrefs("LoadingStationDistanceFudge", 1.09);
@@ -196,7 +191,7 @@ public class NRGPreferences {
 
     // General preferences
     public static final BooleanPrefs USING_PRACTICE_BOT = new BooleanPrefs("UsingPracticeBot", false);
-    public static final BooleanPrefs WRITE_DEFAULT = new BooleanPrefs("WriteDefault", true); 
+    public static final BooleanPrefs WRITE_DEFAULT = new BooleanPrefs("WriteDefault", true);
 
     public static void init() {
         if (NRGPreferences.WRITE_DEFAULT.getValue()) {
