@@ -37,6 +37,7 @@ import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
 import frc.robot.commandSequences.PrepareForMatch;
 import frc.robot.commands.SetAcquirerState;
+import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AcquireNumberOfBalls;
@@ -101,6 +102,9 @@ public class RobotContainer {
   private ManualShooter manualShooter = new ManualShooter(subsystems.shooterRPM, xboxController);
   private LEDTest ledTest = new LEDTest(subsystems.leds);
   private InterruptAll interruptAll = new InterruptAll(subsystems);
+
+  // When we press down the HoldHoodDownButton we store the original hood position here.
+  private double originalHoodPosition;
 
   // Autonomous chooser
   private SendableChooser<InitialAutoPath> autoPathChooser;
@@ -173,7 +177,9 @@ public class RobotContainer {
     driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
     driveToBallContinuous.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
     interruptAllButton.whenPressed(interruptAll);
-    holdHoodDownButton.whenHeld(new HoldHoodDown(subsystems.hood));
+    holdHoodDownButton.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
+        .andThen(new SetHoodPosition(subsystems.hood, 2)));
+    holdHoodDownButton.whenReleased(new SetHoodPosition(subsystems.hood, originalHoodPosition));
   }
   
   /**
