@@ -193,6 +193,7 @@ public class NRGPreferences {
     public static final BooleanPrefs SHUFFLEBOARD_RASPBERRY_PI_ENABLED = new BooleanPrefs("ShuffleboardRaspberryPiEnabled", false);
     public static final BooleanPrefs SHUFFLEBOARD_SHOOTER_RPM_ENABLED = new BooleanPrefs("ShuffleboardShooterRPMEnabled", false);
     public static final BooleanPrefs SHUFFLEBOARD_TURRET_ENABLED = new BooleanPrefs("ShuffleboardTurretEnabled", false);
+    public static final BooleanPrefs SHUFFLEBOARD_LIMELIGHT_ENABLE = new BooleanPrefs("ShuffleboardLimelightEnabled", false);
 
     // General preferences
     public static final BooleanPrefs USING_PRACTICE_BOT = new BooleanPrefs("UsingPracticeBot", false);

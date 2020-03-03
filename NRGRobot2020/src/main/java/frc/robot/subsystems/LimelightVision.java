@@ -1,11 +1,11 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utilities.NRGPreferences;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -63,9 +63,9 @@ public class LimelightVision extends SubsystemBase {
   }
 
   public double getDistance() {
-    // return 4822.0 / tshort.getDouble(0.0) - 5.0664;
-    // return (TARGET_HEIGHT - LIMELIGHT_MOUNTING_HEIGHT) / Math.tan(LIMELIGHT_MOUNTING_ANGLE + Math.toRadians(getAngle())); 
-    return (LIMELIGHT_CENTER_Y / Math.tan(LIMELIGHT_HALF_FOV_Y) / Math.cos(Math.toRadians(getAngle()))) * (17.0 / tshort.getDouble(0.000001));
+    // return 4822.0 / tshort.getDouble(0.0) - 5.0664; // Formula 1
+    // return (TARGET_HEIGHT - LIMELIGHT_MOUNTING_HEIGHT) / Math.tan(LIMELIGHT_MOUNTING_ANGLE + Math.toRadians(getAngle())); // Formula 2
+    return (LIMELIGHT_CENTER_Y / Math.tan(LIMELIGHT_HALF_FOV_Y) / Math.cos(Math.toRadians(getAngle()))) * (17.0 / tshort.getDouble(0.000001)); // Formula 3
   }
 
   public double getAngle() {
@@ -93,14 +93,19 @@ public class LimelightVision extends SubsystemBase {
     // post to smart dashboard periodically
   }
 
-  public void addShuffleboardTab(){
+  public void addShuffleboardTab() {
+    if (!NRGPreferences.SHUFFLEBOARD_LIMELIGHT_ENABLE.getValue()) {
+      return;
+    }
+
     ShuffleboardTab limelightTab = Shuffleboard.getTab("Limelight");
     ShuffleboardLayout limelightLayout = limelightTab.getLayout("Limelight", BuiltInLayouts.kList);
     limelightLayout.addNumber("tshort", () -> tshort.getDouble(0.0));
     limelightLayout.addNumber("ty", () -> ty.getDouble(0.0));
     limelightLayout.addNumber("Distance", this::getDistance);
     limelightLayout.addNumber("Angle", this::getAngle);
-    limelightLayout.addNumber("Distance (alt)", () -> 4822.0 / tshort.getDouble(0.0) - 5.0664);
-    limelightLayout.addNumber("Distance (alt1)", () -> (LIMELIGHT_CENTER_Y / Math.tan(LIMELIGHT_HALF_FOV_Y) / Math.cos(Math.toRadians(getAngle()))) * (17.0 / tshort.getDouble(0.000001)));
+    limelightLayout.addNumber("Distance (formula 1)", () -> 4822.0 / tshort.getDouble(0.0) - 5.0664);
+    limelightLayout.addNumber("Distance (formula 2)", () -> (TARGET_HEIGHT - LIMELIGHT_MOUNTING_HEIGHT) / Math.tan(LIMELIGHT_MOUNTING_ANGLE + Math.toRadians(getAngle())));
+    limelightLayout.addNumber("Distance (formula 3)", () -> (LIMELIGHT_CENTER_Y / Math.tan(LIMELIGHT_HALF_FOV_Y) / Math.cos(Math.toRadians(getAngle()))) * (17.0 / tshort.getDouble(0.000001)));
   }
 }
