@@ -179,6 +179,7 @@ public class NRGPreferences {
 
     // Power Cell intake preferences
     public static final NumberPrefs FEEDER_POWER = new NumberPrefs("FeederPower", 1.0);
+    public static final NumberPrefs FEEDER_ACQUIRE_POWER = new NumberPrefs("FeederAcquirePower", 0.7);
     public static final NumberPrefs ACQUIRER_POWER = new NumberPrefs("AcquirerPower", 1.0);
 
     // Shuffleboard Tab preferences
