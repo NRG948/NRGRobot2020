@@ -42,6 +42,7 @@ import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.AutoTurret;
 import frc.robot.utilities.NRGPreferences;
+import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.AcquirerPiston.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -100,6 +101,7 @@ public class RobotContainer {
   private ManualShooter manualShooter = new ManualShooter(subsystems.shooterRPM, xboxController);
   private LEDTest ledTest = new LEDTest(subsystems.leds);
   private InterruptAll interruptAll = new InterruptAll(subsystems);
+  private final BallCounter ballCounter = new BallCounter();
 
   // Autonomous chooser
   private SendableChooser<InitialAutoPath> autoPathChooser;
@@ -207,6 +209,10 @@ public class RobotContainer {
     loadingStationLayout.add("Drive to left feeder", new AutoDriveToLoadingStation(
       subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(-22)));
     loadingStationLayout.add("Drive to center feeder", new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
+
+    ShuffleboardLayout layout = driverTab.getLayout("Ball counter",  BuiltInLayouts.kList).withPosition(0, 0)
+    .withSize(2, 3);  
+    layout.addNumber("Ball Count", () -> ballCounter.getBallCount());
   }
 
   /**

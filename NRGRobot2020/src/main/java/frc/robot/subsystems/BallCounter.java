@@ -20,6 +20,7 @@ public class BallCounter extends SubsystemBase {
   private boolean acquirerLastState = acquirerBeamBreak.get();
   private boolean feederLastState = feederBeamBreak.get();
   private int ballCount = 3;
+public Object feederCurrentState;
 
   /**
    * Creates a new BallCounter.
