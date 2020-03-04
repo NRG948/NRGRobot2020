@@ -79,7 +79,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
       // TODO Use the limelight crosshair adjustement feature to adjust the skew
       new SetLimelightHorizontalSkew(subsystems.turret, -3),
       // Shoot all four balls.
-      new AutoShootSequence(4000, subsystems),
+      new AutoShootSequence(subsystems, 4000, 72),
       // Continue to drive toward the fuel cells attempting to pick up three of them (C).
       // At the same time, lower the hood so that we can pass under the control panel.
       new AutoDriveToFuelCell(subsystems, 3).alongWith(new SetHoodPosition(subsystems.hood, 2)),
@@ -92,7 +92,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
       // Return the hood to shooting position.
       new SetHoodPosition(subsystems.hood,72),
       // Shoot all three balls.
-      new AutoShootSequence(4200, subsystems),
+      new AutoShootSequence(subsystems, 4200, 72),
       // TODO Stop continous turret PID in AutoShootSequence. 
       new StopTurretAnglePID(subsystems.turret)
       );

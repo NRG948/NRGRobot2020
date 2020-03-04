@@ -24,6 +24,7 @@ public class SetHoodPosition extends CommandBase {
     this.desiredPosition = position;
     addRequirements(hood);
   }
+  
 
   // Called when the command is initially scheduled.
   @Override

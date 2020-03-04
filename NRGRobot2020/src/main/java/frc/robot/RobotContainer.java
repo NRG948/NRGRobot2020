@@ -44,7 +44,6 @@ import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.AutoTurret;
 import frc.robot.utilities.NRGPreferences;
-import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.AcquirerPiston.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -106,7 +105,6 @@ public class RobotContainer {
   private ManualShooter manualShooter = new ManualShooter(subsystems.shooterRPM, xboxController);
   private LEDTest ledTest = new LEDTest(subsystems.leds);
   private InterruptAll interruptAll = new InterruptAll(subsystems);
-  private final BallCounter ballCounter = new BallCounter();
 
   // When we press down the HoldHoodDownButton we store the original hood position here.
   private double originalHoodPosition;
@@ -131,7 +129,7 @@ public class RobotContainer {
     subsystems.acquirer.setDefaultCommand(manualAcquirer);
     subsystems.feeder.setDefaultCommand(manualFeeder);
     // turret.setDefaultCommand(manualTurret);
-    subsystems.hood.setDefaultCommand(manualHood);
+    subsystems.hood.setDefaultCommand(new SetHoodPosition(subsystems.hood, 2));
     // leds.setDefaultCommand(ledTest);
 
     // Configure the button bindings
@@ -160,31 +158,40 @@ public class RobotContainer {
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings(){
+    xboxButtonA.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
     xboxButtonB.whenPressed(new MaintainShooterRPM(subsystems.shooterRPM));
+    
+    //Holding x button activates AutoDriveToFuelcellsSequence
     xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)).alongWith(new DriveToFuelCell(subsystems.drive, subsystems.raspPi)));
     xboxButtonX.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
       new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(5)));
-      xboxButtonX.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
-      xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret));
-      xboxRightBumper.whenPressed(new AutoShootSequence(4000, subsystems));
-      xboxBackButton.whenPressed(new ManualTurret(subsystems.turret, xboxController));
-      xboxButtonA.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
-      xboxButton9.whenPressed(new InstantCommand(() -> { 
-        if(xboxController.getRawButtonPressed(8)) {
-          subsystems.ballCounter.addToBallCount(-1);
-        } else {
-        subsystems.ballCounter.addToBallCount(1);
-        }
-      }));
-      driveStraight.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
-      shiftGears.whenPressed(new InstantCommand(() -> { subsystems.gearbox.toggleGears(); } ));
-      activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
-      resetSensorsButton.whenPressed(new InstantCommand(() -> {
-        resetSensors();
-      }));
-      ledModeButton.whenPressed(new InstantCommand(() -> {
-        subsystems.limelightVision.toggleLed();
-      }));
+    xboxButtonX.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
+
+    //Holding x button activates AcquirerSequence
+    xboxButtonY.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)));
+    xboxButtonY.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
+      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(5)));
+    xboxButtonY.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
+    
+    xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret));
+    xboxRightBumper.whenPressed(new AutoShootSequence(subsystems, NRGPreferences.SHOOTER_RPM_TRENCH_CLOSE.getValue(), NRGPreferences.HOOD_POSITION_TRENCH_CLOSE.getValue()));
+    xboxBackButton.whenPressed(new ManualTurret(subsystems.turret, xboxController));
+    xboxButton9.whenPressed(new InstantCommand(() -> { 
+      if(xboxController.getRawButtonPressed(8)) {
+        subsystems.ballCounter.addToBallCount(-1);
+      } else {
+      subsystems.ballCounter.addToBallCount(1);
+      }
+    }));
+    driveStraight.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
+    shiftGears.whenPressed(new InstantCommand(() -> { subsystems.gearbox.toggleGears(); } ));
+    activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
+    resetSensorsButton.whenPressed(new InstantCommand(() -> {
+      resetSensors();
+    }));
+    ledModeButton.whenPressed(new InstantCommand(() -> {
+      subsystems.limelightVision.toggleLed();
+    }));
     driveToBall.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
     driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
     driveToBallContinuous.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
@@ -230,7 +237,7 @@ public class RobotContainer {
 
     ShuffleboardLayout layout = driverTab.getLayout("Ball counter",  BuiltInLayouts.kList).withPosition(0, 0)
     .withSize(2, 3);  
-    layout.addNumber("Ball Count", () -> ballCounter.getBallCount());
+    layout.addNumber("Ball Count", () -> subsystems.ballCounter.getBallCount());
   }
 
   /**

@@ -78,6 +78,6 @@ public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
             // turn turret in the rough direction of the target
             .alongWith(new TurnTurretToAngle(subsystems.turret, 100)),
             // FIRE! (with auto-targetting)
-          new AutoShootSequence(4000, subsystems));
+          new AutoShootSequence(subsystems, 4000, 72));
   }
 }
