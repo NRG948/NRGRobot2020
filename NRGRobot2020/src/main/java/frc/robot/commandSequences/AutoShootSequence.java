@@ -43,7 +43,9 @@ public class AutoShootSequence extends SequentialCommandGroup {
       // Release Ball
       new AutoFeedToShooter(subsystems.acquirer, subsystems.feeder, subsystems.ballCounter),
       // Stop Shooter
-      new DisableShooterRPM(subsystems.shooterRPM)
+      new DisableShooterRPM(subsystems.shooterRPM),
+      // Bring hood back down
+      new SetHoodPosition(subsystems.hood, 2)
     );
   }
 }
