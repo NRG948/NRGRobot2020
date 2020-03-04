@@ -23,9 +23,10 @@ import frc.robot.commands.ManualHood;
 import frc.robot.commandSequences.AutoDriveToFuelCell;
 import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
+import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
+import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
 import frc.robot.commands.DriveToFuelCell;
-import frc.robot.commands.HoldHoodDown;
 import frc.robot.commands.InterruptAll;
 import frc.robot.commands.LEDTest;
 import frc.robot.commands.ManualAcquirer;
@@ -36,6 +37,7 @@ import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
 import frc.robot.commandSequences.PrepareForMatch;
 import frc.robot.commands.SetAcquirerState;
+import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AcquireNumberOfBalls;
@@ -56,7 +58,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  
+
   // Joysticks and JoystickButtons
   private final Joystick leftJoystick = new Joystick(0);
   private final Joystick rightJoystick = new Joystick(1);
@@ -79,21 +81,24 @@ public class RobotContainer {
   private JoystickButton xboxButtonB = new JoystickButton(xboxController, 2); // B Button
   private JoystickButton xboxButtonX = new JoystickButton(xboxController, 3); // X Button
   private JoystickButton xboxButtonY = new JoystickButton(xboxController, 4); // Y button
-  private JoystickButton xboxLeftBumper = new JoystickButton(xboxController, 5); 
+  private JoystickButton xboxLeftBumper = new JoystickButton(xboxController, 5);
   private JoystickButton xboxRightBumper = new JoystickButton(xboxController, 6);
   private JoystickButton xboxBackButton = new JoystickButton(xboxController, 7);
-
+  private JoystickButton xboxButton8 = new JoystickButton(xboxController, 8);
+  private JoystickButton xboxButton9 = new JoystickButton(xboxController, 9);
   // D-pad left/right - turret rotate
   // D-pad up/down - hood up/down
   // Xbox right trigger - manual shooter rpm
-  // Xbox right stick up/down - acquirer, back button + right stick up/down - feeder,
-  
+  // Xbox right stick up/down - acquirer, back button + right stick up/down -
+  // feeder,
+
   // Create subsystems
   private final RobotSubsystems subsystems = new RobotSubsystems();
   private final Compressor compressor = new Compressor();
 
   // Commands
-  private final ManualDrive manualDrive = new ManualDrive(subsystems.drive, leftJoystick, rightJoystick, xboxController);
+  private final ManualDrive manualDrive = new ManualDrive(subsystems.drive, leftJoystick, rightJoystick,
+      xboxController);
   private final ManualAcquirer manualAcquirer = new ManualAcquirer(subsystems.acquirer, xboxController);
   private final ManualFeeder manualFeeder = new ManualFeeder(subsystems.feeder, xboxController);
   private final ManualTurret manualTurret = new ManualTurret(subsystems.turret, xboxController);
@@ -103,13 +108,14 @@ public class RobotContainer {
   private InterruptAll interruptAll = new InterruptAll(subsystems);
   private final BallCounter ballCounter = new BallCounter();
 
+  // When we press down the HoldHoodDownButton we store the original hood position here.
+  private double originalHoodPosition;
+
   // Autonomous chooser
   private SendableChooser<InitialAutoPath> autoPathChooser;
 
   private enum InitialAutoPath {
-    INITIATION_LINE_TO_MIDDLE,
-    INITIATION_LINE_TO_LEFT_TRENCH,
-    INITIATION_LINE_TO_RIGHT_TRENCH;
+    INITIATION_LINE_TO_LEFT_TRENCH, INITIATION_LINE_TO_RIGHT_TRENCH, INITIATION_LINE_TO_SHIELD_GENERATOR
   }
 
   /**
@@ -142,7 +148,8 @@ public class RobotContainer {
     subsystems.hood.initShuffleboard();
     subsystems.ballCounter.addShuffleboardTab();
     subsystems.shooterRPM.addShuffleBoardTab();
-
+    subsystems.limelightVision.addShuffleboardTab();
+    
     compressor.start();
   }
 
@@ -158,9 +165,17 @@ public class RobotContainer {
     xboxButtonX.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
       new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(5)));
       xboxButtonX.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
-      xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret, subsystems.limelightVision));
+      xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret));
       xboxRightBumper.whenPressed(new AutoShootSequence(4000, subsystems));
       xboxBackButton.whenPressed(new ManualTurret(subsystems.turret, xboxController));
+      xboxButtonA.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
+      xboxButton9.whenPressed(new InstantCommand(() -> { 
+        if(xboxController.getRawButtonPressed(8)) {
+          subsystems.ballCounter.addToBallCount(-1);
+        } else {
+        subsystems.ballCounter.addToBallCount(1);
+        }
+      }));
       driveStraight.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
       shiftGears.whenPressed(new InstantCommand(() -> { subsystems.gearbox.toggleGears(); } ));
       activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
@@ -174,7 +189,9 @@ public class RobotContainer {
     driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
     driveToBallContinuous.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
     interruptAllButton.whenPressed(interruptAll);
-    holdHoodDownButton.whenHeld(new HoldHoodDown(subsystems.hood));
+    holdHoodDownButton.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
+        .andThen(new SetHoodPosition(subsystems.hood, 2)));
+    holdHoodDownButton.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
   }
   
   /**
@@ -188,7 +205,7 @@ public class RobotContainer {
     HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
     processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
-    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream/mjpg");
+    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpg");
     limelightVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
     MjpegServer switchedCamera = cs.addSwitchedCamera("Switched");
@@ -200,10 +217,11 @@ public class RobotContainer {
     videoToggleLayout.add("limelight", new InstantCommand(() -> switchedCamera.setSource(limelightVideo)));  
 
     // Add the switched camera to the Shuffleboard tab.
-    HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream/mjpg");
+    HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream.mjpg");
     driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
     
-    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 0);
+    // TODO Remove temporary buttons to test drive to feeder.
+    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 2);
     loadingStationLayout.add("Drive to right feeder", new AutoDriveToLoadingStation(
         subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(22)));
     loadingStationLayout.add("Drive to left feeder", new AutoDriveToLoadingStation(
@@ -225,9 +243,9 @@ public class RobotContainer {
     ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList).withPosition(0, 0).withSize(6, 4);
 
     autoPathChooser = new SendableChooser<InitialAutoPath>();
-    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_MIDDLE.name(), InitialAutoPath.INITIATION_LINE_TO_MIDDLE);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
+    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR.name(), InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     PrepareForMatch pForMatch = new PrepareForMatch(subsystems.hood, subsystems.turret, subsystems.acquirerPiston);
     autoTab.add("PrepareForMatch", pForMatch);
@@ -241,14 +259,23 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     resetSensors();
     InitialAutoPath path = autoPathChooser.getSelected();
-    switch(path){
+    switch (path) {
       case INITIATION_LINE_TO_RIGHT_TRENCH:
         return new SetStartPosition(subsystems.drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
           .andThen(new InitiationLineToRightTrenchAuto(subsystems));
+
+      case INITIATION_LINE_TO_LEFT_TRENCH:
+        return new SetStartPosition(subsystems.drive, InitiationLineToLeftTrenchAuto.INITIAL_POSITION)
+          .andThen(new InitiationLineToLeftTrenchAuto(subsystems));
+
+      case INITIATION_LINE_TO_SHIELD_GENERATOR:
+        return new SetStartPosition(subsystems.drive, InitiationLineToShieldGeneratorAuto.INITIAL_POSITION)
+          .andThen(new InitiationLineToShieldGeneratorAuto(subsystems));
+
       default:
         // TODO move off of Initiation Line
         return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
-          }    
+    }    
   }
 
   public void resetSensors() {

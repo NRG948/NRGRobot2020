@@ -1,22 +1,22 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ShooterRPM;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 
+/**
+ * Maintains a given RPM speed on the shooter wheel using a Take-Back-Half feedback loop.
+ */
 public class MaintainShooterRPM extends CommandBase {
+
   private final ShooterRPM shooterRPM;
 
   private double goalRPM;
-  private Timer timer = new Timer();
-  private double seconds = 20;
   private boolean setAndExit;
-  private boolean usedDefaultGoalRPM = true;
+  private boolean useDefaultGoalRPM = true;
 
-  /**
-   * Creates a new SetShooterRPM.
-   */
+  /** Creates a new SetShooterRPM. */
   public MaintainShooterRPM(ShooterRPM shooterRPM) {
     this.goalRPM = Double.NaN;
     this.shooterRPM = shooterRPM;
@@ -24,13 +24,8 @@ public class MaintainShooterRPM extends CommandBase {
   }
 
   public MaintainShooterRPM atRpm(double goalRPM) {
-    this.usedDefaultGoalRPM = false;
+    this.useDefaultGoalRPM = false;
     this.goalRPM = goalRPM;
-    return this;
-  }
-
-  public MaintainShooterRPM forSeconds(double seconds) {
-    this.seconds = seconds;
     return this;
   }
 
@@ -42,28 +37,23 @@ public class MaintainShooterRPM extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    timer.reset();
-    timer.start();
-    if (usedDefaultGoalRPM) {
+    shooterRPM.enableAutoRPM(false);
+    if (useDefaultGoalRPM) {
       goalRPM = NRGPreferences.SHOOTER_TEST_RPM.getValue();
     }
     shooterRPM.setGoalRPM(goalRPM);
+    Logger.commandInit(this, String.format("rpm:%4.0f", goalRPM));
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     // ShooterRPM.periodic() runs the take-back-half feedback control.
   }
 
-  // Returns true when the command should end.
+  // This command either ends immediately (if in set-and-exit mode), or runs forever.
   @Override
   public boolean isFinished() {
-    if (setAndExit || timer.get() > seconds) {
-      timer.stop();
-      return true;
-    }
-    return false;
+    return setAndExit;
   }
 
   // Called once the command ends or is interrupted.
@@ -72,5 +62,6 @@ public class MaintainShooterRPM extends CommandBase {
     if (!setAndExit) {
       shooterRPM.disableTakeBackHalf();
     }
+    Logger.commandEnd(this);
   }
 }

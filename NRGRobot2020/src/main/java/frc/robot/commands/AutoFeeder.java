@@ -35,7 +35,7 @@ public class AutoFeeder extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    feeder.rawFeeder(NRGPreferences.FEEDER_POWER.getValue());
+    feeder.rawFeeder(NRGPreferences.FEEDER_ACQUIRE_POWER.getValue());
   }
 
   // Called once the command ends or is interrupted.
