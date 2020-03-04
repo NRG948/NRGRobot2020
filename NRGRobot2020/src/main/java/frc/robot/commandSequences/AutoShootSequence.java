@@ -8,6 +8,7 @@ import frc.robot.commands.AutoTurret;
 import frc.robot.commands.DisableShooterRPM;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.SetHoodPosition;
+import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.WaitForMinRPM;
 import frc.robot.utilities.NRGPreferences;
 
@@ -18,11 +19,13 @@ public class AutoShootSequence extends SequentialCommandGroup {
   /**
    * Shoots up to 5 balls in an autonoumous mode.
    */
-  public AutoShootSequence(RobotSubsystems subsystems, double rpm, double hoodPosition){
+  public AutoShootSequence(RobotSubsystems subsystems, double rpm, double hoodPosition, double skew){
     super(
       new MaintainShooterRPM(subsystems.shooterRPM).atRpm(rpm).setAndExit()
       // new AutoRPM(subsystems.shooterRPM, true)
-        .alongWith(new AutoTurret(subsystems.turret), new SetHoodPosition(subsystems.hood, hoodPosition)),
+        .alongWith(new AutoTurret(subsystems.turret), 
+                   new SetHoodPosition(subsystems.hood, hoodPosition),
+                   new SetLimelightHorizontalSkew(subsystems.turret, skew)),
       new WaitForMinRPM(rpm, subsystems.shooterRPM),
       // Release Ball
       new AutoFeedToShooter(subsystems.acquirer, subsystems.feeder, subsystems.ballCounter),
@@ -43,9 +46,12 @@ public class AutoShootSequence extends SequentialCommandGroup {
       // Release Ball
       new AutoFeedToShooter(subsystems.acquirer, subsystems.feeder, subsystems.ballCounter),
       // Stop Shooter
-      new DisableShooterRPM(subsystems.shooterRPM),
+      new DisableShooterRPM(subsystems.shooterRPM).alongWith(
       // Bring hood back down
-      new SetHoodPosition(subsystems.hood, 2)
+      new SetHoodPosition(subsystems.hood, 2),
+      // Remove skew
+      new SetLimelightHorizontalSkew(subsystems.turret, 0))
+
     );
   }
 }
