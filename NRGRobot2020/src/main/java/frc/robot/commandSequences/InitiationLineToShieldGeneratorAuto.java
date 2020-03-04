@@ -71,6 +71,6 @@ public class InitiationLineToShieldGeneratorAuto extends SequentialCommandGroup 
         // Turn the shooter toward the power port and fire!
         new AutoTurnToHeading(subsystems.drive).toHeading(-75).withTolerance(2).withMaxPower(0.8)
           .alongWith(new TurnTurretToAngle(subsystems.turret, 130)),
-        new AutoShootSequence(4000, subsystems));
+        new AutoShootSequence(subsystems, 4000, 72));
   }
 }

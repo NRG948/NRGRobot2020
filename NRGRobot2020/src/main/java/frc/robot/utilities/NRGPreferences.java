@@ -157,14 +157,18 @@ public class NRGPreferences {
 
     // Turret and Hood preferences
     public static final BooleanPrefs ENABLE_TURRET_LOGGING = new BooleanPrefs("TurretLogging", true);
-    public static final NumberPrefs SHOOTER_TEST_RPM = new NumberPrefs("ShooterTestRPM", 4000);
     public static final NumberPrefs WAIT_FOR_RPM_OFFSET = new NumberPrefs("WaitForRpmOffset", 120.0);
     public static final NumberPrefs TURRET_P_TERM = new NumberPrefs("TurretP", 0.085);
     public static final NumberPrefs TURRET_I_TERM = new NumberPrefs("TurretI", 0.3);
     public static final NumberPrefs TURRET_D_TERM = new NumberPrefs("TurretD", 0.01);
     public static final NumberPrefs TURRET_MOTOR_POWER = new NumberPrefs("TurretMotorPower", 0.2);
+    
+    public static final NumberPrefs SHOOTER_TEST_RPM = new NumberPrefs("ShooterTestRPM", 4000);
+    public static final NumberPrefs SHOOTER_RPM_TRENCH_CLOSE =  new NumberPrefs("ShooterRPMTrenchClose", 3200);
+    
     public static final NumberPrefs HOOD_MANUAL_MOTOR_POWER = new NumberPrefs("HoodMotorPower", 0.25);
     public static final NumberPrefs HOOD_MAX_VOLTAGE = new NumberPrefs("HoodMaxVoltage", 2.967);
+    public static final NumberPrefs HOOD_POSITION_TRENCH_CLOSE = new NumberPrefs("HoodPositionTrenchClose", 44.0);
 
     // Climber preferences
     public static final NumberPrefs CLIMBER_REAR_POWER = new NumberPrefs("ClimberRearPower", 0.95);

@@ -29,7 +29,7 @@ public class Turret extends SubsystemBase {
   // fictious values.
   private static final double MIN_ENCODER_VALUE = 0;
   private static final double MAX_ENCODER_VALUE = 170;
-  private static final double CAMERA_HORIZONTAL_CORRECTION_PRACTICE = -3;
+  private static final double CAMERA_HORIZONTAL_CORRECTION_PRACTICE = -1.5;
   private static final double CAMERA_HORIZONTAL_CORRECTION_COMPETITION = 0;
   private double cameraHorizontalCorrection;
 
