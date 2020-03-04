@@ -67,4 +67,8 @@ public final class Constants {
     public static final class ControlPanelConstants {
         public static final int kPanelSpinnerMotorPort = 7;
     }
+
+    public static final class ClimberConstants {
+        public static final int kClimberWinchMotorPort = 5; // This is a temporary number
+    }
 }
