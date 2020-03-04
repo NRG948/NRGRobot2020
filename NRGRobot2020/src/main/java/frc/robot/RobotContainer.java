@@ -30,13 +30,16 @@ import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.InterruptAll;
 import frc.robot.commands.LEDTest;
 import frc.robot.commands.ManualAcquirer;
+import frc.robot.commands.TurnClimberWinch;
 import frc.robot.commands.ToggleAcquirerPiston;
+import frc.robot.commands.ToggleClimberPiston;
 import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
 import frc.robot.commandSequences.PrepareForMatch;
 import frc.robot.commands.SetAcquirerState;
+import frc.robot.commands.SetClimberPiston;
 import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.MaintainShooterRPM;
@@ -66,6 +69,8 @@ public class RobotContainer {
   private JoystickButton driveStraight = new JoystickButton(leftJoystick, 1);
   private JoystickButton interruptAllButton = new JoystickButton(leftJoystick, 2);
   private JoystickButton ledModeButton = new JoystickButton(leftJoystick, 8);
+  private JoystickButton extendClimber = new JoystickButton(leftJoystick, 3); // Temporary
+  private JoystickButton retractClimber = new JoystickButton(leftJoystick, 4); // Temporary
 
   private JoystickButton shiftGears = new JoystickButton(rightJoystick, 1);
   private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
@@ -192,6 +197,8 @@ public class RobotContainer {
     holdHoodDownButton.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
         .andThen(new SetHoodPosition(subsystems.hood, 2)));
     holdHoodDownButton.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
+    extendClimber.whenPressed(new ToggleClimberPiston(subsystems.climberPiston));
+    retractClimber.whenHeld(new TurnClimberWinch(subsystems.climberWinch));
   }
   
   /**

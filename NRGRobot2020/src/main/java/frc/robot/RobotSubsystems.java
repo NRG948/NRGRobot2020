@@ -5,6 +5,8 @@ import frc.robot.subsystems.Acquirer;
 import frc.robot.subsystems.AcquirerPiston;
 import frc.robot.subsystems.AddressableLEDs;
 import frc.robot.subsystems.BallCounter;
+import frc.robot.subsystems.ClimberPiston;
+import frc.robot.subsystems.ClimberWinch;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Gearbox;
@@ -30,8 +32,10 @@ public class RobotSubsystems {
   public final ShooterRPM shooterRPM = new ShooterRPM(limelightVision);
   public final RaspberryPiVision raspPi = new RaspberryPiVision();
   public final BallCounter ballCounter = new BallCounter();
+  public final ClimberWinch climberWinch = new ClimberWinch();
+  public final ClimberPiston climberPiston = new ClimberPiston();
 
   public Subsystem[] getAll(){
-    return new Subsystem[]{leds, drive, gearbox, acquirer, acquirerPiston, feeder, turret, hood, shooterRPM, raspPi, ballCounter};
+    return new Subsystem[]{leds, drive, gearbox, acquirer, acquirerPiston, feeder, turret, hood, shooterRPM, raspPi, ballCounter, climberWinch, climberPiston};
   }
 }
