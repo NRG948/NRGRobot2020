@@ -5,6 +5,7 @@ import frc.robot.RobotSubsystems;
 import frc.robot.commands.AutoFeedToShooter;
 import frc.robot.commands.AutoRPM;
 import frc.robot.commands.AutoTurret;
+import frc.robot.commands.Delay;
 import frc.robot.commands.DisableShooterRPM;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.SetHoodPosition;
@@ -45,6 +46,8 @@ public class AutoShootSequence extends SequentialCommandGroup {
       new WaitForMinRPM(rpm, subsystems.shooterRPM),
       // Release Ball
       new AutoFeedToShooter(subsystems.acquirer, subsystems.feeder, subsystems.ballCounter),
+      // Add delay
+      new Delay(0.25),
       // Stop Shooter
       new DisableShooterRPM(subsystems.shooterRPM).alongWith(
       // Bring hood back down
