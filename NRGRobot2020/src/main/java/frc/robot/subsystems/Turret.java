@@ -5,13 +5,11 @@ import edu.wpi.cscore.VideoSource;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Victor;
-import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.MathUtil;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.Constants.TurretConstants;
-import frc.robot.commands.ManualTurret;
 import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.TurnTurretToAngle;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
@@ -33,8 +31,7 @@ public class Turret extends SubsystemBase {
   private static final double CAMERA_HORIZONTAL_CORRECTION_COMPETITION = 0;
   private double cameraHorizontalCorrection;
 
-  private final Victor turretMotor = new Victor(TurretConstants.kTurretMotorPort); // Change back to victor when we get
-                                                                                   // the actual robot
+  private final Victor turretMotor = new Victor(TurretConstants.kTurretMotorPort);
   private final Encoder turretEncoder = new Encoder(TurretConstants.kTurretEncoderPorts[0],
       TurretConstants.kTurretEncoderPorts[1]);
   private PIDController turretPIDController;

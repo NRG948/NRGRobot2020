@@ -25,11 +25,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.commands.AutoTurnToHeading;
-import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetStartPosition;
 import frc.robot.test.IMotorEncoderPair;
@@ -398,8 +396,6 @@ public class Drive extends SubsystemBase {
     commandsLayout.add("Follow S Curve", new SetStartPosition(this, new Pose2d(0, 0, new Rotation2d()))
     .andThen( new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
         List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)), false)));
-    // commandsLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToRightTrenchAuto(this));
-    // commandsLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToLeftTrenchAuto(this));
 
     // Add the DifferentialDrive object and encoders to a list layout in the tab.
     ShuffleboardLayout diffDriveLayout = driveTab.getLayout("Base", BuiltInLayouts.kList).
@@ -440,19 +436,21 @@ public class Drive extends SubsystemBase {
     this.detectCollisions = detectCollisions;
   }
 
-   public class MotorEncoderPair implements IMotorEncoderPair{
-     private WPI_VictorSPX motor;
-     private Encoder encoder;
-     public MotorEncoderPair(WPI_VictorSPX motor, Encoder encoder){
-       this.motor = motor;
-       this.encoder = encoder;
-     }
+  public class MotorEncoderPair implements IMotorEncoderPair {
+    private WPI_VictorSPX motor;
+    private Encoder encoder;
 
-     public void setMotor(double power){
-       motor.set(power);
-     }
-     public double getEncoder(){
-       return encoder.getDistance();
-     }
-   }
+    public MotorEncoderPair(WPI_VictorSPX motor, Encoder encoder){
+      this.motor = motor;
+      this.encoder = encoder;
+    }
+
+    public void setMotor(double power){
+      motor.set(power);
+    }
+
+    public double getEncoder(){
+      return encoder.getDistance();
+    }
+  }
 }

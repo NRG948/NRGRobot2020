@@ -11,7 +11,6 @@ import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.WaitForMinRPM;
-import frc.robot.utilities.NRGPreferences;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
