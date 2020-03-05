@@ -1,11 +1,11 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.Victor;
+import edu.wpi.first.wpilibj.PWMSparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ClimberConstants;
 
 public class ClimberWinch extends SubsystemBase {
-  private final Victor climberWinchMotor = new Victor(ClimberConstants.kClimberWinchMotorPort);
+  private final PWMSparkMax climberWinchMotor = new PWMSparkMax(ClimberConstants.kClimberWinchMotorPort);
   /**
    * Creates a new ClimberWinch.
    */

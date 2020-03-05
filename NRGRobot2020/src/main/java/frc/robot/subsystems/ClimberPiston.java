@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ClimberPiston extends SubsystemBase {
-    public DoubleSolenoid climberSolenoid = new DoubleSolenoid(2, 3); // Wrong numbers
+    public DoubleSolenoid climberSolenoid = new DoubleSolenoid(4, 5);
 
     State state = State.RETRACT;
     

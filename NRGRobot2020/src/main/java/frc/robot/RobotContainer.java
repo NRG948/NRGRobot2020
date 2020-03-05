@@ -205,7 +205,7 @@ public class RobotContainer {
         .andThen(new SetHoodPosition(subsystems.hood, 2)));
     holdHoodDownButton.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
     extendClimber.whenPressed(new ToggleClimberPiston(subsystems.climberPiston));
-    retractClimber.whenHeld(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.02));
+    retractClimber.whenHeld(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.2));
   }
   
   /**
