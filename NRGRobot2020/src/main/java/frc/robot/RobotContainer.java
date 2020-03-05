@@ -169,17 +169,17 @@ public class RobotContainer {
     //Holding x button activates AutoDriveToFuelcellsSequence
     xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)).alongWith(new DriveToFuelCell(subsystems.drive, subsystems.raspPi)));
     xboxButtonX.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
-      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(5)));
+      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
     xboxButtonX.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
 
     //Holding x button activates AcquirerSequence
     xboxButtonY.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)));
     xboxButtonY.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
-      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(5)));
+      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
     xboxButtonY.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
     
     xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret));
-    xboxRightBumper.whenPressed(new AutoShootSequence(subsystems, NRGPreferences.SHOOTER_RPM_TRENCH_CLOSE.getValue(), NRGPreferences.HOOD_POSITION_TRENCH_CLOSE.getValue(), -1.5));
+    xboxRightBumper.whenPressed(new AutoShootSequence(subsystems, NRGPreferences.SHOOTER_RPM_TRENCH_CLOSE.getValue(), NRGPreferences.HOOD_POSITION_TRENCH_CLOSE.getValue(), 0));
     xboxBackButton.whenPressed(new ManualTurret(subsystems.turret, xboxController));
     xboxButton9.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
     xboxButton10.whenPressed( () -> subsystems.ballCounter.addToBallCount(1));
