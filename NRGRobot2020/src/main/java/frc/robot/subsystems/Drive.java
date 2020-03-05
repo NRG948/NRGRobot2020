@@ -395,8 +395,9 @@ public class Drive extends SubsystemBase {
     commandsLayout.add("Turn to -90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(-90));
     commandsLayout.add("Drive 1 meter", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(1));
     commandsLayout.add("Drive 3 meters", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(3));
-    commandsLayout.add("Follow S Curve", new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
-        List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)), false));
+    commandsLayout.add("Follow S Curve", new SetStartPosition(this, new Pose2d(0, 0, new Rotation2d()))
+    .andThen( new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)), false)));
     // commandsLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToRightTrenchAuto(this));
     // commandsLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToLeftTrenchAuto(this));
 
