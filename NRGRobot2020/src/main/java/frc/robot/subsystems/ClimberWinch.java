@@ -10,6 +10,7 @@ public class ClimberWinch extends SubsystemBase {
    * Creates a new ClimberWinch.
    */
   public ClimberWinch() {
+    climberWinchMotor.setInverted(true);
   }
   
   public void rawClimb(double power) {
