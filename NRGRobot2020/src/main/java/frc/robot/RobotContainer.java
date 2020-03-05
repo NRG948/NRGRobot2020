@@ -207,10 +207,10 @@ public class RobotContainer {
     CameraServer cs = CameraServer.getInstance();
 
     // Initialize the video sources and create a switched camera.
-    HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
+    HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1182/stream.mjpg");
     processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
-    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpg");
+    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5801/stream.mjpg");
     limelightVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
     MjpegServer switchedCamera = cs.addSwitchedCamera("Switched");
