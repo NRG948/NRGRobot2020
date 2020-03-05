@@ -3,9 +3,10 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utilities.NRGPreferences;
 
 public class AcquirerPiston extends SubsystemBase {
-    public DoubleSolenoid acquirerSolenoid = new DoubleSolenoid(2, 3);
+    public DoubleSolenoid acquirerSolenoid;
 
     State state = State.RETRACT;
     
@@ -14,6 +15,11 @@ public class AcquirerPiston extends SubsystemBase {
     }
 
     public AcquirerPiston() {
+      if(NRGPreferences.USING_PRACTICE_BOT.getValue()){
+        acquirerSolenoid = new DoubleSolenoid(2, 3);
+      }else{
+        acquirerSolenoid = new DoubleSolenoid(3, 2);
+      }
     }
 
     public void toggleState() {
