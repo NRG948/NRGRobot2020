@@ -27,6 +27,7 @@ public class Acquirer extends SubsystemBase {
 
   /** Creates a new Acquirer. */
   public Acquirer() {
+    acquirerMotor.setInverted(!NRGPreferences.USING_PRACTICE_BOT.getValue());
   }
 
   public void rawAcquirer(final double power) {
