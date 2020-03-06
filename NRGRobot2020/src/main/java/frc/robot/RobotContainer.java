@@ -210,7 +210,7 @@ public class RobotContainer {
     HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1182/stream.mjpg");
     processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
-    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5801/stream.mjpg");
+    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpg");
     limelightVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
     MjpegServer switchedCamera = cs.addSwitchedCamera("Switched");
@@ -233,8 +233,8 @@ public class RobotContainer {
       subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(-22)));
     loadingStationLayout.add("Drive to center feeder", new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
 
-    ShuffleboardLayout layout = driverTab.getLayout("Ball counter",  BuiltInLayouts.kList).withPosition(0, 0)
-    .withSize(2, 3);  
+    ShuffleboardLayout layout = driverTab.getLayout("Ball counter",  BuiltInLayouts.kList).withPosition(0, 2)
+    .withSize(2, 1);  
     layout.addNumber("Ball Count", () -> subsystems.ballCounter.getBallCount());
   }
 
