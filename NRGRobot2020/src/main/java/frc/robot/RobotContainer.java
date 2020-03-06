@@ -114,9 +114,9 @@ public class RobotContainer {
   private final ManualTurret manualTurret = new ManualTurret(subsystems.turret, xboxController);
   private final ManualHood manualHood = new ManualHood(subsystems.hood, xboxController);
   private final ManualShooter manualShooter = new ManualShooter(subsystems.shooterRPM, xboxController);
-  private final AutoShootSequence shootFromInitiation = new AutoShootSequence(subsystems, SHOOTER_RPM_INITIATION.getValue(),  HOOD_POSITION_INITIATION.getValue(),  +0.0);
+  private final AutoShootSequence shootFromInitiation = new AutoShootSequence(subsystems, SHOOTER_RPM_INITIATION.getValue(),  HOOD_POSITION_INITIATION.getValue(),   0.0);
   private final AutoShootSequence shootFromTrenchNear = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_NEAR.getValue(), HOOD_POSITION_TRENCH_NEAR.getValue(), -1.5);
-  private final AutoShootSequence shootFromTrenchFar  = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_FAR.getValue(),  HOOD_POSITION_TRENCH_NEAR.getValue(), -1.0);
+  private final AutoShootSequence shootFromTrenchFar  = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_FAR.getValue(),  HOOD_POSITION_TRENCH_FAR.getValue(), -1.0);
   private final LEDTest ledTest = new LEDTest(subsystems.leds);
   private final InterruptAll interruptAll = new InterruptAll(subsystems);
 
