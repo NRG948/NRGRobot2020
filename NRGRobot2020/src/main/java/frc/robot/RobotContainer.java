@@ -30,6 +30,7 @@ import frc.robot.commands.ManualHood;
 import frc.robot.commandSequences.AutoDriveToFuelCell;
 import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
+import frc.robot.commandSequences.InitiationLineRollForward;
 import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
@@ -125,9 +126,17 @@ public class RobotContainer {
 
   // Autonomous chooser
   private SendableChooser<InitialAutoPath> autoPathChooser;
+  private SendableChooser<InitialDelay> autoDelay;
 
   private enum InitialAutoPath {
-    INITIATION_LINE_TO_LEFT_TRENCH, INITIATION_LINE_TO_RIGHT_TRENCH, INITIATION_LINE_TO_SHIELD_GENERATOR
+    INITIATION_LINE_TO_LEFT_TRENCH, 
+    INITIATION_LINE_TO_RIGHT_TRENCH, 
+    INITIATION_LINE_TO_SHIELD_GENERATOR, 
+    INITIATION_LINE_ROLL_FORWARD
+  }
+
+  private enum InitialDelay {
+    DELAY_0, DELAY_2, DELAY_5
   }
 
   /**
@@ -262,9 +271,33 @@ public class RobotContainer {
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR.name(), InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR);
+    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_ROLL_FORWARD.name(), InitialAutoPath.INITIATION_LINE_ROLL_FORWARD);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    
+    // Add an optional delay before Autonomous movement
+    autoDelay = new SendableChooser<InitialDelay>();
+    autoDelay.addOption("0 sec", InitialDelay.DELAY_0);
+    autoDelay.addOption("2 sec", InitialDelay.DELAY_2);
+    autoDelay.addOption("5 sec", InitialDelay.DELAY_5);
+    autoLayout.add("Delay before movement", autoDelay).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    // autoLayout.add("Delay before movement", autoDelay).withWidget(BuiltInWidgets.kNumberBar);
+
+    
     PrepareForMatch pForMatch = new PrepareForMatch(subsystems.hood, subsystems.turret, subsystems.acquirerPiston);
     autoTab.add("PrepareForMatch", pForMatch);
+  }
+
+  private float getInitialDelay(){
+    InitialDelay delay  = autoDelay.getSelected();
+    if(delay == InitialDelay.DELAY_0){
+      return 0;
+    }
+    else if(delay == InitialDelay.DELAY_2){
+      return 2;
+    }
+    else{
+      return 5;
+    }
   }
 
   /**
@@ -275,19 +308,23 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     resetSensors();
     InitialAutoPath path = autoPathChooser.getSelected();
+    float delay  = getInitialDelay();
     switch (path) {
       case INITIATION_LINE_TO_RIGHT_TRENCH:
         return new SetStartPosition(subsystems.drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
-          .andThen(new InitiationLineToRightTrenchAuto(subsystems));
+          .andThen(new InitiationLineToRightTrenchAuto(subsystems, delay));
 
       case INITIATION_LINE_TO_LEFT_TRENCH:
         return new SetStartPosition(subsystems.drive, InitiationLineToLeftTrenchAuto.INITIAL_POSITION)
-          .andThen(new InitiationLineToLeftTrenchAuto(subsystems));
+          .andThen(new InitiationLineToLeftTrenchAuto(subsystems, delay));
 
       case INITIATION_LINE_TO_SHIELD_GENERATOR:
         return new SetStartPosition(subsystems.drive, InitiationLineToShieldGeneratorAuto.INITIAL_POSITION)
-          .andThen(new InitiationLineToShieldGeneratorAuto(subsystems));
+          .andThen(new InitiationLineToShieldGeneratorAuto(subsystems, delay));
 
+      case INITIATION_LINE_ROLL_FORWARD:
+        return new SetStartPosition(subsystems.drive, InitiationLineRollForward.INITIAL_POSITION)
+          .andThen(new InitiationLineRollForward(subsystems, delay));
       default:
         // TODO move off of Initiation Line
         return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
