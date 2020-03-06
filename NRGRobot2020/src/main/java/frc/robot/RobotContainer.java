@@ -1,5 +1,12 @@
 package frc.robot;
 
+import static frc.robot.utilities.NRGPreferences.HOOD_POSITION_INITIATION;
+import static frc.robot.utilities.NRGPreferences.HOOD_POSITION_TRENCH_NEAR;
+import static frc.robot.utilities.NRGPreferences.HOOD_POSITION_TRENCH_FAR;
+import static frc.robot.utilities.NRGPreferences.SHOOTER_RPM_INITIATION;
+import static frc.robot.utilities.NRGPreferences.SHOOTER_RPM_TRENCH_NEAR;
+import static frc.robot.utilities.NRGPreferences.SHOOTER_RPM_TRENCH_FAR;
+
 import edu.wpi.cscore.HttpCamera;
 import edu.wpi.cscore.MjpegServer;
 import edu.wpi.cscore.VideoSource;
@@ -101,15 +108,17 @@ public class RobotContainer {
   private final Compressor compressor = new Compressor();
 
   // Commands
-  private final ManualDrive manualDrive = new ManualDrive(subsystems.drive, leftJoystick, rightJoystick,
-      xboxController);
+  private final ManualDrive manualDrive = new ManualDrive(subsystems.drive, leftJoystick, rightJoystick, xboxController);
   private final ManualAcquirer manualAcquirer = new ManualAcquirer(subsystems.acquirer, xboxController);
   private final ManualFeeder manualFeeder = new ManualFeeder(subsystems.feeder, xboxController);
   private final ManualTurret manualTurret = new ManualTurret(subsystems.turret, xboxController);
   private final ManualHood manualHood = new ManualHood(subsystems.hood, xboxController);
-  private ManualShooter manualShooter = new ManualShooter(subsystems.shooterRPM, xboxController);
-  private LEDTest ledTest = new LEDTest(subsystems.leds);
-  private InterruptAll interruptAll = new InterruptAll(subsystems);
+  private final ManualShooter manualShooter = new ManualShooter(subsystems.shooterRPM, xboxController);
+  private final AutoShootSequence shootFromInitiation = new AutoShootSequence(subsystems, SHOOTER_RPM_INITIATION.getValue(),  HOOD_POSITION_INITIATION.getValue(),  +0.0);
+  private final AutoShootSequence shootFromTrenchNear = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_NEAR.getValue(), HOOD_POSITION_TRENCH_NEAR.getValue(), -1.5);
+  private final AutoShootSequence shootFromTrenchFar  = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_FAR.getValue(),  HOOD_POSITION_TRENCH_NEAR.getValue(), -1.0);
+  private final LEDTest ledTest = new LEDTest(subsystems.leds);
+  private final InterruptAll interruptAll = new InterruptAll(subsystems);
 
   // When we press down the HoldHoodDownButton we store the original hood position here.
   private double originalHoodPosition;
@@ -179,7 +188,9 @@ public class RobotContainer {
     xboxButtonY.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
     
     xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret));
-    xboxRightBumper.whenPressed(new AutoShootSequence(subsystems, NRGPreferences.SHOOTER_RPM_TRENCH_CLOSE.getValue(), NRGPreferences.HOOD_POSITION_TRENCH_CLOSE.getValue(), 0));
+    xboxRightBumper.whenPressed(shootFromInitiation);
+    // xboxRightBumper.whenPressed(shootFromTrenchNear);
+    // xboxRightBumper.whenPressed(shootFromTrenchFar);
     xboxBackButton.whenPressed(new ManualTurret(subsystems.turret, xboxController));
     xboxButton9.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
     xboxButton10.whenPressed( () -> subsystems.ballCounter.addToBallCount(1));
