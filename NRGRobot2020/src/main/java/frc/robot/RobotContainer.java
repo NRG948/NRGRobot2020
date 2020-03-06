@@ -23,6 +23,7 @@ import frc.robot.commands.ManualHood;
 import frc.robot.commandSequences.AutoDriveToFuelCell;
 import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
+import frc.robot.commandSequences.InitiationLineRollForward;
 import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
@@ -119,7 +120,10 @@ public class RobotContainer {
   private SendableChooser<InitialDelay> autoDelay;
 
   private enum InitialAutoPath {
-    INITIATION_LINE_TO_LEFT_TRENCH, INITIATION_LINE_TO_RIGHT_TRENCH, INITIATION_LINE_TO_SHIELD_GENERATOR
+    INITIATION_LINE_TO_LEFT_TRENCH, 
+    INITIATION_LINE_TO_RIGHT_TRENCH, 
+    INITIATION_LINE_TO_SHIELD_GENERATOR, 
+    INITIATION_LINE_ROLL_FORWARD
   }
 
   private enum InitialDelay {
@@ -256,6 +260,7 @@ public class RobotContainer {
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR.name(), InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR);
+    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_ROLL_FORWARD.name(), InitialAutoPath.INITIATION_LINE_ROLL_FORWARD);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     
     // Add an optional delay before Autonomous movement
@@ -306,6 +311,9 @@ public class RobotContainer {
         return new SetStartPosition(subsystems.drive, InitiationLineToShieldGeneratorAuto.INITIAL_POSITION)
           .andThen(new InitiationLineToShieldGeneratorAuto(subsystems, delay));
 
+      case INITIATION_LINE_ROLL_FORWARD:
+        return new SetStartPosition(subsystems.drive, InitiationLineRollForward.INITIAL_POSITION)
+          .andThen(new InitiationLineRollForward(subsystems, delay));
       default:
         // TODO move off of Initiation Line
         return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
