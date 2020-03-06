@@ -153,7 +153,7 @@ public class NRGPreferences {
 
     // Vision subsystem preferences
     public static final NumberPrefs CAMERA_DISTANCE_SCALE = new NumberPrefs("CameraDistanceScale", 1.0);
-    public static final NumberPrefs LOADING_STATION_DISTANCE_FUDGE = new NumberPrefs("LoadingStationDistanceFudge", 1.09);
+    public static final NumberPrefs LOADING_STATION_DISTANCE_FUDGE = new NumberPrefs("LoadingStationDistanceFudge", 1.04);
 
     // Turret and Hood preferences
     public static final BooleanPrefs ENABLE_TURRET_LOGGING = new BooleanPrefs("TurretLogging", true);
