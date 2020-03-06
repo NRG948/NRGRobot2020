@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotSubsystems;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
+import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.SetAcquirerState;
@@ -58,8 +59,9 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
   /**
    * Creates a new InitiationLineToLeftTrenchAuto.
    */
-  public InitiationLineToRightTrenchAuto(RobotSubsystems subsystems) {
+  public InitiationLineToRightTrenchAuto(RobotSubsystems subsystems, float delay) {
     super(
+      new Delay(delay),
       /* Start on the initiation line, centered in line with the balls on our
        * alliance's trench (A) and move toward the first ball (B). At the same time,
        * attempt to acquire 1 ball and warm up the shooter.
