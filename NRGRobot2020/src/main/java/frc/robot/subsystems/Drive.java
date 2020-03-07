@@ -29,7 +29,6 @@ import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.commands.FollowWaypoints;
-import frc.robot.commands.SetStartPosition;
 import frc.robot.test.IMotorEncoderPair;
 
 public class Drive extends SubsystemBase {
