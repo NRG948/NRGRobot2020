@@ -73,19 +73,19 @@ public class RobotContainer {
   private final Joystick leftJoystick = new Joystick(0);
   private final Joystick rightJoystick = new Joystick(1);
 
-  private JoystickButton driveStraight = new JoystickButton(leftJoystick, 1);
-  private JoystickButton interruptAllButton = new JoystickButton(leftJoystick, 2);
-  private JoystickButton ledModeButton = new JoystickButton(leftJoystick, 8);
-  private JoystickButton extendClimber = new JoystickButton(leftJoystick, 3); // Temporary
-  private JoystickButton retractClimber = new JoystickButton(leftJoystick, 4); // Temporary
+  private JoystickButton leftJoyButton1 = new JoystickButton(leftJoystick, 1);
+  private JoystickButton leftJoyButton2 = new JoystickButton(leftJoystick, 2);
+  private JoystickButton leftJoyButton3 = new JoystickButton(leftJoystick, 3);
+  private JoystickButton leftJoyButton4 = new JoystickButton(leftJoystick, 4);
+  private JoystickButton leftJoyButton8 = new JoystickButton(leftJoystick, 8);
 
-  private JoystickButton shiftGears = new JoystickButton(rightJoystick, 1);
-  private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
-  private JoystickButton holdHoodDownButton = new JoystickButton(rightJoystick, 4);
-  private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
-  private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 6);
-  private JoystickButton activateAcquirerPiston = new JoystickButton(rightJoystick, 10);
-  private JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
+  private JoystickButton rightJoyButton1 = new JoystickButton(rightJoystick, 1);
+  private JoystickButton rightJoyButton3 = new JoystickButton(rightJoystick, 3);
+  private JoystickButton rightJoyButton4 = new JoystickButton(rightJoystick, 4);
+  private JoystickButton rightJoyButton5 = new JoystickButton(rightJoystick, 5);
+  private JoystickButton rightJoyButton6 = new JoystickButton(rightJoystick, 6);
+  private JoystickButton rightJoyButton10 = new JoystickButton(rightJoystick, 10);
+  private JoystickButton rightJoyButton11 = new JoystickButton(rightJoystick, 11);
 
   // XboxController and Xbox buttons
   private XboxController xboxController = new XboxController(2);
@@ -101,8 +101,8 @@ public class RobotContainer {
   // D-pad left/right - turret rotate
   // D-pad up/down - hood up/down
   // Xbox right trigger - manual shooter rpm
-  // Xbox right stick up/down - acquirer, back button + right stick up/down -
-  // feeder,
+  // Xbox right stick up/down - acquirer, 
+  // back button + right stick up/down - feeder,
 
   // Create subsystems
   private final RobotSubsystems subsystems = new RobotSubsystems();
@@ -151,7 +151,6 @@ public class RobotContainer {
     subsystems.shooterRPM.setDefaultCommand(manualShooter);
     subsystems.acquirer.setDefaultCommand(manualAcquirer);
     subsystems.feeder.setDefaultCommand(manualFeeder);
-    // turret.setDefaultCommand(manualTurret);
     subsystems.hood.setDefaultCommand(manualHood);
     // leds.setDefaultCommand(ledTest);
 
@@ -200,23 +199,23 @@ public class RobotContainer {
     xboxRightBumper.whenPressed(shootFromInitiation);
     // xboxRightBumper.whenPressed(shootFromTrenchNear);
     // xboxRightBumper.whenPressed(shootFromTrenchFar);
-    xboxBackButton.whenPressed(new ManualTurret(subsystems.turret, xboxController));
+    xboxBackButton.whenPressed(manualTurret);
     xboxButton9.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
     xboxButton10.whenPressed( () -> subsystems.ballCounter.addToBallCount(1));
-    driveStraight.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
-    shiftGears.whenPressed( () -> subsystems.gearbox.toggleGears());
-    activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
-    resetSensorsButton.whenPressed( () -> resetSensors());
-    ledModeButton.whenPressed( () -> subsystems.limelightVision.toggleLed());
-    driveToBall.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
-    driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
-    driveToBallContinuous.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
-    interruptAllButton.whenPressed(interruptAll);
-    holdHoodDownButton.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
+    leftJoyButton1.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
+    rightJoyButton1.whenPressed( () -> subsystems.gearbox.toggleGears());
+    rightJoyButton10.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
+    rightJoyButton11.whenPressed( () -> resetSensors());
+    leftJoyButton8.whenPressed( () -> subsystems.limelightVision.toggleLed());
+    rightJoyButton3.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
+    rightJoyButton6.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
+    rightJoyButton5.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
+    leftJoyButton2.whenPressed(interruptAll);
+    rightJoyButton4.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
         .andThen(new SetHoodPosition(subsystems.hood, 2)));
-    holdHoodDownButton.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
-    extendClimber.whenPressed(new ToggleClimberPiston(subsystems.climberPiston));
-    retractClimber.whenHeld(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.35));
+    rightJoyButton4.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
+    leftJoyButton3.whenPressed(new ToggleClimberPiston(subsystems.climberPiston));
+    leftJoyButton4.whenHeld(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.35));
   }
   
   /**
