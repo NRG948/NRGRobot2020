@@ -30,8 +30,6 @@ import edu.wpi.first.wpilibj.util.Units;
  */
 public class Turret extends SubsystemBase {
 
-  // TODO: min and max values need to be figured out; the values below are
-  // fictious values.
   private static final double MIN_ENCODER_VALUE = 0;
   private static final double MAX_ENCODER_VALUE = 170;
   private static final double CAMERA_HORIZONTAL_CORRECTION_PRACTICE = -1.5;
@@ -159,7 +157,7 @@ public class Turret extends SubsystemBase {
       if (DriverStation.getInstance().isDisabled()) {
         this.turretAngleEnd();
       } else {
-        double currentAngle = this.skewHorizontalAngle;
+        double currentAngle = 0;
 
         if (this.targetSource == TargetSource.LIMELIGHT) {
           currentAngle = limelightVision.getX();
@@ -192,9 +190,9 @@ public class Turret extends SubsystemBase {
     turretLayout.addNumber("Angle", () -> lastAngle);
     turretLayout.addNumber("PID Position Error",
         () -> (turretPIDController != null) ? turretPIDController.getPositionError() : 0.0);
-    turretLayout.addNumber("Raw Output", () -> (turretMotor.get()));
-    turretLayout.addBoolean("ContinuousPID", () -> (continuousPID));
-    turretLayout.addNumber("Limelight x", () -> (limelightVision.getX()));
+    turretLayout.addNumber("Raw Output", () -> turretMotor.get());
+    turretLayout.addBoolean("ContinuousPID", () -> continuousPID);
+    turretLayout.addNumber("Limelight x", () -> limelightVision.getX());
 
     ShuffleboardLayout controlLayout = turretTab.getLayout("Control", BuiltInLayouts.kList)
       .withPosition(6, 0)
