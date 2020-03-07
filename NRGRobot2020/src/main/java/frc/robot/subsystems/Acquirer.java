@@ -16,10 +16,13 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
  * The pistons that extend/retract the acquirer are a separate subsystem.
  */
 public class Acquirer extends SubsystemBase {
-
   private double sentPower;
   
+  public State state;
 
+  public enum State {
+    INTAKING, EJECTING, STATIC;
+  }
 
   private static final double MAX_ACQUIRER_POWER = 1;
 
@@ -32,7 +35,18 @@ public class Acquirer extends SubsystemBase {
 
   public void rawAcquirer(final double power) {
     sentPower = MathUtil.clamp(power, -MAX_ACQUIRER_POWER, MAX_ACQUIRER_POWER);
+    if (sentPower > 0) {
+      state = State.INTAKING;
+    } else if (sentPower < 0) {
+      state = State.EJECTING;
+    } else {
+      state = State.STATIC;
+    }
     acquirerMotor.set(sentPower);
+  }
+
+  public State getState() {
+    return state;
   }
 
   @Override

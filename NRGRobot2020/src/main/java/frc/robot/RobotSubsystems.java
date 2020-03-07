@@ -31,7 +31,7 @@ public class RobotSubsystems {
   public final Hood hood = new Hood();
   public final ShooterRPM shooterRPM = new ShooterRPM(limelightVision);
   public final RaspberryPiVision raspPi = new RaspberryPiVision();
-  public final BallCounter ballCounter = new BallCounter();
+  public final BallCounter ballCounter = new BallCounter(acquirer);
   public final ClimberWinch climberWinch = new ClimberWinch();
   public final ClimberPiston climberPiston = new ClimberPiston();
 

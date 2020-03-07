@@ -51,6 +51,7 @@ import frc.robot.commands.SetClimberPiston;
 import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.SetStartPosition;
+import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
@@ -124,7 +125,9 @@ public class RobotContainer {
   private final AutoShootSequence shootFromTrenchFar  = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_FAR.getValue(),  HOOD_POSITION_TRENCH_FAR.getValue(), -1.0);
   private final CommandBase stopAutoShootSequence = new Delay(0.25)
     .andThen(new DisableShooterRPM(subsystems.shooterRPM)
-      .alongWith(new SetHoodPosition(subsystems.hood, 2), new SetLimelightHorizontalSkew(subsystems.turret, 0)));
+      .alongWith(new StopTurretAnglePID(subsystems.turret), 
+                 new SetHoodPosition(subsystems.hood, 2), 
+                 new SetLimelightHorizontalSkew(subsystems.turret, 0)));
 
   private final LEDTest ledTest = new LEDTest(subsystems.leds);
   private final InterruptAll interruptAll = new InterruptAll(subsystems);
