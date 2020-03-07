@@ -49,14 +49,18 @@ import frc.robot.commandSequences.PrepareForMatch;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetClimberPiston;
 import frc.robot.commands.SetHoodPosition;
+import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.AutoTurret;
+import frc.robot.commands.Delay;
+import frc.robot.commands.DisableShooterRPM;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.subsystems.AcquirerPiston.State;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -118,6 +122,10 @@ public class RobotContainer {
   private final AutoShootSequence shootFromInitiation = new AutoShootSequence(subsystems, SHOOTER_RPM_INITIATION.getValue(),  HOOD_POSITION_INITIATION.getValue(),   0.0);
   private final AutoShootSequence shootFromTrenchNear = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_NEAR.getValue(), HOOD_POSITION_TRENCH_NEAR.getValue(), -1.5);
   private final AutoShootSequence shootFromTrenchFar  = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_FAR.getValue(),  HOOD_POSITION_TRENCH_FAR.getValue(), -1.0);
+  private final CommandBase stopAutoShootSequence = new Delay(0.25)
+    .andThen(new DisableShooterRPM(subsystems.shooterRPM)
+      .alongWith(new SetHoodPosition(subsystems.hood, 2), new SetLimelightHorizontalSkew(subsystems.turret, 0)));
+
   private final LEDTest ledTest = new LEDTest(subsystems.leds);
   private final InterruptAll interruptAll = new InterruptAll(subsystems);
 
@@ -201,7 +209,8 @@ public class RobotContainer {
     xboxButtonY.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
     
     xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret));
-    xboxRightBumper.whenPressed(shootFromInitiation);
+    xboxRightBumper.whenHeld(shootFromInitiation);
+    xboxRightBumper.whenReleased(stopAutoShootSequence);
     // xboxRightBumper.whenPressed(shootFromTrenchNear);
     // xboxRightBumper.whenPressed(shootFromTrenchFar);
     xboxBackButton.whenPressed(manualTurret);

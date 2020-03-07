@@ -44,16 +44,7 @@ public class AutoShootSequence extends SequentialCommandGroup {
       // Are you at target rpm?
       new WaitForMinRPM(rpm, subsystems.shooterRPM),
       // Release Ball
-      new AutoFeedToShooter(subsystems.acquirer, subsystems.feeder, subsystems.ballCounter),
-      // Add delay
-      new Delay(0.25),
-      // Stop Shooter
-      new DisableShooterRPM(subsystems.shooterRPM).alongWith(
-      // Bring hood back down
-      new SetHoodPosition(subsystems.hood, 2),
-      // Remove skew
-      new SetLimelightHorizontalSkew(subsystems.turret, 0))
-
+      new AutoFeedToShooter(subsystems.acquirer, subsystems.feeder, subsystems.ballCounter)
     );
   }
 }
