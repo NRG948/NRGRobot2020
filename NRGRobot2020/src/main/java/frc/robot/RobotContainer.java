@@ -47,7 +47,6 @@ import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
 import frc.robot.commandSequences.PrepareForMatch;
 import frc.robot.commands.SetAcquirerState;
-import frc.robot.commands.SetClimberPiston;
 import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.SetStartPosition;

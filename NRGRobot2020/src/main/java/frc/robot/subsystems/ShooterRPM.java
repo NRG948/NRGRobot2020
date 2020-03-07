@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.utilities.Average;
@@ -191,7 +190,6 @@ public class ShooterRPM extends SubsystemBase {
     if (turretLoggingEnabled) {
       trackMinMaxRPM(30);
     }
-    updateDashBoard();
   }
 
   /** Resets the ShooterRPM subsystem to its initial state. */
@@ -255,15 +253,6 @@ public class ShooterRPM extends SubsystemBase {
     return deltaTime;
   }
 
-  /** Sends important subsystem data to the SmartDashboard for monitoring and deubgging. */
-  public void updateDashBoard() {
-    // SmartDashboard.putNumber("ShooterRPM/Raw", spinMotorEncoder.get());
-    // SmartDashboard.putNumber("ShooterRPM/Distance", spinMotorEncoder.getDistance());
-    // SmartDashboard.putNumber("ShooterRPM/RPM", currentRPM);
-    // SmartDashboard.putNumber("ShooterRPM/error", error);
-    // SmartDashboard.putNumber("ShooterRPM/power", lastMotorPower);
-  }
-
   public void addShuffleBoardTab() {
     if (!NRGPreferences.SHUFFLEBOARD_SHOOTER_RPM_ENABLED.getValue()) {
       return;
@@ -272,7 +261,7 @@ public class ShooterRPM extends SubsystemBase {
     ShuffleboardTab shooterTab = Shuffleboard.getTab("Shooter");
     ShuffleboardLayout layout = shooterTab.getLayout("Shooter", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 3);
     layout.add("Encoder", this.spinMotorEncoder);
-    layout.addNumber("Power", () -> this.motorPower);
+    layout.addNumber("Power", () -> this.lastMotorPower);
     layout.addNumber("RPM", () -> this.currentRPM);
     shooterTab.addNumber("RPM", () -> this.currentRPM).withWidget(BuiltInWidgets.kGraph).withPosition(2, 0).withSize(6, 4);
   }

@@ -25,7 +25,6 @@ public class ManualShooter extends CommandBase {
   @Override
   public void execute() {
     shooterRPM.setFlyWheel(xboxController.getTriggerAxis(Hand.kRight));
-    shooterRPM.updateDashBoard();
   }
 
   // Called once the command ends or is interrupted.
