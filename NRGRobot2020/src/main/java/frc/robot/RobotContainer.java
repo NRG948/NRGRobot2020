@@ -180,18 +180,23 @@ public class RobotContainer {
    * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings(){
+  private void configureButtonBindings() {
+    /*
+     * Xbox controller button mappings
+     */
     xboxButtonA.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
     xboxButtonB.whenPressed(new MaintainShooterRPM(subsystems.shooterRPM));
     
-    //Holding x button activates AutoDriveToFuelcellsSequence
-    xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)).alongWith(new DriveToFuelCell(subsystems.drive, subsystems.raspPi)));
+    // Holding x button activates AutoDriveToFuelcellsSequence
+    xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND)
+      .alongWith(new TurnTurretToAngle(subsystems.turret, 77), new DriveToFuelCell(subsystems.drive, subsystems.raspPi)));
     xboxButtonX.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
       new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
     xboxButtonX.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
 
-    //Holding x button activates AcquirerSequence
-    xboxButtonY.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)));
+    // Holding x button activates AcquirerSequence
+    xboxButtonY.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND)
+      .alongWith(new TurnTurretToAngle(subsystems.turret, 77)));
     xboxButtonY.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
       new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
     xboxButtonY.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
@@ -203,6 +208,10 @@ public class RobotContainer {
     xboxBackButton.whenPressed(new ManualTurret(subsystems.turret, xboxController));
     xboxButton9.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
     xboxButton10.whenPressed( () -> subsystems.ballCounter.addToBallCount(1));
+
+    /*
+     * Joystick button mappings.
+     */
     driveStraight.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
     shiftGears.whenPressed( () -> subsystems.gearbox.toggleGears());
     activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
