@@ -26,12 +26,19 @@ public class Hood extends SubsystemBase {
   private static final int LOWER_HARD_STOP = 1;
   private static final int UPPER_HARD_STOP = 97;
 
+  private static final double INITIATION_SHOOT_DISTANCE = 160; // inches
+  private static final double TRENCH_FAR_SHOOT_DISTANCE = 330; // inches
+  private static final double TOLERANCE = 0.1;
+
   private final Victor hoodMotor = new Victor(TurretConstants.kHoodMotorPort);
   private final AnalogInput encoderInput = new AnalogInput(1);
   private final AnalogEncoder hoodEncoder = new AnalogEncoder(encoderInput);
+  private final LimelightVision limelightVision;
+  private boolean isAutoHoodEnabled = false;
 
   /** Creates a new Hood. */
-  public Hood() {
+  public Hood(LimelightVision limelightVision) {
+    this.limelightVision = limelightVision;
   }
 
   public void reset() {
@@ -52,9 +59,14 @@ public class Hood extends SubsystemBase {
     hoodMotor.set(power);
   }
 
+  public void enableAutoHood(){
+    isAutoHoodEnabled = true;
+  }
+
   /** Turns off the hood motor. */
   public void hoodEnd() {
     this.hoodMotor.set(0);
+    isAutoHoodEnabled = false;
   }
 
   /** Returns the position of the hood, scaled to be between 0 (full back) and 100 (full forward). */
@@ -70,6 +82,28 @@ public class Hood extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if(isAutoHoodEnabled){
+      if(limelightVision.hasTarget()){
+        double goalPosition = hoodPositionFromLimelight(limelightVision.getDistance());
+        double currentPosition = getPosition();
+        double error = goalPosition - currentPosition; // This is how far off we are from the goal position;
+        if(Math.abs(error) < TOLERANCE){
+          rawHood(0);
+        } else{
+          rawHood(NRGPreferences.HOOD_MANUAL_MOTOR_POWER.getValue() * Math.signum(error));
+        }
+      } else {
+        rawHood(0);
+      }
+    }
+  }
+
+  // Interpalates a hood position based on known values of Limelight distance;
+  private double hoodPositionFromLimelight(double distance){
+    double posTrenchFar = NRGPreferences.HOOD_POSITION_TRENCH_FAR.getValue();
+    double posInitiation = NRGPreferences.HOOD_POSITION_INITIATION.getValue();
+    double slope = (posTrenchFar - posInitiation) / (TRENCH_FAR_SHOOT_DISTANCE - INITIATION_SHOOT_DISTANCE);
+    return slope * distance + posTrenchFar - slope * TRENCH_FAR_SHOOT_DISTANCE;
   }
 
   public void initShuffleboard() {
