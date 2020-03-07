@@ -63,6 +63,9 @@ public class LimelightVision extends SubsystemBase {
   }
 
   public double getDistance() {
+    if(!hasTarget()) {
+      return 0.0;
+    }
     // return 4822.0 / tshort.getDouble(0.0) - 5.0664; // Formula 1
     // return (TARGET_HEIGHT - LIMELIGHT_MOUNTING_HEIGHT) / Math.tan(LIMELIGHT_MOUNTING_ANGLE + Math.toRadians(getAngle())); // Formula 2
     return (LIMELIGHT_CENTER_Y / Math.tan(LIMELIGHT_HALF_FOV_Y) / Math.cos(Math.toRadians(getAngle()))) * (17.0 / tshort.getDouble(0.000001)); // Formula 3
@@ -84,8 +87,11 @@ public class LimelightVision extends SubsystemBase {
     return ts.getDouble(0.0);
   }
 
-  public double getTv(){
-    return tv.getDouble(0.0);
+  /**
+   * Returns true if the Limelight has target.
+   */
+  public boolean hasTarget() {
+    return tv.getDouble(0.0) != 0.0;
   }
 
   @Override
