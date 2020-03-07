@@ -155,21 +155,27 @@ public class NRGPreferences {
     public static final NumberPrefs CAMERA_DISTANCE_SCALE = new NumberPrefs("CameraDistanceScale", 1.0);
     public static final NumberPrefs LOADING_STATION_DISTANCE_FUDGE = new NumberPrefs("LoadingStationDistanceFudge", 1.04);
 
-    // Turret and Hood preferences
+    // Turret preferences
     public static final BooleanPrefs ENABLE_TURRET_LOGGING = new BooleanPrefs("TurretLogging", true);
-    public static final NumberPrefs WAIT_FOR_RPM_OFFSET = new NumberPrefs("WaitForRpmOffset", 120.0);
     public static final NumberPrefs TURRET_P_TERM = new NumberPrefs("TurretP", 0.085);
     public static final NumberPrefs TURRET_I_TERM = new NumberPrefs("TurretI", 0.3);
     public static final NumberPrefs TURRET_D_TERM = new NumberPrefs("TurretD", 0.01);
     public static final NumberPrefs TURRET_MOTOR_POWER = new NumberPrefs("TurretMotorPower", 0.2);
     
-    public static final NumberPrefs SHOOTER_TEST_RPM = new NumberPrefs("ShooterTestRPM", 4000);
-    public static final NumberPrefs SHOOTER_RPM_TRENCH_CLOSE =  new NumberPrefs("ShooterRPMTrenchClose", 3200);
-    
+    // Hood preferences
     public static final NumberPrefs HOOD_MANUAL_MOTOR_POWER = new NumberPrefs("HoodMotorPower", 0.25);
-    public static final NumberPrefs HOOD_MAX_VOLTAGE = new NumberPrefs("HoodMaxVoltage", 2.967);
-    public static final NumberPrefs HOOD_POSITION_TRENCH_CLOSE = new NumberPrefs("HoodPositionTrenchClose", 44.0);
-
+    public static final NumberPrefs HOOD_MAX_VOLTAGE = new NumberPrefs("HoodMaxVoltage", 4.00);
+    public static final NumberPrefs HOOD_POSITION_INITIATION = new NumberPrefs("HoodPositionInitiation", 67.0);
+    public static final NumberPrefs HOOD_POSITION_TRENCH_NEAR = new NumberPrefs("HoodPositionTrenchNear", 72.0);
+    public static final NumberPrefs HOOD_POSITION_TRENCH_FAR = new NumberPrefs("HoodPositionTrenchFar", 72.0);
+  
+    // Shooter RPM preferences
+    public static final NumberPrefs WAIT_FOR_RPM_OFFSET = new NumberPrefs("WaitForRpmOffset", 100.0);
+    public static final NumberPrefs SHOOTER_RPM_INITIATION =  new NumberPrefs("ShooterRpmInitiation", 3400);
+    public static final NumberPrefs SHOOTER_RPM_TRENCH_NEAR =  new NumberPrefs("ShooterRpmTrenchNear", 3550);
+    public static final NumberPrefs SHOOTER_RPM_TRENCH_FAR =  new NumberPrefs("ShooterRpmTrenchFar", 3730);
+    public static final NumberPrefs SHOOTER_TEST_RPM = new NumberPrefs("ShooterTestRPM", 4000);
+    
     // Climber preferences
     public static final NumberPrefs CLIMBER_REAR_POWER = new NumberPrefs("ClimberRearPower", 0.95);
     public static final NumberPrefs CLIMBER_REAR_MIN_TICKS = new NumberPrefs("ClimberRearMinTicks", 800);

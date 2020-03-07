@@ -386,16 +386,18 @@ public class Drive extends SubsystemBase {
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
 
     // Add test buttons to a layout in the tab
-    ShuffleboardLayout commandsLayout = driveTab.getLayout("Test", BuiltInLayouts.kList).withPosition(0, 0).withSize(2,
-        3);
+    ShuffleboardLayout commandsLayout = driveTab.getLayout("Test", BuiltInLayouts.kList)
+      .withPosition(0, 0)
+      .withSize(2, 3);
 
     commandsLayout.add("Turn to 90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(90));
     commandsLayout.add("Turn to -90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(-90));
     commandsLayout.add("Drive 1 meter", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(1));
     commandsLayout.add("Drive 3 meters", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(3));
-    commandsLayout.add("Follow S Curve", new SetStartPosition(this, new Pose2d(0, 0, new Rotation2d()))
-    .andThen( new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
-        List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)), false)));
+    commandsLayout.add("Follow S Curve",
+      new InstantCommand(() -> { this.resetHeading(); this.resetOdometry(new Pose2d(0, 0, new Rotation2d())); })
+        .andThen( new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
+          List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)), false)));
 
     // Add the DifferentialDrive object and encoders to a list layout in the tab.
     ShuffleboardLayout diffDriveLayout = driveTab.getLayout("Base", BuiltInLayouts.kList).
@@ -416,8 +418,10 @@ public class Drive extends SubsystemBase {
     positionLayout.addNumber("Heading", () -> getHeadingContinuous());
     
     // Add collision detection to a layout tab
-    ShuffleboardLayout collisionLayout = driveTab.getLayout("Collision", BuiltInLayouts.kList).
-      withPosition(6, 2).withSize(2, 2);
+    ShuffleboardLayout collisionLayout = driveTab.getLayout("Collision", BuiltInLayouts.kList)
+      .withPosition(6, 2)
+      .withSize(2, 2);
+      
     collisionLayout.addNumber("Collision Count", () -> this.collisionCount);
     collisionLayout.add("Enable", new InstantCommand(() -> this.setDetectCollisions(true)));
     collisionLayout.add("Disable", new InstantCommand(() -> this.setDetectCollisions(false)));
