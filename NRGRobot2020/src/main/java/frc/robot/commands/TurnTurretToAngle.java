@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
 import frc.robot.utilities.NRGPreferences;
+import frc.robot.utilities.TargetSource;
 
 public class TurnTurretToAngle extends CommandBase {
   private Turret turret;
@@ -28,7 +29,7 @@ public class TurnTurretToAngle extends CommandBase {
   @Override
   public void initialize() {
     maxPower = NRGPreferences.TURRET_MOTOR_POWER.getValue();
-    turret.turretAnglePIDInit(angle, maxPower, 1, false);
+    turret.turretAnglePIDInit(TargetSource.NONE, angle, maxPower, 1, false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

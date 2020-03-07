@@ -23,7 +23,7 @@ public class AutoShootSequence extends SequentialCommandGroup {
     super(
       new MaintainShooterRPM(subsystems.shooterRPM).atRpm(rpm).setAndExit()
       // new AutoRPM(subsystems.shooterRPM, true)
-        .alongWith(new AutoTurret(subsystems.turret), 
+        .alongWith(new AutoTurret(subsystems.turret).usingLimelight(), 
                    new SetHoodPosition(subsystems.hood, hoodPosition),
                    new SetLimelightHorizontalSkew(subsystems.turret, skew)),
       new WaitForMinRPM(rpm, subsystems.shooterRPM),

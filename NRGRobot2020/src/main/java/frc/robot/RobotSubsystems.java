@@ -27,7 +27,7 @@ public class RobotSubsystems {
   public final AcquirerPiston acquirerPiston = new AcquirerPiston();
   public final Feeder feeder = new Feeder();
   public final LimelightVision limelightVision = new LimelightVision();
-  public final Turret turret = new Turret(limelightVision);
+  public final Turret turret = new Turret(limelightVision, drive);
   public final Hood hood = new Hood();
   public final ShooterRPM shooterRPM = new ShooterRPM(limelightVision);
   public final RaspberryPiVision raspPi = new RaspberryPiVision();

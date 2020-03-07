@@ -4,12 +4,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
 import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
+import frc.robot.utilities.TargetSource;
 
 /**
  * Enables the Turret PID and leaves it running after this command exits.
  */
 public class AutoTurret extends CommandBase {
   private final Turret turret;
+  private TargetSource targetSource = TargetSource.NONE;
   private double skewAngle;
   private double maxPower;
   private boolean useDefaultMaxPower = true;
@@ -21,6 +23,18 @@ public class AutoTurret extends CommandBase {
     this.turret = turret;
     this.skewAngle = 0;
     addRequirements(turret);
+  }
+
+  /** Sets the target source to the Limelight. */
+  public AutoTurret usingLimelight() {
+    this.targetSource = TargetSource.LIMELIGHT;
+    return this;
+  }
+
+  /** Sets the target source based on position. */
+  public AutoTurret usingPosition() {
+    this.targetSource = TargetSource.POSITION;
+    return this;
   }
 
   /** Optionally sets the maximum power used to rotate the turret. */
@@ -43,7 +57,7 @@ public class AutoTurret extends CommandBase {
       maxPower = NRGPreferences.TURRET_MOTOR_POWER.getValue();
     }
     double toleranceDegrees = 1.0;
-    turret.turretAnglePIDInit(skewAngle, maxPower, toleranceDegrees, true);
+    turret.turretAnglePIDInit(targetSource, skewAngle, maxPower, toleranceDegrees, true);
     Logger.commandInit(this, String.format("skew:%4.1f toler:%4.1f", skewAngle, toleranceDegrees));
   }
 

@@ -211,7 +211,7 @@ public class RobotContainer {
       new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
     xboxButtonY.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
     
-    xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret));
+    xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret).usingLimelight());
     xboxRightBumper.whenHeld(shootFromInitiation);
     xboxRightBumper.whenReleased(stopAutoShootSequence);
     // xboxRightBumper.whenPressed(shootFromTrenchNear);
