@@ -69,6 +69,6 @@ public final class Constants {
     }
 
     public static final class ClimberConstants {
-        public static final int kClimberWinchMotorPort = 5; // This is a temporary number
+        public static final int kClimberWinchMotorPort = 6; // This is a temporary number
     }
 }

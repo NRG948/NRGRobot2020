@@ -201,7 +201,7 @@ public class RaspberryPiVision extends SubsystemBase {
     pipelineLayout.add("FuelCellTrackerTarget", new SetRaspberryPiPipeline(this, PipelineRunner.FUEL_CELL));
 
     // Adds the processed video to the RaspberryPi Shuffleboard tab.
-    VideoSource processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
+    VideoSource processedVideo = new HttpCamera("Processed", "http://frcvision.local:1182/stream.mjpg");
 
     piTab.add("Processed Video", processedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4,
         3);

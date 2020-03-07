@@ -1,5 +1,12 @@
 package frc.robot;
 
+import static frc.robot.utilities.NRGPreferences.HOOD_POSITION_INITIATION;
+import static frc.robot.utilities.NRGPreferences.HOOD_POSITION_TRENCH_NEAR;
+import static frc.robot.utilities.NRGPreferences.HOOD_POSITION_TRENCH_FAR;
+import static frc.robot.utilities.NRGPreferences.SHOOTER_RPM_INITIATION;
+import static frc.robot.utilities.NRGPreferences.SHOOTER_RPM_TRENCH_NEAR;
+import static frc.robot.utilities.NRGPreferences.SHOOTER_RPM_TRENCH_FAR;
+
 import edu.wpi.cscore.HttpCamera;
 import edu.wpi.cscore.MjpegServer;
 import edu.wpi.cscore.VideoSource;
@@ -23,6 +30,7 @@ import frc.robot.commands.ManualHood;
 import frc.robot.commandSequences.AutoDriveToFuelCell;
 import frc.robot.commandSequences.AutoDriveToLoadingStation;
 import frc.robot.commandSequences.AutoShootSequence;
+import frc.robot.commandSequences.InitiationLineRollForward;
 import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToRightTrenchAuto;
 import frc.robot.commandSequences.InitiationLineToShieldGeneratorAuto;
@@ -41,14 +49,19 @@ import frc.robot.commandSequences.PrepareForMatch;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetClimberPiston;
 import frc.robot.commands.SetHoodPosition;
+import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.SetStartPosition;
+import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.AutoTurret;
+import frc.robot.commands.Delay;
+import frc.robot.commands.DisableShooterRPM;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.subsystems.AcquirerPiston.State;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -65,19 +78,19 @@ public class RobotContainer {
   private final Joystick leftJoystick = new Joystick(0);
   private final Joystick rightJoystick = new Joystick(1);
 
-  private JoystickButton driveStraight = new JoystickButton(leftJoystick, 1);
-  private JoystickButton interruptAllButton = new JoystickButton(leftJoystick, 2);
-  private JoystickButton ledModeButton = new JoystickButton(leftJoystick, 8);
-  private JoystickButton extendClimber = new JoystickButton(leftJoystick, 3); // Temporary
-  private JoystickButton retractClimber = new JoystickButton(leftJoystick, 4); // Temporary
+  private JoystickButton leftJoyButton1 = new JoystickButton(leftJoystick, 1);
+  private JoystickButton leftJoyButton2 = new JoystickButton(leftJoystick, 2);
+  private JoystickButton leftJoyButton3 = new JoystickButton(leftJoystick, 3);
+  private JoystickButton leftJoyButton4 = new JoystickButton(leftJoystick, 4);
+  private JoystickButton leftJoyButton8 = new JoystickButton(leftJoystick, 8);
 
-  private JoystickButton shiftGears = new JoystickButton(rightJoystick, 1);
-  private JoystickButton driveToBall = new JoystickButton(rightJoystick, 3);
-  private JoystickButton holdHoodDownButton = new JoystickButton(rightJoystick, 4);
-  private JoystickButton driveToBallContinuous = new JoystickButton(rightJoystick, 4);
-  private JoystickButton driveToLoadingStation = new JoystickButton(rightJoystick, 6);
-  private JoystickButton activateAcquirerPiston = new JoystickButton(rightJoystick, 10);
-  private JoystickButton resetSensorsButton = new JoystickButton(rightJoystick, 11);
+  private JoystickButton rightJoyButton1 = new JoystickButton(rightJoystick, 1);
+  private JoystickButton rightJoyButton3 = new JoystickButton(rightJoystick, 3);
+  private JoystickButton rightJoyButton4 = new JoystickButton(rightJoystick, 4);
+  private JoystickButton rightJoyButton5 = new JoystickButton(rightJoystick, 5);
+  private JoystickButton rightJoyButton6 = new JoystickButton(rightJoystick, 6);
+  private JoystickButton rightJoyButton10 = new JoystickButton(rightJoystick, 10);
+  private JoystickButton rightJoyButton11 = new JoystickButton(rightJoystick, 11);
 
   // XboxController and Xbox buttons
   private XboxController xboxController = new XboxController(2);
@@ -88,37 +101,53 @@ public class RobotContainer {
   private JoystickButton xboxLeftBumper = new JoystickButton(xboxController, 5);
   private JoystickButton xboxRightBumper = new JoystickButton(xboxController, 6);
   private JoystickButton xboxBackButton = new JoystickButton(xboxController, 7);
-  private JoystickButton xboxButton8 = new JoystickButton(xboxController, 8);
   private JoystickButton xboxButton9 = new JoystickButton(xboxController, 9);
+  private JoystickButton xboxButton10 = new JoystickButton(xboxController, 10);
   // D-pad left/right - turret rotate
   // D-pad up/down - hood up/down
   // Xbox right trigger - manual shooter rpm
-  // Xbox right stick up/down - acquirer, back button + right stick up/down -
-  // feeder,
+  // Xbox right stick up/down - acquirer, 
+  // back button + right stick up/down - feeder,
 
   // Create subsystems
   private final RobotSubsystems subsystems = new RobotSubsystems();
   private final Compressor compressor = new Compressor();
 
   // Commands
-  private final ManualDrive manualDrive = new ManualDrive(subsystems.drive, leftJoystick, rightJoystick,
-      xboxController);
+  private final ManualDrive manualDrive = new ManualDrive(subsystems.drive, leftJoystick, rightJoystick, xboxController);
   private final ManualAcquirer manualAcquirer = new ManualAcquirer(subsystems.acquirer, xboxController);
   private final ManualFeeder manualFeeder = new ManualFeeder(subsystems.feeder, xboxController);
   private final ManualTurret manualTurret = new ManualTurret(subsystems.turret, xboxController);
   private final ManualHood manualHood = new ManualHood(subsystems.hood, xboxController);
-  private ManualShooter manualShooter = new ManualShooter(subsystems.shooterRPM, xboxController);
-  private LEDTest ledTest = new LEDTest(subsystems.leds);
-  private InterruptAll interruptAll = new InterruptAll(subsystems);
+  private final ManualShooter manualShooter = new ManualShooter(subsystems.shooterRPM, xboxController);
+  private final AutoShootSequence shootFromInitiation = new AutoShootSequence(subsystems, SHOOTER_RPM_INITIATION.getValue(),  HOOD_POSITION_INITIATION.getValue(),   0.0);
+  private final AutoShootSequence shootFromTrenchNear = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_NEAR.getValue(), HOOD_POSITION_TRENCH_NEAR.getValue(), -1.5);
+  private final AutoShootSequence shootFromTrenchFar  = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_FAR.getValue(),  HOOD_POSITION_TRENCH_FAR.getValue(), -1.0);
+  private final CommandBase stopAutoShootSequence = new Delay(0.25)
+    .andThen(new DisableShooterRPM(subsystems.shooterRPM)
+      .alongWith(new StopTurretAnglePID(subsystems.turret), 
+                 new SetHoodPosition(subsystems.hood, 2), 
+                 new SetLimelightHorizontalSkew(subsystems.turret, 0)));
+
+  private final LEDTest ledTest = new LEDTest(subsystems.leds);
+  private final InterruptAll interruptAll = new InterruptAll(subsystems);
 
   // When we press down the HoldHoodDownButton we store the original hood position here.
   private double originalHoodPosition;
 
   // Autonomous chooser
   private SendableChooser<InitialAutoPath> autoPathChooser;
+  private SendableChooser<InitialDelay> autoDelay;
 
   private enum InitialAutoPath {
-    INITIATION_LINE_TO_LEFT_TRENCH, INITIATION_LINE_TO_RIGHT_TRENCH, INITIATION_LINE_TO_SHIELD_GENERATOR
+    INITIATION_LINE_TO_LEFT_TRENCH, 
+    INITIATION_LINE_TO_RIGHT_TRENCH, 
+    INITIATION_LINE_TO_SHIELD_GENERATOR, 
+    INITIATION_LINE_ROLL_FORWARD
+  }
+
+  private enum InitialDelay {
+    DELAY_0, DELAY_2, DELAY_5
   }
 
   /**
@@ -133,8 +162,7 @@ public class RobotContainer {
     subsystems.shooterRPM.setDefaultCommand(manualShooter);
     subsystems.acquirer.setDefaultCommand(manualAcquirer);
     subsystems.feeder.setDefaultCommand(manualFeeder);
-    // turret.setDefaultCommand(manualTurret);
-    subsystems.hood.setDefaultCommand(new SetHoodPosition(subsystems.hood, 2));
+    subsystems.hood.setDefaultCommand(manualHood);
     // leds.setDefaultCommand(ledTest);
 
     // Configure the button bindings
@@ -162,50 +190,53 @@ public class RobotContainer {
    * ({@link edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then
    * passing it to a {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
-  private void configureButtonBindings(){
+  private void configureButtonBindings() {
+    /*
+     * Xbox controller button mappings
+     */
     xboxButtonA.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
     xboxButtonB.whenPressed(new MaintainShooterRPM(subsystems.shooterRPM));
     
-    //Holding x button activates AutoDriveToFuelcellsSequence
-    xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)).alongWith(new DriveToFuelCell(subsystems.drive, subsystems.raspPi)));
+    // Holding x button activates AutoDriveToFuelcellsSequence
+    xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND)
+      .alongWith(new TurnTurretToAngle(subsystems.turret, 77), new DriveToFuelCell(subsystems.drive, subsystems.raspPi)));
     xboxButtonX.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
-      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(5)));
+      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
     xboxButtonX.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
 
-    //Holding x button activates AcquirerSequence
-    xboxButtonY.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND).alongWith(new TurnTurretToAngle(subsystems.turret, 77)));
+    // Holding x button activates AcquirerSequence
+    xboxButtonY.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND)
+      .alongWith(new TurnTurretToAngle(subsystems.turret, 77)));
     xboxButtonY.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
-      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(5)));
+      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
     xboxButtonY.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
     
     xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret));
-    xboxRightBumper.whenPressed(new AutoShootSequence(subsystems, NRGPreferences.SHOOTER_RPM_TRENCH_CLOSE.getValue(), NRGPreferences.HOOD_POSITION_TRENCH_CLOSE.getValue()));
-    xboxBackButton.whenPressed(new ManualTurret(subsystems.turret, xboxController));
-    xboxButton9.whenPressed(new InstantCommand(() -> { 
-      if(xboxController.getRawButtonPressed(8)) {
-        subsystems.ballCounter.addToBallCount(-1);
-      } else {
-      subsystems.ballCounter.addToBallCount(1);
-      }
-    }));
-    driveStraight.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
-    shiftGears.whenPressed(new InstantCommand(() -> { subsystems.gearbox.toggleGears(); } ));
-    activateAcquirerPiston.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
-    resetSensorsButton.whenPressed(new InstantCommand(() -> {
-      resetSensors();
-    }));
-    ledModeButton.whenPressed(new InstantCommand(() -> {
-      subsystems.limelightVision.toggleLed();
-    }));
-    driveToBall.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
-    driveToLoadingStation.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
-    driveToBallContinuous.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
-    interruptAllButton.whenPressed(interruptAll);
-    holdHoodDownButton.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
+    xboxRightBumper.whenHeld(shootFromInitiation);
+    xboxRightBumper.whenReleased(stopAutoShootSequence);
+    // xboxRightBumper.whenPressed(shootFromTrenchNear);
+    // xboxRightBumper.whenPressed(shootFromTrenchFar);
+    xboxBackButton.whenPressed(manualTurret);
+    xboxButton9.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
+    xboxButton10.whenPressed( () -> subsystems.ballCounter.addToBallCount(1));
+
+     /*
+     * Joystick button mappings.
+     */
+    leftJoyButton1.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
+    rightJoyButton1.whenPressed( () -> subsystems.gearbox.toggleGears());
+    rightJoyButton10.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
+    rightJoyButton11.whenPressed( () -> resetSensors());
+    leftJoyButton8.whenPressed( () -> subsystems.limelightVision.toggleLed());
+    rightJoyButton3.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
+    rightJoyButton6.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
+    rightJoyButton5.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
+    leftJoyButton2.whenPressed(interruptAll);
+    rightJoyButton4.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
         .andThen(new SetHoodPosition(subsystems.hood, 2)));
-    holdHoodDownButton.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
-    extendClimber.whenPressed(new ToggleClimberPiston(subsystems.climberPiston));
-    retractClimber.whenHeld(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.02));
+    rightJoyButton4.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
+    leftJoyButton3.whenPressed(new ToggleClimberPiston(subsystems.climberPiston));
+    leftJoyButton4.whenHeld(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.35));
   }
   
   /**
@@ -216,7 +247,7 @@ public class RobotContainer {
     CameraServer cs = CameraServer.getInstance();
 
     // Initialize the video sources and create a switched camera.
-    HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1181/stream.mjpg");
+    HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1182/stream.mjpg");
     processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
     HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpg");
@@ -242,8 +273,8 @@ public class RobotContainer {
       subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(-22)));
     loadingStationLayout.add("Drive to center feeder", new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
 
-    ShuffleboardLayout layout = driverTab.getLayout("Ball counter",  BuiltInLayouts.kList).withPosition(0, 0)
-    .withSize(2, 3);  
+    ShuffleboardLayout layout = driverTab.getLayout("Ball counter",  BuiltInLayouts.kList).withPosition(0, 2)
+    .withSize(2, 1);  
     layout.addNumber("Ball Count", () -> subsystems.ballCounter.getBallCount());
   }
 
@@ -260,9 +291,33 @@ public class RobotContainer {
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR.name(), InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR);
+    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_ROLL_FORWARD.name(), InitialAutoPath.INITIATION_LINE_ROLL_FORWARD);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    
+    // Add an optional delay before Autonomous movement
+    autoDelay = new SendableChooser<InitialDelay>();
+    autoDelay.addOption("0 sec", InitialDelay.DELAY_0);
+    autoDelay.addOption("2 sec", InitialDelay.DELAY_2);
+    autoDelay.addOption("5 sec", InitialDelay.DELAY_5);
+    autoLayout.add("Delay before movement", autoDelay).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    // autoLayout.add("Delay before movement", autoDelay).withWidget(BuiltInWidgets.kNumberBar);
+
+    
     PrepareForMatch pForMatch = new PrepareForMatch(subsystems.hood, subsystems.turret, subsystems.acquirerPiston);
     autoTab.add("PrepareForMatch", pForMatch);
+  }
+
+  private float getInitialDelay(){
+    InitialDelay delay  = autoDelay.getSelected();
+    if(delay == InitialDelay.DELAY_0){
+      return 0;
+    }
+    else if(delay == InitialDelay.DELAY_2){
+      return 2;
+    }
+    else{
+      return 5;
+    }
   }
 
   /**
@@ -273,19 +328,23 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     resetSensors();
     InitialAutoPath path = autoPathChooser.getSelected();
+    float delay  = getInitialDelay();
     switch (path) {
       case INITIATION_LINE_TO_RIGHT_TRENCH:
         return new SetStartPosition(subsystems.drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
-          .andThen(new InitiationLineToRightTrenchAuto(subsystems));
+          .andThen(new InitiationLineToRightTrenchAuto(subsystems, delay));
 
       case INITIATION_LINE_TO_LEFT_TRENCH:
         return new SetStartPosition(subsystems.drive, InitiationLineToLeftTrenchAuto.INITIAL_POSITION)
-          .andThen(new InitiationLineToLeftTrenchAuto(subsystems));
+          .andThen(new InitiationLineToLeftTrenchAuto(subsystems, delay));
 
       case INITIATION_LINE_TO_SHIELD_GENERATOR:
         return new SetStartPosition(subsystems.drive, InitiationLineToShieldGeneratorAuto.INITIAL_POSITION)
-          .andThen(new InitiationLineToShieldGeneratorAuto(subsystems));
+          .andThen(new InitiationLineToShieldGeneratorAuto(subsystems, delay));
 
+      case INITIATION_LINE_ROLL_FORWARD:
+        return new SetStartPosition(subsystems.drive, InitiationLineRollForward.INITIAL_POSITION)
+          .andThen(new InitiationLineRollForward(subsystems, delay));
       default:
         // TODO move off of Initiation Line
         return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));

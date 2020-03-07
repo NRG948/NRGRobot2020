@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotSubsystems;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
+import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.SetAcquirerState;
@@ -58,8 +59,9 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
   /**
    * Creates a new InitiationLineToLeftTrenchAuto.
    */
-  public InitiationLineToRightTrenchAuto(RobotSubsystems subsystems) {
+  public InitiationLineToRightTrenchAuto(RobotSubsystems subsystems, float delay) {
     super(
+      new Delay(delay),
       /* Start on the initiation line, centered in line with the balls on our
        * alliance's trench (A) and move toward the first ball (B). At the same time,
        * attempt to acquire 1 ball and warm up the shooter.
@@ -79,7 +81,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
       // TODO Use the limelight crosshair adjustement feature to adjust the skew
       new SetLimelightHorizontalSkew(subsystems.turret, -3),
       // Shoot all four balls.
-      new AutoShootSequence(subsystems, 4000, 72),
+      new AutoShootSequence(subsystems, 4000, 72, -1.5),
       // Continue to drive toward the fuel cells attempting to pick up three of them (C).
       // At the same time, lower the hood so that we can pass under the control panel.
       new AutoDriveToFuelCell(subsystems, 3).alongWith(new SetHoodPosition(subsystems.hood, 2)),
@@ -92,7 +94,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
       // Return the hood to shooting position.
       new SetHoodPosition(subsystems.hood,72),
       // Shoot all three balls.
-      new AutoShootSequence(subsystems, 4200, 72),
+      new AutoShootSequence(subsystems, 4200, 72, -1),
       // TODO Stop continous turret PID in AutoShootSequence. 
       new StopTurretAnglePID(subsystems.turret)
       );

@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotSubsystems;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
+import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.TurnTurretToAngle;
@@ -52,9 +53,10 @@ public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
   /**
    * Creates a new InitiationLineToRightTrenchAuto.
    */
-  public InitiationLineToLeftTrenchAuto(RobotSubsystems subsystems) {
+  public InitiationLineToLeftTrenchAuto(RobotSubsystems subsystems, float delay) {
     // Start on the initiation line, centered between two opponent's balls (A)
-    super(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND), 
+    super(new Delay(delay),
+          new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND), 
           new FollowWaypoints(subsystems.drive,
                               INITIAL_POSITION, // Starting pose  (B)
                               FIRST_PATH_WAYPOINTS,  // Waypoints (C)
@@ -78,6 +80,6 @@ public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
             // turn turret in the rough direction of the target
             .alongWith(new TurnTurretToAngle(subsystems.turret, 100)),
             // FIRE! (with auto-targetting)
-          new AutoShootSequence(subsystems, 4000, 72));
+          new AutoShootSequence(subsystems, 4000, 72, 0));
   }
 }

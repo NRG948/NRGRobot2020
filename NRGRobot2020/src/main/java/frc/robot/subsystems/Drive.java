@@ -25,11 +25,9 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.commandSequences.InitiationLineToLeftTrenchAuto;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.commands.AutoTurnToHeading;
-import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetStartPosition;
 import frc.robot.test.IMotorEncoderPair;
@@ -388,17 +386,18 @@ public class Drive extends SubsystemBase {
     ShuffleboardTab driveTab = Shuffleboard.getTab("Drive");
 
     // Add test buttons to a layout in the tab
-    ShuffleboardLayout commandsLayout = driveTab.getLayout("Test", BuiltInLayouts.kList).withPosition(0, 0).withSize(2,
-        3);
+    ShuffleboardLayout commandsLayout = driveTab.getLayout("Test", BuiltInLayouts.kList)
+      .withPosition(0, 0)
+      .withSize(2, 3);
 
     commandsLayout.add("Turn to 90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(90));
     commandsLayout.add("Turn to -90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(-90));
     commandsLayout.add("Drive 1 meter", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(1));
     commandsLayout.add("Drive 3 meters", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(3));
-    commandsLayout.add("Follow S Curve", new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
-        List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)), false));
-    // commandsLayout.add("InitiationLineToRightTrenchAuto", new InitiationLineToRightTrenchAuto(this));
-    // commandsLayout.add("InitiationLineToLeftTrenchAuto", new InitiationLineToLeftTrenchAuto(this));
+    commandsLayout.add("Follow S Curve",
+      new InstantCommand(() -> { this.resetHeading(); this.resetOdometry(new Pose2d(0, 0, new Rotation2d())); })
+        .andThen( new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
+          List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)), false)));
 
     // Add the DifferentialDrive object and encoders to a list layout in the tab.
     ShuffleboardLayout diffDriveLayout = driveTab.getLayout("Base", BuiltInLayouts.kList).
@@ -419,8 +418,10 @@ public class Drive extends SubsystemBase {
     positionLayout.addNumber("Heading", () -> getHeadingContinuous());
     
     // Add collision detection to a layout tab
-    ShuffleboardLayout collisionLayout = driveTab.getLayout("Collision", BuiltInLayouts.kList).
-      withPosition(6, 2).withSize(2, 2);
+    ShuffleboardLayout collisionLayout = driveTab.getLayout("Collision", BuiltInLayouts.kList)
+      .withPosition(6, 2)
+      .withSize(2, 2);
+      
     collisionLayout.addNumber("Collision Count", () -> this.collisionCount);
     collisionLayout.add("Enable", new InstantCommand(() -> this.setDetectCollisions(true)));
     collisionLayout.add("Disable", new InstantCommand(() -> this.setDetectCollisions(false)));
@@ -439,19 +440,21 @@ public class Drive extends SubsystemBase {
     this.detectCollisions = detectCollisions;
   }
 
-   public class MotorEncoderPair implements IMotorEncoderPair{
-     private WPI_VictorSPX motor;
-     private Encoder encoder;
-     public MotorEncoderPair(WPI_VictorSPX motor, Encoder encoder){
-       this.motor = motor;
-       this.encoder = encoder;
-     }
+  public class MotorEncoderPair implements IMotorEncoderPair {
+    private WPI_VictorSPX motor;
+    private Encoder encoder;
 
-     public void setMotor(double power){
-       motor.set(power);
-     }
-     public double getEncoder(){
-       return encoder.getDistance();
-     }
-   }
+    public MotorEncoderPair(WPI_VictorSPX motor, Encoder encoder){
+      this.motor = motor;
+      this.encoder = encoder;
+    }
+
+    public void setMotor(double power){
+      motor.set(power);
+    }
+
+    public double getEncoder(){
+      return encoder.getDistance();
+    }
+  }
 }

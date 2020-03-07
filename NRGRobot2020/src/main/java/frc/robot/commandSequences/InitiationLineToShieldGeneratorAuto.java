@@ -10,6 +10,7 @@ import frc.robot.RobotSubsystems;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.AutoTurnToHeading;
+import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.TurnTurretToAngle;
@@ -51,8 +52,8 @@ public class InitiationLineToShieldGeneratorAuto extends SequentialCommandGroup 
   /**
    * Creates a new InitiationLineToLeftTrenchAuto.
    */
-  public InitiationLineToShieldGeneratorAuto(RobotSubsystems subsystems) {
-    super(
+  public InitiationLineToShieldGeneratorAuto(RobotSubsystems subsystems, float delay) {
+    super(new Delay(delay),
       // Start on the initiation line in line with our alliance trench edge (A),
       // and drive to the shield generator while attempting to acquire two balls. (C)
       new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND),
@@ -71,6 +72,6 @@ public class InitiationLineToShieldGeneratorAuto extends SequentialCommandGroup 
         // Turn the shooter toward the power port and fire!
         new AutoTurnToHeading(subsystems.drive).toHeading(-75).withTolerance(2).withMaxPower(0.8)
           .alongWith(new TurnTurretToAngle(subsystems.turret, 130)),
-        new AutoShootSequence(subsystems, 4000, 72));
+        new AutoShootSequence(subsystems, 4000, 72, -1.5));
   }
 }
