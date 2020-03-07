@@ -2,7 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.subsystems.Acquirer;
-import frc.robot.subsystems.AcquirerPiston;
+import frc.robot.subsystems.AcquirerPistons;
 import frc.robot.subsystems.AddressableLEDs;
 import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.ClimberPiston;
@@ -24,7 +24,7 @@ public class RobotSubsystems {
   public final Drive drive = new Drive();
   public final Gearbox gearbox = new Gearbox();
   public final Acquirer acquirer = new Acquirer();
-  public final AcquirerPiston acquirerPiston = new AcquirerPiston();
+  public final AcquirerPistons acquirerPiston = new AcquirerPistons();
   public final Feeder feeder = new Feeder();
   public final LimelightVision limelightVision = new LimelightVision();
   public final Turret turret = new Turret(limelightVision, drive);

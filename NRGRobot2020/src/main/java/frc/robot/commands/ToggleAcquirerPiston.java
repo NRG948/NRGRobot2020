@@ -1,16 +1,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.AcquirerPiston;
+import frc.robot.subsystems.AcquirerPistons;
 
 public class ToggleAcquirerPiston extends CommandBase {
 
-  private AcquirerPiston acquirerPiston;
+  private AcquirerPistons acquirerPiston;
 
   /**
    * Creates a new ToggleAcquirerPiston.
    */
-  public ToggleAcquirerPiston(AcquirerPiston acquirerPiston) {
+  public ToggleAcquirerPiston(AcquirerPistons acquirerPiston) {
     this.acquirerPiston = acquirerPiston;
     addRequirements(acquirerPiston);
   }

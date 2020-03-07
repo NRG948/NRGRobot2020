@@ -58,7 +58,7 @@ import frc.robot.commands.AutoTurret;
 import frc.robot.commands.Delay;
 import frc.robot.commands.DisableShooterRPM;
 import frc.robot.utilities.NRGPreferences;
-import frc.robot.subsystems.AcquirerPiston.State;
+import frc.robot.subsystems.AcquirerPistons.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
