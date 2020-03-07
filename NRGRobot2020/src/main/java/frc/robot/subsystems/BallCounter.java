@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
  import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.Acquirer.State;
 import frc.robot.utilities.NRGPreferences;
 
 public class BallCounter extends SubsystemBase {
@@ -20,13 +21,15 @@ public class BallCounter extends SubsystemBase {
   private boolean acquirerLastState = acquirerBeamBreak.get();
   private boolean feederLastState = feederBeamBreak.get();
   private int ballCount = 3;
-public Object feederCurrentState;
+  private Acquirer acquirer;
+  private State acquirerState;
+  public Object feederCurrentState;
 
   /**
    * Creates a new BallCounter.
    */
-  public BallCounter() {
-
+  public BallCounter(Acquirer acquirer) {
+    this.acquirer = acquirer;
   }
 
   /**
@@ -58,9 +61,12 @@ public Object feederCurrentState;
   public void periodic() {
     boolean acquirerCurrentState = acquirerBeamBreak.get();
     boolean feederCurrentState = feederBeamBreak.get();
-
-    if (acquirerCurrentState != acquirerLastState && acquirerLastState == BEAM_CONNECTED) {
+    acquirerState = acquirer.getState();
+    
+    if (acquirerCurrentState != acquirerLastState && acquirerLastState == BEAM_CONNECTED && acquirerState == State.INTAKING) {
       ++ballCount;
+    } else if (acquirerCurrentState != acquirerLastState && acquirerLastState == BEAM_BROKEN && acquirerState == State.EJECTING) {
+      --ballCount;
     }
 
     if (feederCurrentState != feederLastState && feederLastState == BEAM_BROKEN && ballCount > 0) {
