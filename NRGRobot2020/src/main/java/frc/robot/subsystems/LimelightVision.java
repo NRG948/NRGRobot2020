@@ -39,16 +39,18 @@ public class LimelightVision extends SubsystemBase {
     table.getEntry("ledMode").setNumber(1); // sets defualt led mode to off;
 
   }
-  // Turns off Led
+
+  /** Turns off LED. */
   public void turnOffLed(){
     table.getEntry("ledMode").setNumber(1);
   }
   
-  // Turns on Led
+  /** Turns on LED. */
   public void turnOnLed(){
     table.getEntry("ledMode").setNumber(3);
   }
 
+  /** Toggles the the LED on and off. */
   public void toggleLed(){
     ledToggle = !ledToggle;
     table.getEntry("ledMode").setNumber(ledToggle ? 3 : 1);
@@ -62,6 +64,7 @@ public class LimelightVision extends SubsystemBase {
     return tx.getDouble(0); 
   }
 
+  /** Returns the distance to the target in inches. */
   public double getDistance() {
     if(!hasTarget()) {
       return 0.0;
@@ -71,34 +74,38 @@ public class LimelightVision extends SubsystemBase {
     return (LIMELIGHT_CENTER_Y / Math.tan(LIMELIGHT_HALF_FOV_Y) / Math.cos(Math.toRadians(getAngle()))) * (17.0 / tshort.getDouble(0.000001)); // Formula 3
   }
 
+  /** Returns the angle to the target in degrees. */
   public double getAngle() {
     return ty.getDouble(0.0);
   }
 
+  /** Returns the width of the target in pixels. */
   public double getWidth() {
     return thor.getDouble(0.0);
   }
 
+  /** Returns the height of the target in pixels. */
   public double getHeight() {
     return tvert.getDouble(0.0);
   }
 
+  /** Returns the skew of the target (-90 degrees to 0 degrees). */
   public double getSkew() {
     return ts.getDouble(0.0);
   }
 
-  /**
-   * Returns true if the Limelight has target.
-   */
+  /** Returns true if the Limelight has target. */
   public boolean hasTarget() {
     return tv.getDouble(0.0) != 0.0;
   }
 
+  /** Called by the scheduler to perform subsystem periodic tasks. */
   @Override
   public void periodic() {
-    // post to smart dashboard periodically
+
   }
 
+  /** Adds a tab to the Shuffleboard for testing and status. */
   public void addShuffleboardTab() {
     if (!NRGPreferences.SHUFFLEBOARD_LIMELIGHT_ENABLE.getValue()) {
       return;
