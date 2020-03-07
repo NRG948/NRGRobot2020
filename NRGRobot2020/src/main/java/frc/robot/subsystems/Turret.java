@@ -60,7 +60,8 @@ public class Turret extends SubsystemBase {
   /**
    * Passes power to turret with hard stop protection.
    * 
-   * @param power turret motor power, + means clockwise, - means counter-clockwise
+   * @param power turret motor power, + means counter-clockwise, - means clockwise
+   * (because the encoder value increases counter-clockwise)
    */
   public void rawTurret(double power) {
     double encoderAngle = turretEncoder.getDistance();
