@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
- import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystems.Acquirer.State;
 import frc.robot.utilities.NRGPreferences;
@@ -16,8 +16,9 @@ public class BallCounter extends SubsystemBase {
   private static final boolean BEAM_BROKEN = false;
   private static final boolean BEAM_CONNECTED = true;
 
-  private DigitalInput acquirerBeamBreak = new DigitalInput(9);
-  private DigitalInput feederBeamBreak = new DigitalInput(8);
+  private final DigitalInput acquirerBeamBreak = new DigitalInput(9);
+  private final DigitalInput feederBeamBreak = new DigitalInput(8);
+
   private boolean acquirerLastState = acquirerBeamBreak.get();
   private boolean feederLastState = feederBeamBreak.get();
   private int ballCount = 3;
@@ -26,37 +27,50 @@ public class BallCounter extends SubsystemBase {
   public Object feederCurrentState;
 
   /**
-   * Creates a new BallCounter.
+   * Creates the BallCounter subsystem.
    */
   public BallCounter(Acquirer acquirer) {
     this.acquirer = acquirer;
   }
 
   /**
-   * Returns true if a ball is in shooting postition
+   * Returns true if a ball is in shooting postition.
    */
   public boolean isBallInShootingPosition() {
     return feederBeamBreak.get() == BEAM_BROKEN;
   }
 
   /**
-   * Returns true if a ball is the acquired postition
+   * Returns true if a ball is the acquired postition.
    */
   public boolean isBallInAcquirerPosition() {
     return acquirerBeamBreak.get() == BEAM_BROKEN;
   }
 
   /**
-   * Returns the ball count
+   * Returns the current ball count.
    */
   public int getBallCount() {
-    return ballCount;
+    return this.ballCount;
   }
 
+  /**
+   * Sets the current ball count to {@code ballCount}.
+   */
+  public void setBallCount(int ballCount) {
+    this.ballCount = ballCount;
+  }
+
+  /**
+   * Adds {@code num} to the current ball count.
+   */
   public void addToBallCount(int num) {
-    ballCount += num;
+    this.ballCount += num;
   }
 
+  /**
+   * Keep track of the current ball count by monitoring transitions in the beam breaks.
+   */
   @Override
   public void periodic() {
     boolean acquirerCurrentState = acquirerBeamBreak.get();
@@ -90,9 +104,5 @@ public class BallCounter extends SubsystemBase {
     layout.addNumber("Ball Count", () -> this.getBallCount());
     layout.add("Increment Ball Count", new InstantCommand(() -> this.addToBallCount(1)));
     layout.add("Decrement Ball Count", new InstantCommand(() -> this.addToBallCount(-1)));
-  }
-
-  public void setBallCount(int ballCount) {
-    this.ballCount = ballCount;
   }
 }
