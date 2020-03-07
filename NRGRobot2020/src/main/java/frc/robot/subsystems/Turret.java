@@ -62,7 +62,7 @@ public class Turret extends SubsystemBase {
     this.drive = drive;
     turretMotor.setInverted(false);
     turretEncoder.setDistancePerPulse(0.027);
-    cameraHorizontalCorrection = NRGPreferences.USING_PRACTICE_BOT.getValue()
+    cameraHorizontalCorrection = NRGPreferences.IS_PRACTICE_BOT.getValue()
       ? CAMERA_HORIZONTAL_CORRECTION_PRACTICE : CAMERA_HORIZONTAL_CORRECTION_COMPETITION;
   }
 

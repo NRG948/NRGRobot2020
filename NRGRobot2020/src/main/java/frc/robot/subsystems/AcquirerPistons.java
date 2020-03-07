@@ -23,7 +23,7 @@ public class AcquirerPistons extends SubsystemBase {
 
   /** Creates the AcquirerPistons subsystem. */
   public AcquirerPistons() {
-    if (NRGPreferences.USING_PRACTICE_BOT.getValue()) {
+    if (NRGPreferences.IS_PRACTICE_BOT.getValue()) {
       acquirerSolenoid = new DoubleSolenoid(2, 3);
     } else {
       acquirerSolenoid = new DoubleSolenoid(3, 2);
