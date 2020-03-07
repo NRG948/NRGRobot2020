@@ -8,18 +8,19 @@ import frc.robot.utilities.NRGPreferences;
 public class AcquirerPiston extends SubsystemBase {
     public DoubleSolenoid acquirerSolenoid;
 
-    State state = State.RETRACT;
+    State state;
     
     public enum State {
       EXTEND, RETRACT;
     }
 
     public AcquirerPiston() {
-      if(NRGPreferences.USING_PRACTICE_BOT.getValue()){
+      if (NRGPreferences.USING_PRACTICE_BOT.getValue()) {
         acquirerSolenoid = new DoubleSolenoid(2, 3);
-      }else{
+      } else {
         acquirerSolenoid = new DoubleSolenoid(3, 2);
       }
+      this.state = acquirerSolenoid.get() == Value.kForward ? State.EXTEND : State.RETRACT;
     }
 
     public void toggleState() {
