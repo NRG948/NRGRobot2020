@@ -1,5 +1,6 @@
 package frc.robot.commandSequences;
 
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotSubsystems;
 import frc.robot.commands.AutoDriveOnHeading;
@@ -32,6 +33,8 @@ import frc.robot.commands.Delay;
  *        \-------------------------------------------------/
  */
 public class InitiationLineRollForward extends SequentialCommandGroup {  
+  // This is needed by RobotContainer because it sets the initial position of the robot.
+  public static final Pose2d INITIAL_POSITION = new Pose2d();
 
   /**
    * InitiationLineRollForward moves one meter forward off the initiation line.
