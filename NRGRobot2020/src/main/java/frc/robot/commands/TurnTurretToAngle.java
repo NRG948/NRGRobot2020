@@ -30,7 +30,7 @@ public class TurnTurretToAngle extends CommandBase {
   @Override
   public void initialize() {
     maxPower = NRGPreferences.TURRET_MOTOR_POWER.getValue();
-    Logger.commandInit(this, "maxPower: " + maxPower);
+    Logger.commandInit(this, "maxPower: " + maxPower + " angle: " + angle);
     turret.turretAnglePIDInit(TargetSource.NONE, angle, maxPower, 1, false);
   }
 
@@ -44,7 +44,7 @@ public class TurnTurretToAngle extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     turret.turretAngleEnd();
-    Logger.commandEnd(this, interrupted);
+    Logger.commandEnd(this, interrupted, "angle: " + turret.getHeading());
   }
 
   // Returns true when the command should end.
