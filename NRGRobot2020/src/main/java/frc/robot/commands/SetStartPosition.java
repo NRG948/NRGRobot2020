@@ -12,11 +12,17 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
 import frc.robot.utilities.Logger;
 
+/**
+ * Sets the initial robot odometry to a given pose (an x,y position and robot heading).
+ * 
+ * Should be invoked by each autonomous routine option based on the robot's starting position.
+ */
 public class SetStartPosition extends CommandBase {
   private Drive drive;
   private Pose2d pose;
+  
   /**
-   * Creates a new SetStartPosition.
+   * Creates a new SetStartPosition command.
    */
   public SetStartPosition(Drive drive, Pose2d pose) {
     this.drive = drive;
@@ -27,7 +33,7 @@ public class SetStartPosition extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Logger.commandInit(this, "pose: " + pose.toString());
+    Logger.commandInit(this, "pose: " + pose);
     drive.resetOdometry(pose);
   }
 
@@ -42,7 +48,7 @@ public class SetStartPosition extends CommandBase {
     Logger.commandEnd(this, interrupted);
   }
 
-  // Returns true when the command should end.
+  // Returns true when the command should end, which is immediately.
   @Override
   public boolean isFinished() {
     return true;
