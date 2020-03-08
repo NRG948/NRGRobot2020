@@ -1,17 +1,17 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.AcquirerPiston;
-import frc.robot.subsystems.AcquirerPiston.State;
+import frc.robot.subsystems.AcquirerPistons;
+import frc.robot.subsystems.AcquirerPistons.State;
 import frc.robot.utilities.Logger;
 
 public class SetAcquirerState extends CommandBase {
-  private AcquirerPiston acquirerPiston;
+  private AcquirerPistons acquirerPiston;
   private State state;
   /**
    * Creates a new SetAcquirerState.
    */
-  public SetAcquirerState(AcquirerPiston acquirerPiston, State state) {
+  public SetAcquirerState(AcquirerPistons acquirerPiston, State state) {
     this.acquirerPiston = acquirerPiston;
     this.state = state;
     addRequirements(acquirerPiston);

@@ -14,7 +14,7 @@ import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.TurnTurretToAngle;
-import frc.robot.subsystems.AcquirerPiston.State;
+import frc.robot.subsystems.AcquirerPistons.State;
 
 /**
  * Autonomous command sequence moving the robot from the initiation line to the

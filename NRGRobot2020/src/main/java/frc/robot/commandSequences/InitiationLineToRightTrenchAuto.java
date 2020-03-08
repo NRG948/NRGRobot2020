@@ -19,7 +19,7 @@ import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.TurnTurretToAngle;
-import frc.robot.subsystems.AcquirerPiston.State;
+import frc.robot.subsystems.AcquirerPistons.State;
 import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
 
 /**

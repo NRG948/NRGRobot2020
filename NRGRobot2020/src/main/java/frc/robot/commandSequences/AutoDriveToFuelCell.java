@@ -15,7 +15,7 @@ import frc.robot.commands.DriveToFuelCell;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.WaitForNewVisionData;
-import frc.robot.subsystems.AcquirerPiston.State;
+import frc.robot.subsystems.AcquirerPistons.State;
 import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more

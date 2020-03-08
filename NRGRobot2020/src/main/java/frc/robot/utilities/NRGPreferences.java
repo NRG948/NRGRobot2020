@@ -200,7 +200,7 @@ public class NRGPreferences {
     public static final BooleanPrefs SHUFFLEBOARD_LIMELIGHT_ENABLE = new BooleanPrefs("ShuffleboardLimelightEnabled", false);
 
     // General preferences
-    public static final BooleanPrefs USING_PRACTICE_BOT = new BooleanPrefs("UsingPracticeBot", false);
+    public static final BooleanPrefs IS_PRACTICE_BOT = new BooleanPrefs("UsingPracticeBot", false);
     public static final BooleanPrefs WRITE_DEFAULT = new BooleanPrefs("WriteDefault", true);
 
     public static void init() {

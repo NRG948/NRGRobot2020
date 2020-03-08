@@ -72,7 +72,7 @@ public class Hood extends SubsystemBase {
   /** Returns the position of the hood, scaled to be between 0 (full back) and 100 (full forward). */
   public double getPosition() {
     double volts = hoodEncoder.get();
-    if (NRGPreferences.USING_PRACTICE_BOT.getValue()) {
+    if (NRGPreferences.IS_PRACTICE_BOT.getValue()) {
       return MAX_LIMIT * (HOOD_BACK_VOLTAGE_PRACTICE - volts) / (HOOD_VOLTAGE_RANGE_PRACTICE);
     } else {
       return MAX_LIMIT * (HOOD_BACK_VOLTAGE_COMPETITION - volts) / (HOOD_VOLTAGE_RANGE_COMPETITION);

@@ -13,28 +13,26 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
  * Subsystem which controls the vectoring ball intake rollers that extends
  * beyond the bumper.
  * 
- * The pistons that extend/retract the acquirer are a separate subsystem.
+ * The pistons that extend/retract the acquirer are in the AcquirerPistons subsystem.
  */
 public class Acquirer extends SubsystemBase {
-  private double sentPower;
   
-  public State state;
-
   public enum State {
     INTAKING, EJECTING, STATIC;
   }
-
+  
   private static final double MAX_ACQUIRER_POWER = 1;
-
+  
   private final PWMSparkMax acquirerMotor = new PWMSparkMax(4);
+  public State state;
 
-  /** Creates a new Acquirer. */
+  /** Creates the Acquirer subsystem. */
   public Acquirer() {
-    acquirerMotor.setInverted(!NRGPreferences.USING_PRACTICE_BOT.getValue());
+    acquirerMotor.setInverted(!NRGPreferences.IS_PRACTICE_BOT.getValue());
   }
 
   public void rawAcquirer(final double power) {
-    sentPower = MathUtil.clamp(power, -MAX_ACQUIRER_POWER, MAX_ACQUIRER_POWER);
+    double sentPower = MathUtil.clamp(power, -MAX_ACQUIRER_POWER, MAX_ACQUIRER_POWER);
     if (sentPower > 0) {
       state = State.INTAKING;
     } else if (sentPower < 0) {
@@ -43,6 +41,10 @@ public class Acquirer extends SubsystemBase {
       state = State.STATIC;
     }
     acquirerMotor.set(sentPower);
+  }
+
+  public void stop() {
+    acquirerMotor.stopMotor();
   }
 
   public State getState() {
@@ -62,9 +64,5 @@ public class Acquirer extends SubsystemBase {
     final ShuffleboardLayout acquirerLayout = acquirerTab.getLayout("Acquirer", BuiltInLayouts.kList).withPosition(0, 0)
         .withSize(2, 4);
     acquirerLayout.addNumber("Raw Output", () -> acquirerMotor.get());
-  }
-
-  public void stop() {
-    acquirerMotor.stopMotor();
   }
 }
