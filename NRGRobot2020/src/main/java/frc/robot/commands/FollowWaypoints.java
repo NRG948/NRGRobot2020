@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConst
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 
 public class FollowWaypoints extends FollowTrajectory {
@@ -29,5 +30,17 @@ public class FollowWaypoints extends FollowTrajectory {
   public FollowWaypoints(Drive drive, Pose2d begin, List<Translation2d> waypoints, Pose2d end, boolean isReversed) {
     // Use addRequirements() here to declare subsystem dependencies.
     super(drive, TrajectoryGenerator.generateTrajectory(begin, waypoints, end, config.setReversed(isReversed)));
+  }
+
+  @Override
+  public void initialize(){
+    Logger.commandInit(this);
+    super.initialize();
+  }
+  
+  @Override
+  public void end(boolean interrupted){
+    super.end(interrupted);
+    Logger.commandEnd(this);
   }
 }
