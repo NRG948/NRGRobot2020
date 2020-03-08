@@ -4,11 +4,18 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ClimberWinch;
 import frc.robot.utilities.Logger;
 
+/**
+ * A command which can run the climber winch in either direction.
+ * 
+ * Caution: the winch uses a ratcheting mechanism, so it can only safely
+ * be run in the "climb up" direction (positive motor power).
+ */
 public class TurnClimberWinch extends CommandBase {
   private ClimberWinch climberWinch;
   private double maxPower;
+
   /**
-   * Creates a new ManualClimberWinch.
+   * Creates a new ManualClimberWinch command.
    */
   public TurnClimberWinch(ClimberWinch climberWinch) {
     this.climberWinch = climberWinch;
@@ -29,7 +36,7 @@ public class TurnClimberWinch extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climberWinch.rawClimb(maxPower);
+    climberWinch.rawClimbUp(maxPower);
   }
 
   // Called once the command ends or is interrupted.
@@ -39,7 +46,7 @@ public class TurnClimberWinch extends CommandBase {
     Logger.commandEnd(this, interrupted);
   }
 
-  // Returns true when the command should end.
+  // This command only ends when it is interrupted. Invoke using .whenHeld(...).
   @Override
   public boolean isFinished() {
     return false;
