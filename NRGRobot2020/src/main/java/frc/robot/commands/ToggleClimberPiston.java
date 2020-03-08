@@ -4,12 +4,18 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ClimberPiston;
 import frc.robot.utilities.Logger;
 
+/**
+ * A command which toggles (inverts) the state of the climber piston.
+ * 
+ * That is, if the climber arm is currently stowed, this command will extend it.
+ * If the climber arm is currently extended, this command will stow it.
+ */
 public class ToggleClimberPiston extends CommandBase {
 
   private final ClimberPiston climberPiston;
 
   /**
-   * Creates a new ToggleAcquirerPiston command.
+   * Creates a new ToggleClimberPiston command.
    */
   public ToggleClimberPiston(ClimberPiston climberPiston) {
     this.climberPiston = climberPiston;
@@ -34,7 +40,7 @@ public class ToggleClimberPiston extends CommandBase {
     Logger.commandEnd(this, interrupted, climberPiston.getState().toString());
   }
 
-  // Returns true when the command should end.
+  // Returns true when the command should end, which is immediately.
   @Override
   public boolean isFinished() {
     return true;

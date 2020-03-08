@@ -8,10 +8,9 @@ public class StopTurretAnglePID extends CommandBase {
   private Turret turret;
   
   /**
-   * Creates a new StopAutoFeeder.
+   * Creates a new StopAutoFeeder command.
    */
   public StopTurretAnglePID(Turret turret) {
-    // Use addRequirements() here to declare subsystem dependencies.
     this.turret = turret;
     addRequirements(turret);
   }
@@ -34,7 +33,7 @@ public class StopTurretAnglePID extends CommandBase {
     Logger.commandEnd(this, interrupted);
   }
 
-  // Returns true when the command should end.
+  // Returns true when the command should end, which is immediately.
   @Override
   public boolean isFinished() {
     return true;
