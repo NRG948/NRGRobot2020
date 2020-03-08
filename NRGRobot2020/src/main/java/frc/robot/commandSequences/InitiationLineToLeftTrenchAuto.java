@@ -46,7 +46,7 @@ public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
    *
    */
   public static final Pose2d INITIAL_POSITION = new Pose2d(3.676, -7.2, new Rotation2d(0));
-  private static final Pose2d FIRST_PATH_END_POSITION = new Pose2d(6.4, -7.45, new Rotation2d(Math.toRadians(-65)));
+  private static final Pose2d FIRST_PATH_END_POSITION = new Pose2d(6.4, -7.3, new Rotation2d(Math.toRadians(-65)));
   private static final List<Translation2d> FIRST_PATH_WAYPOINTS = List.of(new Translation2d(5.068, -6.6));
   private static final List<Translation2d> SECOND_PATH_WAYPOINTS = List.of(new Translation2d(4.648, -4.236));
   private static final Pose2d SECOND_PATH_END_POSITION = new Pose2d(4.549, -2.867, new Rotation2d(Math.toRadians(-90)));
@@ -67,7 +67,7 @@ public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
             // turn turret to maximize carrying capacity
             .alongWith(new TurnTurretToAngle(subsystems.turret, 77),
                        // we hope to pick up 2 ball, but give up after 3 seconds
-                       new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withRelativeCount(2).withTimeout(3), 
+                       new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withRelativeCount(1).withTimeout(3), 
                        // make sure our starting state has the initial ball breaking the beam
                        new AutoFeeder(subsystems.ballCounter, subsystems.feeder)),
           // retract aquirer before driving to next point
@@ -79,9 +79,9 @@ public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
                               SECOND_PATH_END_POSITION,  // Ending pose (F)
                               true)  // Drive backward
             // turn turret in the rough direction of the target
-            .alongWith(new TurnTurretToAngle(subsystems.turret, 100)),
+            .alongWith(new TurnTurretToAngle(subsystems.turret, 140)),
             // FIRE! (with auto-targetting)
-          new AutoShootSequence(subsystems, 4000, 72, 0));
+          new AutoShootSequence(subsystems, 3400, 67, 0));
   }
 
   @Override
