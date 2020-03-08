@@ -21,7 +21,7 @@ public class ManualDriveStraight extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    double heading = drive.getHeading();
+    double heading = drive.getHeadingContinuous();
     Logger.commandInit(this, "heading: " + heading);
     drive.driveOnHeadingInit(heading);
   }

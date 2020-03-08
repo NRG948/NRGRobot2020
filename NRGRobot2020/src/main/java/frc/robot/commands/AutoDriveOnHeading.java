@@ -23,7 +23,7 @@ public class AutoDriveOnHeading extends CommandBase {
     this.drive = subsystem;
     this.maxPower = NRGPreferences.DRIVE_STRAIGHT_MAXPOWER.getValue();
     this.distance = 0;
-    this.heading = this.drive.getHeading();
+    this.heading = this.drive.getHeadingContinuous();
   }
 
   /**
