@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.Drive;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.MathUtil;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.vision.FuelCellTarget;
@@ -49,6 +50,7 @@ public class DriveToFuelCell extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Logger.commandInit(this);
     if (useDefaultMaxPower) {
       maxPower = NRGPreferences.DRIVE_TO_BALL_MAXPOWER.getValue();
     }
@@ -81,6 +83,7 @@ public class DriveToFuelCell extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     drive.arcadeDrive(0, 0);
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.
