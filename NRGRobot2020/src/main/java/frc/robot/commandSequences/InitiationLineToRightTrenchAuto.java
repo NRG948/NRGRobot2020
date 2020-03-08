@@ -61,7 +61,8 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
    */
   public InitiationLineToRightTrenchAuto(RobotSubsystems subsystems, float delay) {
     super(
-      new Delay(delay),
+      new MaintainShooterRPM(subsystems.shooterRPM).atRpm(2500).setAndExit(),
+      new Delay(delay + 0.2),
       /* Start on the initiation line, centered in line with the balls on our
        * alliance's trench (A) and move toward the first ball (B). At the same time,
        * attempt to acquire 1 ball and warm up the shooter.
@@ -82,6 +83,8 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
       new SetLimelightHorizontalSkew(subsystems.turret, -3),
       // Shoot all four balls.
       new AutoShootSequence(subsystems, 3550, 72, -1.5),
+      // Stop the AutoShootSequence
+      new StopAutoShootSequence(subsystems),
       // Continue to drive toward the fuel cells attempting to pick up three of them (C).
       // At the same time, lower the hood so that we can pass under the control panel.
       new AutoDriveToFuelCell(subsystems, 3).alongWith(new SetHoodPosition(subsystems.hood, 2)),
@@ -95,6 +98,8 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
       new SetHoodPosition(subsystems.hood,72),
       // Shoot all three balls.
       new AutoShootSequence(subsystems, 4200, 72, -1),
+      // Stop the AutoShootSequence
+      new StopAutoShootSequence(subsystems),
       // TODO Stop continous turret PID in AutoShootSequence. 
       new StopTurretAnglePID(subsystems.turret)
       );

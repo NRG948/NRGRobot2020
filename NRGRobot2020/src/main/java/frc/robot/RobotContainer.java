@@ -46,6 +46,7 @@ import frc.robot.commands.ManualDrive;
 import frc.robot.commands.ManualShooter;
 import frc.robot.commands.ManualTurret;
 import frc.robot.commandSequences.PrepareForMatch;
+import frc.robot.commandSequences.StopAutoShootSequence;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.SetLimelightHorizontalSkew;
@@ -122,11 +123,7 @@ public class RobotContainer {
   private final AutoShootSequence shootFromInitiation = new AutoShootSequence(subsystems, SHOOTER_RPM_INITIATION.getValue(),  HOOD_POSITION_INITIATION.getValue(),   0.0);
   private final AutoShootSequence shootFromTrenchNear = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_NEAR.getValue(), HOOD_POSITION_TRENCH_NEAR.getValue(), -1.5);
   private final AutoShootSequence shootFromTrenchFar  = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_FAR.getValue(),  HOOD_POSITION_TRENCH_FAR.getValue(), -1.0);
-  private final CommandBase stopAutoShootSequence = new Delay(0.25)
-    .andThen(new DisableShooterRPM(subsystems.shooterRPM)
-      .alongWith(new StopTurretAnglePID(subsystems.turret), 
-                 new SetHoodPosition(subsystems.hood, 2), 
-                 new SetLimelightHorizontalSkew(subsystems.turret, 0)));
+  private final CommandBase stopAutoShootSequence = new StopAutoShootSequence(subsystems);
 
   private final LEDTest ledTest = new LEDTest(subsystems.leds);
   private final InterruptAll interruptAll = new InterruptAll(subsystems);

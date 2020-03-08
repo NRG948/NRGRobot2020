@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.BallCounter;
 import frc.robot.subsystems.Feeder;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 
 public class AutoFeeder extends CommandBase {
@@ -29,7 +30,7 @@ public class AutoFeeder extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    Logger.commandInit(this);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -42,6 +43,7 @@ public class AutoFeeder extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     feeder.rawFeeder(0);
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.

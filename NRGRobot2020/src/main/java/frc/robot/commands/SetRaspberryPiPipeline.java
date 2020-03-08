@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
+import frc.robot.utilities.Logger;
 
 /**
  * Add your docs here.
@@ -19,6 +20,7 @@ public class SetRaspberryPiPipeline extends CommandBase {
     @Override
     public void initialize() {
         raspPi.setPipelineRunner(runner);
+        Logger.commandInit(this);
     }
 
     @Override
@@ -27,7 +29,7 @@ public class SetRaspberryPiPipeline extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-
+        Logger.commandEnd(this);
     }
 
     @Override
