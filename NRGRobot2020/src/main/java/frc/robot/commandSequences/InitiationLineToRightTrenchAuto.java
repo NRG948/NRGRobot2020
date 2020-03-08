@@ -21,6 +21,7 @@ import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.subsystems.AcquirerPistons.State;
 import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
+import frc.robot.utilities.Logger;
 
 /**
  * Autonomous command sequence moving the robot from the initiation line to the
@@ -103,5 +104,17 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
       // TODO Stop continous turret PID in AutoShootSequence. 
       new StopTurretAnglePID(subsystems.turret)
       );
+  }
+
+  @Override
+  public void initialize(){
+    Logger.commandInit(this);
+    super.initialize();
+  }
+  
+  @Override
+  public void end(boolean interrupted){
+    super.end(interrupted);
+    Logger.commandEnd(this);
   }
 }

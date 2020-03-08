@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 
 public class AutoDriveOnHeading extends CommandBase {
@@ -82,12 +83,11 @@ public class AutoDriveOnHeading extends CommandBase {
     if (useRobotHeading) {
       this.heading = drive.getHeadingContinuous();
     }
-    System.out.println("DriveStraightDistance Init heading: " + heading + " distance: " + distance);
+    Logger.commandInit(this, "heading: " + heading + " distance: " + distance);
     this.xOrigin = this.drive.getPose().getTranslation().getX(); // gets our current X position from the poistion tracker command
     this.yOrigin = this.drive.getPose().getTranslation().getY(); // gets our current Y position from the poistion tracker command
     this.drive.driveOnHeadingInit(this.heading); // We are getting our current heading and putting it into
-                                            // driveOnHeadingInit to adjust our current heading
-    System.out.println("AutoDriveOnHeading init");
+                                                 // driveOnHeadingInit to adjust our current heading
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -104,11 +104,12 @@ public class AutoDriveOnHeading extends CommandBase {
     if (stopMotors) {
       this.drive.driveOnHeadingEnd();
     }
-    System.out.println(String.format("DriveStraightDistance End x:%.1f y:%.1f", this.drive.getPose().getTranslation().getX(),
+    Logger.commandEnd(this,
+      String.format("DriveStraightDistance End x:%.1f y:%.1f",
+        this.drive.getPose().getTranslation().getX(),
         this.drive.getPose().getTranslation().getY()));
     // terminated the command as the robot has reached the distance that needs to be
     // traveled or if it needs to be interrupted
-    System.out.println("AutoDriveOnHeading end");
   }
 
   // Returns true when the command should end.

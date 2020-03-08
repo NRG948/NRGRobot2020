@@ -14,6 +14,7 @@ import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.subsystems.AcquirerPistons.State;
+import frc.robot.utilities.Logger;
 
 /**
  * Autonomous command sequence moving the robot from the initiation line to the
@@ -81,5 +82,17 @@ public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
             .alongWith(new TurnTurretToAngle(subsystems.turret, 100)),
             // FIRE! (with auto-targetting)
           new AutoShootSequence(subsystems, 4000, 72, 0));
+  }
+
+  @Override
+  public void initialize(){
+    Logger.commandInit(this);
+    super.initialize();
+  }
+  
+  @Override
+  public void end(boolean interrupted){
+    super.end(interrupted);
+    Logger.commandEnd(this);
   }
 }

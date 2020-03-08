@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ClimberWinch;
+import frc.robot.utilities.Logger;
 
 public class TurnClimberWinch extends CommandBase {
   private ClimberWinch climberWinch;
@@ -22,6 +23,7 @@ public class TurnClimberWinch extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Logger.commandInit(this, "maxPower: " + maxPower);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -34,6 +36,7 @@ public class TurnClimberWinch extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     climberWinch.stopMotor();
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.

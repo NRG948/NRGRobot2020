@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 
 public class ManualTurret extends CommandBase {
@@ -25,6 +26,7 @@ public class ManualTurret extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Logger.commandInit(this);
     turret.turretAngleEnd();
     power = 0;
   }
@@ -46,6 +48,7 @@ public class ManualTurret extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.

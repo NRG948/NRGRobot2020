@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
+import frc.robot.utilities.Logger;
 
 public class SetLimelightHorizontalSkew extends CommandBase {
   private Turret turret;
@@ -19,6 +20,7 @@ public class SetLimelightHorizontalSkew extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Logger.commandInit(this, "skew: " + this.skew);
     turret.setHorizontalSkew(this.skew);
   }
 
@@ -30,6 +32,7 @@ public class SetLimelightHorizontalSkew extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.

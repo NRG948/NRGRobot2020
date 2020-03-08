@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
+import frc.robot.utilities.Logger;
 
 public class SetStartPosition extends CommandBase {
   private Drive drive;
@@ -26,6 +27,7 @@ public class SetStartPosition extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Logger.commandInit(this, "pose: " + pose.toString());
     drive.resetOdometry(pose);
   }
 
@@ -37,6 +39,7 @@ public class SetStartPosition extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.

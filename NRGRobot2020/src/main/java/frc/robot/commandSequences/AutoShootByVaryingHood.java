@@ -7,6 +7,7 @@ import frc.robot.commands.AutoHood;
 import frc.robot.commands.AutoTurret;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.WaitForMinRPM;
+import frc.robot.utilities.Logger;
 
 public class AutoShootByVaryingHood extends SequentialCommandGroup {
   /**
@@ -39,5 +40,17 @@ public class AutoShootByVaryingHood extends SequentialCommandGroup {
       // Release Ball
       new AutoFeedToShooter(subsystems.acquirer, subsystems.feeder, subsystems.ballCounter)
     );
+  }
+
+  @Override
+  public void initialize(){
+    Logger.commandInit(this);
+    super.initialize();
+  }
+  
+  @Override
+  public void end(boolean interrupted){
+    super.end(interrupted);
+    Logger.commandEnd(this);
   }
 }

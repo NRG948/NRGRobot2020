@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Turret;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.utilities.TargetSource;
 
@@ -29,6 +30,7 @@ public class TurnTurretToAngle extends CommandBase {
   @Override
   public void initialize() {
     maxPower = NRGPreferences.TURRET_MOTOR_POWER.getValue();
+    Logger.commandInit(this, "maxPower: " + maxPower);
     turret.turretAnglePIDInit(TargetSource.NONE, angle, maxPower, 1, false);
   }
 
@@ -42,6 +44,7 @@ public class TurnTurretToAngle extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     turret.turretAngleEnd();
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.

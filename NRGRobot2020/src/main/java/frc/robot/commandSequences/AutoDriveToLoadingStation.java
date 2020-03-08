@@ -20,6 +20,7 @@ import frc.robot.commands.WaitForNewVisionData;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.RaspberryPiVision;
 import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
+import frc.robot.utilities.Logger;
 import frc.robot.vision.LoadingStationTarget;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -50,5 +51,17 @@ public class AutoDriveToLoadingStation extends SequentialCommandGroup {
             System.out.println("End " + end);
           }
         }));
+  }
+
+  @Override
+  public void initialize(){
+    Logger.commandInit(this);
+    super.initialize();
+  }
+  
+  @Override
+  public void end(boolean interrupted){
+    super.end(interrupted);
+    Logger.commandEnd(this);
   }
 }

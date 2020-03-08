@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Drive;
+import frc.robot.utilities.Logger;
 import frc.robot.utilities.NRGPreferences;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -34,6 +35,7 @@ public class ManualDrive extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Logger.commandInit(this);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -56,6 +58,7 @@ public class ManualDrive extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(final boolean interrupted) {
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.

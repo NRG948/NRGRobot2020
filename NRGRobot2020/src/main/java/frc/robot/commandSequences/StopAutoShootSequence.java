@@ -7,6 +7,7 @@ import frc.robot.commands.DisableShooterRPM;
 import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.StopTurretAnglePID;
+import frc.robot.utilities.Logger;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -21,5 +22,17 @@ public class StopAutoShootSequence extends SequentialCommandGroup {
       .alongWith(new StopTurretAnglePID(subsystems.turret), 
                  new SetHoodPosition(subsystems.hood, 2), 
                  new SetLimelightHorizontalSkew(subsystems.turret, 0))));
+  }
+
+  @Override
+  public void initialize(){
+    Logger.commandInit(this);
+    super.initialize();
+  }
+  
+  @Override
+  public void end(boolean interrupted){
+    super.end(interrupted);
+    Logger.commandEnd(this);
   }
 }

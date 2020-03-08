@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ControlPanelSpinner;
+import frc.robot.utilities.Logger;
 
 public class RotationControl extends CommandBase {
   private final ControlPanelSpinner panelSpinner;
@@ -26,6 +27,7 @@ public class RotationControl extends CommandBase {
   @Override
   public void initialize() {
     this.currentColor = panelSpinner.getColor();
+    Logger.commandInit(this, "color: " + currentColor);
     this.previousColor = currentColor;
   }
 
@@ -44,6 +46,7 @@ public class RotationControl extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     panelSpinner.stopMotor();
+    Logger.commandEnd(this);
   }
 
   // Returns true when the command should end.

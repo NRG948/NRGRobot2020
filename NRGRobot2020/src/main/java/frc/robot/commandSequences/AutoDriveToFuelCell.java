@@ -10,6 +10,7 @@ import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.WaitForNewVisionData;
 import frc.robot.subsystems.AcquirerPistons.State;
 import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
+import frc.robot.utilities.Logger;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -28,5 +29,17 @@ public class AutoDriveToFuelCell extends SequentialCommandGroup {
                     new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withRelativeCount(ballCount)),
         new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT)
     );
+  }
+
+  @Override
+  public void initialize(){
+    Logger.commandInit(this);
+    super.initialize();
+  }
+  
+  @Override
+  public void end(boolean interrupted){
+    super.end(interrupted);
+    Logger.commandEnd(this);
   }
 }
