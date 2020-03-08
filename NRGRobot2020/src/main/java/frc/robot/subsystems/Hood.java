@@ -110,11 +110,15 @@ public class Hood extends SubsystemBase {
     if (!NRGPreferences.SHUFFLEBOARD_HOOD_ENABLED.getValue()) {
       return;
     }
+
     ShuffleboardTab hoodTab = Shuffleboard.getTab("Hood");
-    ShuffleboardLayout hoodLayout = hoodTab.getLayout("Hood", BuiltInLayouts.kList).withPosition(0, 0).withSize(2, 4);
+    ShuffleboardLayout hoodLayout = hoodTab.getLayout("Hood", BuiltInLayouts.kList)
+      .withPosition(0, 0)
+      .withSize(2, 4);
+      
     hoodLayout.addNumber("Raw Output", () -> this.hoodMotor.get());
     hoodLayout.addNumber("Position", () -> this.getPosition());
-    hoodLayout.add("Encoder", this.hoodEncoder);
-    hoodLayout.add("Analog Input", this.encoderInput);
+    hoodLayout.addNumber("Encoder Distance", () -> this.hoodEncoder.getDistance());
+    hoodLayout.addNumber("Analog Input", () -> this.encoderInput.getVoltage());
   }
 }
