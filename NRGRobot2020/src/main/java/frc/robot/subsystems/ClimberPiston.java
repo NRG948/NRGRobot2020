@@ -4,27 +4,36 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+/**
+ * Subsystem to control the piston that extends/retracts the climber 4-bar mechanism.
+ */
 public class ClimberPiston extends SubsystemBase {
-    public DoubleSolenoid climberSolenoid = new DoubleSolenoid(4, 5);
 
-    State state = State.RETRACT;
-    
-    public enum State {
-      EXTEND, RETRACT;
-    }
+  public final DoubleSolenoid climberSolenoid = new DoubleSolenoid(4, 5);
 
-    public ClimberPiston() {
-    }
+  /** Define the possible climber states. */
+  public enum State {
+    EXTEND, RETRACT;
+  }
 
-    public void toggleState() {
-      state = state == State.EXTEND ? State.RETRACT : State.EXTEND;
-      climberSolenoid.set(state == State.EXTEND ? Value.kForward : Value.kReverse); 
-    }
+  /** Creates the ClimberPiston subsystem. */
+  public ClimberPiston() {
+  }
 
-    public void setState(State state) {
-      climberSolenoid.set(state == State.EXTEND ? Value.kForward : Value.kReverse);
-      this.state = state;
-    }
+  /** Returns the current state of the climber piston. */
+  public State getState() {
+    return climberSolenoid.get() == Value.kForward ? State.EXTEND : State.RETRACT;
+  }
+
+  /** Sets a new state for the climber piston. */
+  public void setState(State state) {
+    climberSolenoid.set(state == State.EXTEND ? Value.kForward : Value.kReverse);
+  }
+
+  /** Toggles the state of the climber piston. */
+  public void toggleState() {
+    setState(getState() == State.EXTEND ? State.RETRACT : State.EXTEND);
+  }
 
   @Override
   public void periodic() {
