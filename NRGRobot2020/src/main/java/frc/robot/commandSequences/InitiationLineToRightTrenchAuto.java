@@ -81,7 +81,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
       // TODO Use the limelight crosshair adjustement feature to adjust the skew
       new SetLimelightHorizontalSkew(subsystems.turret, -3),
       // Shoot all four balls.
-      new AutoShootSequence(subsystems, 4000, 72, -1.5),
+      new AutoShootSequence(subsystems, 3550, 72, -1.5),
       // Continue to drive toward the fuel cells attempting to pick up three of them (C).
       // At the same time, lower the hood so that we can pass under the control panel.
       new AutoDriveToFuelCell(subsystems, 3).alongWith(new SetHoodPosition(subsystems.hood, 2)),
