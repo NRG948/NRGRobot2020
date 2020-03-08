@@ -27,6 +27,6 @@ public class FollowPathWeaverFile extends FollowTrajectory {
   @Override
   public void end(boolean interrupted){
     super.end(interrupted);
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 }

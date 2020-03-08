@@ -41,7 +41,7 @@ public class SetHoodPosition extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     hood.hoodEnd();
-    Logger.commandEnd(this, "current: " + hood.getPosition());
+    Logger.commandEnd(this, interrupted, "current: " + hood.getPosition());
   }
 
   // Returns true when the command should end.

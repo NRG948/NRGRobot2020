@@ -10,7 +10,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
 import frc.robot.utilities.NRGPreferences;
 
-public class FollowTrajectory extends RamseteCommand {
+public abstract class FollowTrajectory extends RamseteCommand {
   /**
    * Creates a new FollowTrajectory.
    */

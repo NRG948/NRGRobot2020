@@ -105,6 +105,7 @@ public class AutoDriveOnHeading extends CommandBase {
       this.drive.driveOnHeadingEnd();
     }
     Logger.commandEnd(this,
+      interrupted,
       String.format("DriveStraightDistance End x:%.1f y:%.1f",
         this.drive.getPose().getTranslation().getX(),
         this.drive.getPose().getTranslation().getY()));

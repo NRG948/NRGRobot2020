@@ -50,10 +50,10 @@ public class DriveToFuelCell extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    Logger.commandInit(this);
     if (useDefaultMaxPower) {
       maxPower = NRGPreferences.DRIVE_TO_BALL_MAXPOWER.getValue();
     }
+    Logger.commandInit(this, "maxPower: " + maxPower);
     ballNotFound = false;
   }
 
@@ -83,7 +83,7 @@ public class DriveToFuelCell extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     drive.arcadeDrive(0, 0);
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 
   // Returns true when the command should end.

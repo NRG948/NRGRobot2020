@@ -66,7 +66,7 @@ public class AutoTurnToHeading extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     drive.turnToHeadingEnd(); // terminates the turn
-    Logger.commandEnd(this, "current: " + this.drive.getHeadingContinuous());
+    Logger.commandEnd(this, interrupted, "current: " + this.drive.getHeadingContinuous());
   }
 
   // Checks whether the robot is on target 

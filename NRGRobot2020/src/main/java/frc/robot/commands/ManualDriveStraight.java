@@ -36,7 +36,7 @@ public class ManualDriveStraight extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     drive.driveOnHeadingEnd();
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 
   // Returns true when the command should end.

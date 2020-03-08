@@ -84,7 +84,7 @@ public class PositionControl extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     panelSpinner.stopMotor();
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 
   // Returns true when the command should end.

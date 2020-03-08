@@ -50,6 +50,6 @@ public class ManualHood extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     hood.hoodEnd();
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 }

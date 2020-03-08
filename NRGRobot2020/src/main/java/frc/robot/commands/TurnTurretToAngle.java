@@ -44,7 +44,7 @@ public class TurnTurretToAngle extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     turret.turretAngleEnd();
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 
   // Returns true when the command should end.

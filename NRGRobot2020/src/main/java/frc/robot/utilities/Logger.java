@@ -32,13 +32,13 @@ public class Logger {
         System.out.printf("%s Init %s\n", command.getName(), details);
     }
 
-    public static void commandEnd(Command command) {
-        commandEnd(command, "");
+    public static void commandEnd(Command command, boolean interrupted) {
+        commandEnd(command, interrupted, "");
     }
 
-    public static void commandEnd(Command command, String details) {
+    public static void commandEnd(Command command, boolean interrupted, String details) {
         logModeAndTime();
-        System.out.printf("%s End %s\n", command.getName(), details);
+        System.out.printf("%s %s %s\n", command.getName(), interrupted ? "Interrupt" : "End", details);
     }
 
     private static void logModeAndTime() {

@@ -30,7 +30,7 @@ public class SetRaspberryPiPipeline extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        Logger.commandEnd(this);
+        Logger.commandEnd(this, interrupted);
     }
 
     @Override

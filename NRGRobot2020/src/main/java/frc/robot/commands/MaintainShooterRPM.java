@@ -62,6 +62,6 @@ public class MaintainShooterRPM extends CommandBase {
     if (!setAndExit) {
       shooterRPM.disableTakeBackHalf();
     }
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 }

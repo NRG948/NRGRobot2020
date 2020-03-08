@@ -31,7 +31,7 @@ public class ToggleClimberPiston extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Logger.commandEnd(this, climberPiston.getState().toString());
+    Logger.commandEnd(this, interrupted, climberPiston.getState().toString());
   }
 
   // Returns true when the command should end.

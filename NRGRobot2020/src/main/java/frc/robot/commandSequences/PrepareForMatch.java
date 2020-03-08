@@ -28,6 +28,6 @@ public class PrepareForMatch extends ParallelCommandGroup {
   @Override
   public void end(boolean interrupted){
     super.end(interrupted);
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 }

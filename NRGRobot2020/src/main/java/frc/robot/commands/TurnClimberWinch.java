@@ -36,7 +36,7 @@ public class TurnClimberWinch extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     climberWinch.stopMotor();
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 
   // Returns true when the command should end.
