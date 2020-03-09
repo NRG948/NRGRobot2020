@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2019 FIRST. All Rights Reserved.                             */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot.commandSequences;
 
 import java.util.List;
@@ -23,9 +16,10 @@ import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
 import frc.robot.utilities.Logger;
 import frc.robot.vision.LoadingStationTarget;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
+/**
+ * Autonomous command sequence that drives to the left, center or right fuel
+ * cell loading station based on vision processing input from the Raspberry Pi.
+ */
 public class AutoDriveToLoadingStation extends SequentialCommandGroup {
   private RaspberryPiVision raspberryPiVision;
   private Drive drive;
