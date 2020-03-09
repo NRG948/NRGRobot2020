@@ -17,13 +17,17 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
  */
 public class Hood extends SubsystemBase {
 
-  private static final double HOOD_BACK_VOLTAGE_PRACTICE = 3.99;
-  private static final double HOOD_VOLTAGE_RANGE_PRACTICE = HOOD_BACK_VOLTAGE_PRACTICE - 1.5;
+  /**
+   *
+   */
+  private static final double HOOD_BACK_VOLTAGE_PRACTICE = 4.12;
+  private static final double HOOD_VOLTAGE_RANGE_PRACTICE = 2.49;
+
   private static final double HOOD_BACK_VOLTAGE_COMPETITION = 3.99;  // TODO: measure this!
-  private static final double HOOD_VOLTAGE_RANGE_COMPETITION = HOOD_BACK_VOLTAGE_PRACTICE - 1.5; // TODO: verify
+  private static final double HOOD_VOLTAGE_RANGE_COMPETITION = 2.49;
 
   private static final int MAX_LIMIT = 100;
-  private static final int LOWER_HARD_STOP = 1;
+  private static final int LOWER_HARD_STOP = 10;
   private static final int UPPER_HARD_STOP = 97;
 
   private static final double INITIATION_SHOOT_DISTANCE = 160; // inches
@@ -115,10 +119,10 @@ public class Hood extends SubsystemBase {
     ShuffleboardLayout hoodLayout = hoodTab.getLayout("Hood", BuiltInLayouts.kList)
       .withPosition(0, 0)
       .withSize(2, 4);
-      
+
     hoodLayout.addNumber("Raw Output", () -> this.hoodMotor.get());
     hoodLayout.addNumber("Position", () -> this.getPosition());
-    hoodLayout.addNumber("Encoder Distance", () -> this.hoodEncoder.getDistance());
+    hoodLayout.addNumber("Encoder Value", () -> this.hoodEncoder.get());
     hoodLayout.addNumber("Analog Input", () -> this.encoderInput.getVoltage());
   }
 }
