@@ -59,6 +59,7 @@ import frc.robot.commands.AutoTurret;
 import frc.robot.commands.Delay;
 import frc.robot.commands.DisableShooterRPM;
 import frc.robot.utilities.NRGPreferences;
+import frc.robot.subsystems.ClimberPiston;
 import frc.robot.subsystems.AcquirerPistons.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -232,7 +233,8 @@ public class RobotContainer {
         .andThen(new SetHoodPosition(subsystems.hood, 2)));
     rightJoyButton4.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
     leftJoyButton3.whenPressed(new ToggleClimberPiston(subsystems.climberPiston));
-    leftJoyButton4.whenHeld(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.35));
+    leftJoyButton4.whenHeld(new InstantCommand(() -> subsystems.climberPiston.setState(ClimberPiston.State.RETRACT))
+      .andThen(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.4)));
   }
   
   /**
