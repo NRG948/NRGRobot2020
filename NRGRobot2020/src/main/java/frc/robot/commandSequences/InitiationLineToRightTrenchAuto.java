@@ -63,7 +63,12 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
   public InitiationLineToRightTrenchAuto(RobotSubsystems subsystems, float delay) {
     super(
       new MaintainShooterRPM(subsystems.shooterRPM).atRpm(2500).setAndExit(),
-      new Delay(delay + 0.2),
+      new Delay(Math.max(delay, 0.75))
+        .alongWith(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND),
+                   new SetRaspberryPiPipeline(subsystems.raspPi, PipelineRunner.FUEL_CELL),
+                   new TurnTurretToAngle(subsystems.turret, 50),
+                   new SetHoodPosition(subsystems.hood, 72),
+                   new AutoFeeder(subsystems.ballCounter, subsystems.feeder)),
       /* Start on the initiation line, centered in line with the balls on our
        * alliance's trench (A) and move toward the first ball (B). At the same time,
        * attempt to acquire 1 ball and warm up the shooter.
@@ -73,22 +78,17 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
                           FIRST_PATH_WAYPOINT, 
                           FIRST_PATH_END_POSITION, 
                           false)
-        .alongWith(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND),
-                   new SetRaspberryPiPipeline(subsystems.raspPi, PipelineRunner.FUEL_CELL),
-                   new TurnTurretToAngle(subsystems.turret, 77),
-                   new SetHoodPosition(subsystems.hood, 72),
-                   new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withRelativeCount(1).withTimeout(3),
-                   new AutoFeeder(subsystems.ballCounter, subsystems.feeder),
-                   new MaintainShooterRPM(subsystems.shooterRPM).atRpm(2500).setAndExit()),
-      // TODO Use the limelight crosshair adjustement feature to adjust the skew
-      new SetLimelightHorizontalSkew(subsystems.turret, -3),
+        .alongWith(new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withRelativeCount(1).withTimeout(3)),
       // Shoot all four balls.
       new AutoShootSequence(subsystems, 3550, 72, -1.5),
+      // Wait for fourth ball to clear the shooter
+      new Delay(0.3),
       // Stop the AutoShootSequence
-      new StopAutoShootSequence(subsystems),
+      // new StopAutoShootSequence(subsystems),
       // Continue to drive toward the fuel cells attempting to pick up three of them (C).
       // At the same time, lower the hood so that we can pass under the control panel.
-      new AutoDriveToFuelCell(subsystems, 3).alongWith(new SetHoodPosition(subsystems.hood, 2)),
+      new AutoDriveToFuelCell(subsystems, 2)
+          /* .alongWith(new SetHoodPosition(subsystems.hood, 10))*/,
       // Drive back to shooting position. (D)
       new FollowWaypoints(subsystems.drive,
                           SECOND_PATH_START_POSITION,
@@ -96,9 +96,9 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
                           SECOND_PATH_END_POSITION,
                           true),
       // Return the hood to shooting position.
-      new SetHoodPosition(subsystems.hood,72),
+      // new SetHoodPosition(subsystems.hood, 72),
       // Shoot all three balls.
-      new AutoShootSequence(subsystems, 4200, 72, -1),
+      new AutoShootSequence(subsystems, 3550, 72, -1),
       // Stop the AutoShootSequence
       new StopAutoShootSequence(subsystems),
       // TODO Stop continous turret PID in AutoShootSequence. 
