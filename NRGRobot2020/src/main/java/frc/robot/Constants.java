@@ -32,8 +32,6 @@ public final class Constants {
         public static final double kWheelDiameterMeters = 0.152;
         public static final double kEncoderDistancePerPulse = (kWheelDiameterMeters * Math.PI)
                 / (double) NRGPreferences.ENCODER_CPR.getValue();
-
-        public static final double kPDriveVel = 8.5;
     }
 
     public static final class ShooterConstants {
