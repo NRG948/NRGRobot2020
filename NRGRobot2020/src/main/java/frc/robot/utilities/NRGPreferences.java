@@ -1,5 +1,6 @@
 package frc.robot.utilities;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import edu.wpi.first.wpilibj.Preferences;
@@ -36,7 +37,7 @@ public class NRGPreferences {
 
         void printIfNotDefault() {
             if (!isDefault())
-                System.out.println(this);
+                System.out.println("NON-DEFAULT PREF: " + this.toString());
         }
     }
 
@@ -213,18 +214,29 @@ public class NRGPreferences {
         } else {
             System.out.println("INITIALIZING PREFERENCES");
             Preferences preferences = Preferences.getInstance();
+            HashSet<String> validKeys = new HashSet<String>();
 
+            // If the key is not currently in the preferences file, write its default value.
+            // Otherwise, print its current value if not equal to the default.
             NRGPreferences.allPrefValues.forEach(p -> {
-                // If the key is not currently in the preferences file, write its default value.
-                // Otherwise, print its current value if not equal to the default.
                 if (!preferences.containsKey(p.getKey())) {
                     p.writeDefaultValue();
                 } else {
                     p.printIfNotDefault();
                 }
-            });
-        }
 
+                validKeys.add(p.getKey());
+            });
+
+            // Remove unused preferences keys. (Keys with leading "." are internal to
+            // the Shuffleboard implementation and should not be removed.)
+            preferences.getKeys().stream()
+                .filter(k -> !k.startsWith(".") && !validKeys.contains(k))
+                .forEach(k -> {
+                    System.out.println(String.format("REMOVING UNUSED KEY: %s", k));
+                    preferences.remove(k);
+                });
+        }
     }
 
 }
