@@ -15,9 +15,7 @@ import frc.robot.commands.FollowWaypoints;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetHoodPosition;
-import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.SetRaspberryPiPipeline;
-import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.subsystems.AcquirerPistons.State;
 import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
@@ -100,9 +98,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
       // Shoot all three balls.
       new AutoShootSequence(subsystems, 3550, 72, -1),
       // Stop the AutoShootSequence
-      new StopAutoShootSequence(subsystems),
-      // TODO Stop continous turret PID in AutoShootSequence. 
-      new StopTurretAnglePID(subsystems.turret)
+      new StopAutoShootSequence(subsystems)
       );
   }
 
