@@ -179,6 +179,8 @@ public class RobotContainer {
     subsystems.limelightVision.addShuffleboardTab();
     
     compressor.start();
+
+    subsystems.drive.onCollisionDetected(drive -> System.out.println("COLLISION # " + drive.getCollisionCount()));
   }
 
   /**

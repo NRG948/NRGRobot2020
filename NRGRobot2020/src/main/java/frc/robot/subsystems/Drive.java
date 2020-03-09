@@ -20,13 +20,14 @@ import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.utilities.NRGPreferences;
+import frc.robot.utilities.Observer;
+import frc.robot.utilities.Subject;
 import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.commands.FollowWaypoints;
 import frc.robot.test.IMotorEncoderPair;
@@ -73,6 +74,7 @@ public class Drive extends SubsystemBase {
   private double lastWorldAccelY;
   private boolean detectCollisions = false;
   private int collisionCount;
+  private Subject<Drive> observableCollision = new Subject<Drive>();
 
   public Drive() {
     leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
@@ -141,10 +143,7 @@ public class Drive extends SubsystemBase {
 
     odometry.update(gyroAngle, leftDistance, rightDistance);
 
-    if(this.detectCollisions && collisionDetected()) {
-      CommandScheduler.getInstance().cancelAll();
-      ++ this.collisionCount;
-    }
+    detectCollisions();
   }
 
   /**
@@ -161,7 +160,7 @@ public class Drive extends SubsystemBase {
   public Pose2d getPose() {
     return odometry.getPoseMeters();
   }
-
+  
   /**
    * Returns the current wheel speeds of the robot.
    *
@@ -215,7 +214,7 @@ public class Drive extends SubsystemBase {
   public double getHeading() {
     return Math.IEEEremainder(navx.getAngle(), 360) * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
-
+  
   /**
    * returns the continuous heading of the robot
    * 
@@ -224,7 +223,7 @@ public class Drive extends SubsystemBase {
   public double getHeadingContinuous() {
     return navx.getAngle() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
-
+  
   /**
    * Returns the turn rate of the robot.
    *
@@ -233,18 +232,18 @@ public class Drive extends SubsystemBase {
   public double getTurnRate() {
     return navx.getRate() * (DriveConstants.kGyroReversed ? -1.0 : 1.0);
   }
-
+  
   /**
    * 
    * @param xOrigin
    * @param yOrigin
    * @return The distance between the current position and the original position
    */
-
+  
   public double calculateDistance(double xOrigin, double yOrigin) {
     return getPose().getTranslation().getDistance(new Translation2d(xOrigin, yOrigin));
   }
-
+  
   /**
    * We are getting our current heading and putting it into driveOnHeadingInit to
    * adjust our current heading
@@ -260,18 +259,18 @@ public class Drive extends SubsystemBase {
     this.drivePIDController.setTolerance(0);
     setCurrentHeading(currentHeading);
   }
-
+  
   public void driveOnHeadingExecute(double power) {
     double powerDelta = this.drivePIDController.calculate(getHeadingContinuous());
     // if (Math.signum(powerDelta) != Math.signum(power)) {
-    // this.tankDrive(power + powerDelta, power, false);
-    // } else {
-    // this.tankDrive(power, power - powerDelta, false);
-    // }
-    powerDelta = MathUtil.clamp(powerDelta, -Math.abs(power), Math.abs(power));
+      // this.tankDrive(power + powerDelta, power, false);
+      // } else {
+        // this.tankDrive(power, power - powerDelta, false);
+        // }
+        powerDelta = MathUtil.clamp(powerDelta, -Math.abs(power), Math.abs(power));
 
     this.arcadeDrive(power, -powerDelta);
-
+    
     SmartDashboard.putNumber("Drive/driveOnHeading/PIDOutput", powerDelta);
     SmartDashboard.putNumber("Drive/driveOnHeading/PIDError", this.drivePIDController.getPositionError());
     SmartDashboard.putNumber("Drive/driveOnHeading/Setpoint", this.drivePIDController.getSetpoint());
@@ -293,7 +292,7 @@ public class Drive extends SubsystemBase {
   public void setCurrentHeading(double currentHeading) {
     this.currentHeading = currentHeading;
   }
-
+  
   /**
    * Performs all initialization for performing a robot's turn using a PID
    * controller.
@@ -310,7 +309,7 @@ public class Drive extends SubsystemBase {
     this.turnPIDController.setTolerance(tolerance);
     this.turnSquareInputs = areTurnInputsSquared();
   }
-
+  
   /**
    * Returns if Turn inputs are squared
    * 
@@ -319,7 +318,7 @@ public class Drive extends SubsystemBase {
   public boolean areTurnInputsSquared() {
     return NRGPreferences.TURN_SQUARE_INPUTS.getValue();
   }
-
+  
   /**
    * Executes the robot turn by updating the motor values as needed every 20 ms.
    * 
@@ -328,7 +327,7 @@ public class Drive extends SubsystemBase {
   public void turnToHeadingExecute(double maxPower) {
     turnToHeadingExecute(maxPower, true, true);
   }
-
+  
   /**
    * Executes the robot turn by updating the motor values as needed every 20 ms.
    * 
@@ -344,7 +343,7 @@ public class Drive extends SubsystemBase {
     } else {
       double leftPower;
       double rightPower;
-
+      
       if (forward) {
         leftPower = currentPower > 0 ? currentPower : 0;
         rightPower = currentPower < 0 ? -currentPower : 0;
@@ -373,7 +372,7 @@ public class Drive extends SubsystemBase {
     this.diffDrive.stopMotor();
     this.turnPIDController = null;
   }
-
+  
   /**
    * Adds a Shuffleboard tab for the drive subsystem.
    */
@@ -386,38 +385,38 @@ public class Drive extends SubsystemBase {
 
     // Add test buttons to a layout in the tab
     ShuffleboardLayout commandsLayout = driveTab.getLayout("Test", BuiltInLayouts.kList)
-      .withPosition(0, 0)
-      .withSize(2, 3);
-
+    .withPosition(0, 0)
+    .withSize(2, 3);
+    
     commandsLayout.add("Turn to 90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(90));
     commandsLayout.add("Turn to -90", new AutoTurnToHeading(this).withMaxPower(0.35).toHeading(-90));
     commandsLayout.add("Drive 1 meter", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(1));
     commandsLayout.add("Drive 3 meters", new AutoDriveOnHeading(this).withMaxPower(0.5).forMeters(3));
     commandsLayout.add("Follow S Curve",
       new InstantCommand(() -> { this.resetHeading(); this.resetOdometry(new Pose2d(0, 0, new Rotation2d())); })
-        .andThen( new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
+      .andThen( new FollowWaypoints(this, new Pose2d(0, 0, new Rotation2d(0)),
           List.of(new Translation2d(1, -1), new Translation2d(2, 1)), new Pose2d(3, 0, new Rotation2d(0)), false)));
-
+          
     // Add the DifferentialDrive object and encoders to a list layout in the tab.
     ShuffleboardLayout diffDriveLayout = driveTab.getLayout("Base", BuiltInLayouts.kList).
-      withPosition(2, 0).
+    withPosition(2, 0).
       withSize(4, 5);
-
-    diffDriveLayout.add("Differential Drive", diffDrive).withWidget(BuiltInWidgets.kDifferentialDrive);
-    diffDriveLayout.add("Left Encoder", leftEncoder).withWidget(BuiltInWidgets.kEncoder);
-    diffDriveLayout.add("Right Encoder", rightEncoder).withWidget(BuiltInWidgets.kEncoder);
-
-    // Add the odometry to a layout in the tab.
-    ShuffleboardLayout positionLayout = driveTab.getLayout("Position", BuiltInLayouts.kList).
+      
+      diffDriveLayout.add("Differential Drive", diffDrive).withWidget(BuiltInWidgets.kDifferentialDrive);
+      diffDriveLayout.add("Left Encoder", leftEncoder).withWidget(BuiltInWidgets.kEncoder);
+      diffDriveLayout.add("Right Encoder", rightEncoder).withWidget(BuiltInWidgets.kEncoder);
+      
+      // Add the odometry to a layout in the tab.
+      ShuffleboardLayout positionLayout = driveTab.getLayout("Position", BuiltInLayouts.kList).
       withPosition(6, 0).
       withSize(2, 2);
-
-    positionLayout.addNumber("X", () -> getPose().getTranslation().getX());
-    positionLayout.addNumber("Y", () -> getPose().getTranslation().getY());
-    positionLayout.addNumber("Heading", () -> getHeadingContinuous());
-    
-    // Add collision detection to a layout tab
-    ShuffleboardLayout collisionLayout = driveTab.getLayout("Collision", BuiltInLayouts.kList)
+      
+      positionLayout.addNumber("X", () -> getPose().getTranslation().getX());
+      positionLayout.addNumber("Y", () -> getPose().getTranslation().getY());
+      positionLayout.addNumber("Heading", () -> getHeadingContinuous());
+      
+      // Add collision detection to a layout tab
+      ShuffleboardLayout collisionLayout = driveTab.getLayout("Collision", BuiltInLayouts.kList)
       .withPosition(6, 2)
       .withSize(2, 2);
       
@@ -434,11 +433,27 @@ public class Drive extends SubsystemBase {
     double currentJerk = Math.sqrt(currentJerkX * currentJerkX + currentJerkY * currentJerkY);
     return currentJerk >= NRGPreferences.DRIVE_COLLISION_THRESHOLD.getValue();
   }
-
+  
+  private void detectCollisions() {
+    if (this.detectCollisions && collisionDetected()) {
+      this.observableCollision.notify();
+      ++this.collisionCount;
+    }
+  }
+  
   public void setDetectCollisions(boolean detectCollisions) {
     this.detectCollisions = detectCollisions;
   }
+  
+  public void onCollisionDetected(Observer<Drive> collisionObserver) {
+    this.observableCollision.addObserver(collisionObserver);
+  }
 
+  public int getCollisionCount() {
+    return this.collisionCount;
+  }
+
+  /**
   public class MotorEncoderPair implements IMotorEncoderPair {
     private WPI_VictorSPX motor;
     private Encoder encoder;
@@ -456,4 +471,5 @@ public class Drive extends SubsystemBase {
       return encoder.getDistance();
     }
   }
+  */
 }
