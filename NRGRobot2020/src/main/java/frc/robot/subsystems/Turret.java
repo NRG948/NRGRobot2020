@@ -32,7 +32,7 @@ public class Turret extends SubsystemBase {
   private static final double MIN_ENCODER_VALUE = 0;
   private static final double MAX_ENCODER_VALUE = 170;
   private static final double CAMERA_HORIZONTAL_CORRECTION_PRACTICE = -1.5;
-  private static final double CAMERA_HORIZONTAL_CORRECTION_COMPETITION = 0;
+  private static final double CAMERA_HORIZONTAL_CORRECTION_COMPETITION = 2.0;
   private static final Transform2d TURRET_POSITION_OFFSET = new Transform2d(
     new Translation2d(Units.inchesToMeters(-9.5), Units.inchesToMeters(-8.25)),
     new Rotation2d(0.0));
