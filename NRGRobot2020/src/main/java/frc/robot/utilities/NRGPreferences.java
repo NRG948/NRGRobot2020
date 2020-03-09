@@ -135,6 +135,7 @@ public class NRGPreferences {
     public static final NumberPrefs PATH_KS_TERM = new NumberPrefs("PathKS", 0.98);
     public static final NumberPrefs PATH_KV_TERM = new NumberPrefs("PathKV", 0.543);
     public static final NumberPrefs PATH_KA_TERM = new NumberPrefs("PathKA", 0.00337);
+    public static final NumberPrefs PATH_KP_TERM = new NumberPrefs("PathKP", 8.5);
 
     public static final NumberPrefs TRACK_WIDTH_METERS = new NumberPrefs("TrackWidthMeters", Units.inchesToMeters(25.0));
     public static final NumberPrefs ENCODER_CPR = new NumberPrefs("EncoderCPR", 1050);
