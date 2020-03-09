@@ -20,7 +20,7 @@ public class StopAutoShootSequence extends SequentialCommandGroup {
     super(new Delay(0.25)
     .andThen(new DisableShooterRPM(subsystems.shooterRPM)
       .alongWith(new StopTurretAnglePID(subsystems.turret), 
-                 new SetHoodPosition(subsystems.hood, 2), 
+                 new SetHoodPosition(subsystems.hood, 10), //TODO Change to 2
                  new SetLimelightHorizontalSkew(subsystems.turret, 0))));
   }
 
