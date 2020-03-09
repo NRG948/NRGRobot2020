@@ -49,15 +49,11 @@ import frc.robot.commandSequences.PrepareForMatch;
 import frc.robot.commandSequences.StopAutoShootSequence;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetHoodPosition;
-import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.SetStartPosition;
-import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.AutoTurret;
-import frc.robot.commands.Delay;
-import frc.robot.commands.DisableShooterRPM;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.subsystems.ClimberPiston;
 import frc.robot.subsystems.AcquirerPistons.State;
@@ -325,8 +321,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     resetSensors();
+
     InitialAutoPath path = autoPathChooser.getSelected();
-    float delay  = getInitialDelay();
+    float delay = getInitialDelay();
+
     switch (path) {
       case INITIATION_LINE_TO_RIGHT_TRENCH:
         return new SetStartPosition(subsystems.drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
@@ -343,8 +341,8 @@ public class RobotContainer {
       case INITIATION_LINE_ROLL_FORWARD:
         return new SetStartPosition(subsystems.drive, InitiationLineRollForward.INITIAL_POSITION)
           .andThen(new InitiationLineRollForward(subsystems, delay));
+
       default:
-        // TODO move off of Initiation Line
         return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
     }    
   }
