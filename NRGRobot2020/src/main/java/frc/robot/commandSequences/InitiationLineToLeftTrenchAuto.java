@@ -5,12 +5,14 @@ import java.util.List;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotSubsystems;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
+import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.subsystems.AcquirerPistons.State;
@@ -56,7 +58,8 @@ public class InitiationLineToLeftTrenchAuto extends SequentialCommandGroup {
    */
   public InitiationLineToLeftTrenchAuto(RobotSubsystems subsystems, float delay) {
     // Start on the initiation line, centered between two opponent's balls (A)
-    super(new Delay(delay),
+    super(new Delay(delay)
+            .alongWith(new InstantCommand(() -> subsystems.gearbox.setHighGear())),
           new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND), 
           new FollowWaypoints(subsystems.drive,
                               INITIAL_POSITION, // Starting pose  (B)
