@@ -425,15 +425,22 @@ public class Drive extends SubsystemBase {
     collisionLayout.add("Disable", new InstantCommand(() -> this.setDetectCollisions(false)));
   }
 
+  /**
+   * Returns true if a collision was detected since the last call to this method.
+   */
   private boolean collisionDetected() {
     double currentWorldAccelX = this.navx.getWorldLinearAccelX();
     double currentWorldAccelY = this.navx.getWorldLinearAccelY();
     double currentJerkX = currentWorldAccelX - this.lastWorldAccelX;
     double currentJerkY = currentWorldAccelY - this.lastWorldAccelY;
     double currentJerk = Math.sqrt(currentJerkX * currentJerkX + currentJerkY * currentJerkY);
+
     return currentJerk >= NRGPreferences.DRIVE_COLLISION_THRESHOLD.getValue();
   }
   
+  /**
+   * Called from the periodic method to detect collisions.
+   */
   private void detectCollisions() {
     if (this.detectCollisions && collisionDetected()) {
       this.observableCollision.notify();
@@ -441,14 +448,23 @@ public class Drive extends SubsystemBase {
     }
   }
   
+  /**
+   * Enables or disable collision detection.
+   */
   public void setDetectCollisions(boolean detectCollisions) {
     this.detectCollisions = detectCollisions;
   }
   
+  /**
+   * Register an observer to receive notifications when collisions are detected.
+   */
   public void onCollisionDetected(Observer<Drive> collisionObserver) {
     this.observableCollision.addObserver(collisionObserver);
   }
 
+  /**
+   * Returns the number of collisions detected since the start of robot code.
+   */
   public int getCollisionCount() {
     return this.collisionCount;
   }
