@@ -40,10 +40,10 @@ public class InitiationLineRollForward extends SequentialCommandGroup {
   /**
    * InitiationLineRollForward moves one meter forward off the initiation line.
    */
-  public InitiationLineRollForward(RobotSubsystems subsystems, float delay) {
+  public InitiationLineRollForward(RobotSubsystems subsystems, float delay, double distance) {
     // Start anywhere on the initiation line, move forward one meter.
     super(new Delay(delay),
-          new AutoDriveOnHeading(subsystems.drive).withMaxPower(0.5).forMeters(1));
+          new AutoDriveOnHeading(subsystems.drive).withMaxPower(0.5).forMeters(distance));
   }
 
   @Override

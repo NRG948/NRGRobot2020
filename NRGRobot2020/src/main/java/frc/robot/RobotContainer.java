@@ -131,6 +131,7 @@ public class RobotContainer {
   // Autonomous chooser
   private SendableChooser<InitialAutoPath> autoPathChooser;
   private SendableChooser<InitialDelay> autoDelay;
+  private SendableChooser<RollForwardDistance> autoRollForward;
 
   private enum InitialAutoPath {
     INITIATION_LINE_TO_LEFT_TRENCH, 
@@ -141,6 +142,10 @@ public class RobotContainer {
 
   private enum InitialDelay {
     DELAY_0, DELAY_2, DELAY_5
+  }
+
+  private enum RollForwardDistance {
+    DISTANCE_1, DISTANCE_2, DISTANCE_3
   }
 
   /**
@@ -286,15 +291,23 @@ public class RobotContainer {
     autoPathChooser.addOption("Right Trench", InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
     autoPathChooser.addOption("Shield Generator", InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR);
     autoPathChooser.addOption("Roll Forward", InitialAutoPath.INITIATION_LINE_ROLL_FORWARD);
-    autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
     
     // Add an optional delay before Autonomous movement
     autoDelay = new SendableChooser<InitialDelay>();
     autoDelay.addOption("0 sec", InitialDelay.DELAY_0);
     autoDelay.addOption("2 sec", InitialDelay.DELAY_2);
     autoDelay.addOption("5 sec", InitialDelay.DELAY_5);
-    autoLayout.add("Delay before movement", autoDelay).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    autoLayout.add("Delay before movement", autoDelay).withWidget(BuiltInWidgets.kComboBoxChooser);
     // autoLayout.add("Delay before movement", autoDelay).withWidget(BuiltInWidgets.kNumberBar);
+
+    //Selectable options for the Roll Forward auto routine. 
+    autoRollForward = new SendableChooser<>();
+    autoRollForward.addOption("1m", RollForwardDistance.DISTANCE_1);
+    autoRollForward.addOption("2m", RollForwardDistance.DISTANCE_2);
+    autoRollForward.addOption("3m", RollForwardDistance.DISTANCE_3);
+    autoLayout.add("Distance to Roll Forward", autoRollForward).withWidget(BuiltInWidgets.kComboBoxChooser);
+
 
     
     PrepareForMatch pForMatch = new PrepareForMatch(subsystems.hood, subsystems.turret, subsystems.acquirerPiston);
@@ -314,6 +327,17 @@ public class RobotContainer {
     }
   }
 
+  private double getRollForwardDistance(){
+    RollForwardDistance distance = autoRollForward.getSelected();
+    if(distance == RollForwardDistance.DISTANCE_1){
+      return 1.0;
+    } else if(distance == RollForwardDistance.DISTANCE_2) {
+      return 2.0;
+    } else{
+      return 3.0;
+    }
+  }
+
   /**
    * Pass the autonomous command to the main {@link Robot} class.
    *
@@ -324,6 +348,7 @@ public class RobotContainer {
 
     InitialAutoPath path = autoPathChooser.getSelected();
     float delay = getInitialDelay();
+    double distance = getRollForwardDistance();
 
     switch (path) {
       case INITIATION_LINE_TO_RIGHT_TRENCH:
@@ -340,7 +365,7 @@ public class RobotContainer {
 
       case INITIATION_LINE_ROLL_FORWARD:
         return new SetStartPosition(subsystems.drive, InitiationLineRollForward.INITIAL_POSITION)
-          .andThen(new InitiationLineRollForward(subsystems, delay));
+          .andThen(new InitiationLineRollForward(subsystems, delay, distance));
 
       default:
         return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
