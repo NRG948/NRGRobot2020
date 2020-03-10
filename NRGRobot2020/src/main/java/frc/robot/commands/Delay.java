@@ -15,7 +15,7 @@ public class Delay extends CommandBase {
    * Creates a new Delay.
    */
   double seconds;
-  Timer timer;
+  Timer timer = new Timer();
 
   public Delay(double seconds) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -25,7 +25,7 @@ public class Delay extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    this.timer = new Timer();
+    timer.reset();
     timer.start();
   }
 
@@ -37,6 +37,7 @@ public class Delay extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    timer.stop();
   }
 
   // Returns true when the command should end.
