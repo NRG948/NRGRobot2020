@@ -71,6 +71,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  */
 public class RobotContainer {
 
+  private static final String RASPBERRY_PI_PROCESSED_VIDEO_STREAM_URL = "http://frcvision.local:1182/stream.mjpg";
+  private static final String LIMELIGHT_VIDEO_STREAM_URL = "http://limelight.local:5800/stream.mjpg";
+
   // Joysticks and JoystickButtons
   private final Joystick leftJoystick = new Joystick(0);
   private final Joystick rightJoystick = new Joystick(1);
@@ -246,10 +249,10 @@ public class RobotContainer {
     CameraServer cs = CameraServer.getInstance();
 
     // Initialize the video sources and create a switched camera.
-    HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1182/stream.mjpg");
+    HttpCamera processedVideo = new HttpCamera("Processed", RASPBERRY_PI_PROCESSED_VIDEO_STREAM_URL);
     processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
-    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpg");
+    HttpCamera limelightVideo = new HttpCamera("limelight", LIMELIGHT_VIDEO_STREAM_URL);
     limelightVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
     MjpegServer switchedCamera = cs.addSwitchedCamera("Switched");
@@ -271,8 +274,9 @@ public class RobotContainer {
       videoToggleLayout.add("Processed", new InstantCommand(() -> switchedCamera.setSource(processedVideo)));
     videoToggleLayout.add("limelight", new InstantCommand(() -> switchedCamera.setSource(limelightVideo)));  
 
-    // Add the switched camera to the Shuffleboard tab.
-    HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream.mjpg");
+    // Add the switched camera to the Shuffleboard tab. (Use the Raspberry Pi processed video stream URL
+    // since that is the default video stream.)
+    HttpCamera switchedVideo = new HttpCamera("Switched", RASPBERRY_PI_PROCESSED_VIDEO_STREAM_URL);
     driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream)
       .withPosition(2, 0)
       .withSize(4, 3);
