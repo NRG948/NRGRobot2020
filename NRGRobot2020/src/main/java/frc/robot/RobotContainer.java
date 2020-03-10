@@ -255,26 +255,38 @@ public class RobotContainer {
     MjpegServer switchedCamera = cs.addSwitchedCamera("Switched");
     switchedCamera.setSource(processedVideo);
 
+    // Create a layout for useful robot status items the driver needs.
+    ShuffleboardLayout statusLayout = driverTab.getLayout("Status", BuiltInLayouts.kGrid)
+      .withPosition(0, 0)
+      .withSize(2, 1);
+
+    statusLayout.addNumber("Ball Count", () -> subsystems.ballCounter.getBallCount());
+    statusLayout.addBoolean("Compressor", () -> !compressor.enabled());
+
     // Create a layout and add buttons to select the source of the switched camera.
-    ShuffleboardLayout videoToggleLayout = driverTab.getLayout("Video Toggle", BuiltInLayouts.kList).withPosition(0,0).withSize(2, 2);
-    videoToggleLayout.add("Processed", new InstantCommand(() -> switchedCamera.setSource(processedVideo)));
+    ShuffleboardLayout videoToggleLayout = driverTab.getLayout("Video Toggle", BuiltInLayouts.kList)
+      .withPosition(0, 1)
+      .withSize(2, 2);
+
+      videoToggleLayout.add("Processed", new InstantCommand(() -> switchedCamera.setSource(processedVideo)));
     videoToggleLayout.add("limelight", new InstantCommand(() -> switchedCamera.setSource(limelightVideo)));  
 
     // Add the switched camera to the Shuffleboard tab.
     HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream.mjpg");
-    driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
+    driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream)
+      .withPosition(2, 0)
+      .withSize(4, 3);
     
     // TODO Remove temporary buttons to test drive to feeder.
-    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 2);
+    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList)
+      .withPosition(6, 0)
+      .withSize(2, 2);
+
     loadingStationLayout.add("Drive to right feeder", new AutoDriveToLoadingStation(
         subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(22)));
     loadingStationLayout.add("Drive to left feeder", new AutoDriveToLoadingStation(
       subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(-22)));
     loadingStationLayout.add("Drive to center feeder", new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
-
-    ShuffleboardLayout layout = driverTab.getLayout("Ball counter",  BuiltInLayouts.kList).withPosition(0, 2)
-    .withSize(2, 1);  
-    layout.addNumber("Ball Count", () -> subsystems.ballCounter.getBallCount());
   }
 
   /**
@@ -284,7 +296,9 @@ public class RobotContainer {
     ShuffleboardTab autoTab = Shuffleboard.getTab("Autonomous");
 
     // Create a list layout and add the autonomous selection widgets
-    ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList).withPosition(0, 0).withSize(6, 4);
+    ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList)
+      .withPosition(0, 0)
+      .withSize(6, 4);
 
     autoPathChooser = new SendableChooser<InitialAutoPath>();
     autoPathChooser.addOption("Left Trench", InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
@@ -308,8 +322,6 @@ public class RobotContainer {
     autoRollForward.addOption("3m", RollForwardDistance.DISTANCE_3);
     autoLayout.add("Distance to Roll Forward", autoRollForward).withWidget(BuiltInWidgets.kComboBoxChooser);
 
-
-    
     PrepareForMatch pForMatch = new PrepareForMatch(subsystems.hood, subsystems.turret, subsystems.acquirerPiston);
     autoTab.add("PrepareForMatch", pForMatch);
   }
