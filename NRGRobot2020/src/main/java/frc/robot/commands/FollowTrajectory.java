@@ -10,7 +10,7 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.Drive;
 import frc.robot.utilities.NRGPreferences;
 
-public class FollowTrajectory extends RamseteCommand {
+public abstract class FollowTrajectory extends RamseteCommand {
   /**
    * Creates a new FollowTrajectory.
    */
@@ -23,8 +23,8 @@ public class FollowTrajectory extends RamseteCommand {
         NRGPreferences.PATH_KA_TERM.getValue()),
         DriveConstants.kDriveKinematics, 
         drive::getWheelSpeeds, 
-        new PIDController(DriveConstants.kPDriveVel, 0, 0),
-        new PIDController(DriveConstants.kPDriveVel, 0, 0), 
+        new PIDController(NRGPreferences.PATH_KP_TERM.getValue(), 0, 0),
+        new PIDController(NRGPreferences.PATH_KP_TERM.getValue(), 0, 0), 
         drive::tankDriveVolts, 
         drive);
   }

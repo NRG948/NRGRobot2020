@@ -39,7 +39,7 @@ public class AutoHood extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
 
   }
 

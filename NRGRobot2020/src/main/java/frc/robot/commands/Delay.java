@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.utilities.Logger;
 
 public class Delay extends CommandBase {
   /**
@@ -26,6 +27,7 @@ public class Delay extends CommandBase {
   @Override
   public void initialize() {
     timer.reset();
+    Logger.commandInit(this, "seconds: " + seconds);
     timer.start();
   }
 
@@ -38,6 +40,7 @@ public class Delay extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     timer.stop();
+    Logger.commandEnd(this, interrupted);
   }
 
   // Returns true when the command should end.

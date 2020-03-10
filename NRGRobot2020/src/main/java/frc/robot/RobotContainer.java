@@ -49,16 +49,13 @@ import frc.robot.commandSequences.PrepareForMatch;
 import frc.robot.commandSequences.StopAutoShootSequence;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetHoodPosition;
-import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.SetStartPosition;
-import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.AutoTurret;
-import frc.robot.commands.Delay;
-import frc.robot.commands.DisableShooterRPM;
 import frc.robot.utilities.NRGPreferences;
+import frc.robot.subsystems.ClimberPiston;
 import frc.robot.subsystems.AcquirerPistons.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -232,7 +229,8 @@ public class RobotContainer {
         .andThen(new SetHoodPosition(subsystems.hood, 2)));
     rightJoyButton4.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
     leftJoyButton3.whenPressed(new ToggleClimberPiston(subsystems.climberPiston));
-    leftJoyButton4.whenHeld(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.35));
+    leftJoyButton4.whenHeld(new InstantCommand(() -> subsystems.climberPiston.setState(ClimberPiston.State.RETRACT))
+      .andThen(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.4)));
   }
   
   /**
@@ -284,10 +282,10 @@ public class RobotContainer {
     ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList).withPosition(0, 0).withSize(6, 4);
 
     autoPathChooser = new SendableChooser<InitialAutoPath>();
-    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
-    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
-    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR.name(), InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR);
-    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_ROLL_FORWARD.name(), InitialAutoPath.INITIATION_LINE_ROLL_FORWARD);
+    autoPathChooser.addOption("Left Trench", InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
+    autoPathChooser.addOption("Right Trench", InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
+    autoPathChooser.addOption("Shield Generator", InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR);
+    autoPathChooser.addOption("Roll Forward", InitialAutoPath.INITIATION_LINE_ROLL_FORWARD);
     autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
     
     // Add an optional delay before Autonomous movement
@@ -323,8 +321,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     resetSensors();
+
     InitialAutoPath path = autoPathChooser.getSelected();
-    float delay  = getInitialDelay();
+    float delay = getInitialDelay();
+
     switch (path) {
       case INITIATION_LINE_TO_RIGHT_TRENCH:
         return new SetStartPosition(subsystems.drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
@@ -341,8 +341,8 @@ public class RobotContainer {
       case INITIATION_LINE_ROLL_FORWARD:
         return new SetStartPosition(subsystems.drive, InitiationLineRollForward.INITIAL_POSITION)
           .andThen(new InitiationLineRollForward(subsystems, delay));
+
       default:
-        // TODO move off of Initiation Line
         return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
     }    
   }

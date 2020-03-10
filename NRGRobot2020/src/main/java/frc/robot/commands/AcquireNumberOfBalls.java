@@ -65,6 +65,6 @@ public class AcquireNumberOfBalls extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     acquirer.stop();
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 }

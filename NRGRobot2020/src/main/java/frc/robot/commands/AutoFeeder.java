@@ -43,7 +43,7 @@ public class AutoFeeder extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     feeder.rawFeeder(0);
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 
   // Returns true when the command should end.

@@ -8,6 +8,7 @@ import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.WaitForMinRPM;
+import frc.robot.utilities.Logger;
 
 public class AutoShootSequence extends SequentialCommandGroup {
   /**
@@ -40,5 +41,17 @@ public class AutoShootSequence extends SequentialCommandGroup {
       // Release Ball
       new AutoFeedToShooter(subsystems.acquirer, subsystems.feeder, subsystems.ballCounter)
     );
+  }
+
+  @Override
+  public void initialize(){
+    Logger.commandInit(this);
+    super.initialize();
+  }
+  
+  @Override
+  public void end(boolean interrupted){
+    super.end(interrupted);
+    Logger.commandEnd(this, interrupted);
   }
 }

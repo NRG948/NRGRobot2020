@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.ControlPanelSpinner;
-
+import frc.robot.utilities.Logger;
 import edu.wpi.first.wpilibj.DriverStation;
 
 public class PositionControl extends CommandBase {
@@ -34,6 +34,9 @@ public class PositionControl extends CommandBase {
   @Override
   public void initialize() {
     this.currentColor = panelSpinner.getColor();
+
+    Logger.commandInit(this, "color: " + currentColor);
+
     /**
      * The clockwise order of the colors is: Red, Yellow, Blue, Green.
      * This method assumes that when direction is positive, the Control Panel
@@ -81,6 +84,7 @@ public class PositionControl extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     panelSpinner.stopMotor();
+    Logger.commandEnd(this, interrupted);
   }
 
   // Returns true when the command should end.

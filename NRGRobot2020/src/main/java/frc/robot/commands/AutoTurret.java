@@ -79,6 +79,6 @@ public class AutoTurret extends CommandBase {
     if(interrupted){
       turret.turretAngleEnd();
     }
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 }

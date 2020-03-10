@@ -6,6 +6,7 @@ import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.subsystems.AcquirerPistons;
 import frc.robot.subsystems.AcquirerPistons.State;
+import frc.robot.utilities.Logger;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Turret;
 
@@ -16,5 +17,17 @@ public class PrepareForMatch extends ParallelCommandGroup {
       new SetHoodPosition(hood, 0),
       new SetAcquirerState(acquirerPiston, State.RETRACT)
       );
+  }
+
+  @Override
+  public void initialize(){
+    Logger.commandInit(this);
+    super.initialize();
+  }
+  
+  @Override
+  public void end(boolean interrupted){
+    super.end(interrupted);
+    Logger.commandEnd(this, interrupted);
   }
 }

@@ -29,16 +29,21 @@ public class Logger {
 
     public static void commandInit(Command command, String details) {
         logModeAndTime(); 
-        System.out.printf("%s Init %s\n", command.getName(), details);
+        System.out.printf(" + %s Init %s\n", command.getName(), details);
     }
 
-    public static void commandEnd(Command command) {
-        commandEnd(command, "");
+    public static void commandEnd(Command command, boolean interrupted) {
+        commandEnd(command, interrupted, "");
     }
 
-    public static void commandEnd(Command command, String details) {
+    public static void commandEnd(Command command, boolean interrupted, String details) {
         logModeAndTime();
-        System.out.printf("%s End %s\n", command.getName(), details);
+        System.out.printf(" - %s %s %s\n", command.getName(), interrupted ? "Interrupt" : "End", details);
+    }
+
+    public static void event(String s) {
+        logModeAndTime();
+        System.out.printf(" ! %s\n", s);
     }
 
     private static void logModeAndTime() {
@@ -50,13 +55,13 @@ public class Logger {
             logTimeSince(beginTeleop);
         } else if (ds.isTest()) {
             System.out.print("T ");
-        } else {
+        } else { // disabled
             System.out.print("D ");
         }
     }
 
     private static void logTimeSince(long beginTime) {
-        double deltaTime = (System.nanoTime() - beginTime) / 1000000000;
+        double deltaTime = (System.nanoTime() - beginTime) / 1000000000.0;
         System.out.printf("%6.3f ", deltaTime);
     }
 }

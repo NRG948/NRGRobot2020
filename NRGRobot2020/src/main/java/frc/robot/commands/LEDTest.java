@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.AddressableLEDs;
+import frc.robot.utilities.Logger;
 
 public class LEDTest extends CommandBase {
 
@@ -21,6 +22,7 @@ public class LEDTest extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    Logger.commandInit(this);
     AddressableLEDs.setAll(new Color8Bit(0,0,0));
   }
 
@@ -39,6 +41,7 @@ public class LEDTest extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    Logger.commandEnd(this, interrupted);
   }
 
   // Returns true when the command should end.

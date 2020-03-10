@@ -11,6 +11,7 @@ import frc.robot.utilities.Logger;
 public class SetRaspberryPiPipeline extends CommandBase {
     private final RaspberryPiVision raspPi;
     private final PipelineRunner runner;
+    
     public SetRaspberryPiPipeline(RaspberryPiVision raspPi, PipelineRunner runner) {
         this.raspPi = raspPi;
         this.runner = runner;
@@ -19,8 +20,8 @@ public class SetRaspberryPiPipeline extends CommandBase {
 
     @Override
     public void initialize() {
+        Logger.commandInit(this, runner.getName());
         raspPi.setPipelineRunner(runner);
-        Logger.commandInit(this);
     }
 
     @Override
@@ -29,7 +30,7 @@ public class SetRaspberryPiPipeline extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        Logger.commandEnd(this);
+        Logger.commandEnd(this, interrupted);
     }
 
     @Override

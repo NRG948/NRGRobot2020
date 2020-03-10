@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
  */
 public class ClimberPiston extends SubsystemBase {
 
-  public final DoubleSolenoid climberSolenoid = new DoubleSolenoid(4, 5);
+  public final DoubleSolenoid climberSolenoid = new DoubleSolenoid(5, 4);
 
   /** Define the possible climber states. */
   public enum State {

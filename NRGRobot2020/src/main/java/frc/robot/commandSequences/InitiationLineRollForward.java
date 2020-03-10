@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotSubsystems;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.Delay;
+import frc.robot.utilities.Logger;
 
 /**
  * Autonomous sequence for when our robot just wants to stay out of everyone's way.
@@ -43,5 +44,17 @@ public class InitiationLineRollForward extends SequentialCommandGroup {
     // Start anywhere on the initiation line, move forward one meter.
     super(new Delay(delay),
           new AutoDriveOnHeading(subsystems.drive).withMaxPower(0.5).forMeters(1));
+  }
+
+  @Override
+  public void initialize(){
+    Logger.commandInit(this);
+    super.initialize();
+  }
+  
+  @Override
+  public void end(boolean interrupted){
+    super.end(interrupted);
+    Logger.commandEnd(this, interrupted);
   }
 }

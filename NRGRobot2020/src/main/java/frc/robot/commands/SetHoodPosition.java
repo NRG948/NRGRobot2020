@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Hood;
+import frc.robot.utilities.Logger;
 
 public class SetHoodPosition extends CommandBase {
   private Hood hood;
@@ -22,7 +23,7 @@ public class SetHoodPosition extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    Logger.commandInit(this, "desired: " + desiredPosition + " current: " + hood.getPosition());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -40,6 +41,7 @@ public class SetHoodPosition extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     hood.hoodEnd();
+    Logger.commandEnd(this, interrupted, "current: " + hood.getPosition());
   }
 
   // Returns true when the command should end.

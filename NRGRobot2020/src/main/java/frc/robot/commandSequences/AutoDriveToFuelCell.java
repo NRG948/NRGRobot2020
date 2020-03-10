@@ -10,10 +10,12 @@ import frc.robot.commands.SetRaspberryPiPipeline;
 import frc.robot.commands.WaitForNewVisionData;
 import frc.robot.subsystems.AcquirerPistons.State;
 import frc.robot.subsystems.RaspberryPiVision.PipelineRunner;
+import frc.robot.utilities.Logger;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
+/**
+ * Autonomous command sequence that drives to and acquries the nearest fuel
+ * cell using vision processing input from the Raspberry Pi.
+ */
 public class AutoDriveToFuelCell extends SequentialCommandGroup {
   /**
    * Creates a new AutoDriveToFuelCell.
@@ -28,5 +30,17 @@ public class AutoDriveToFuelCell extends SequentialCommandGroup {
                     new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withRelativeCount(ballCount)),
         new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT)
     );
+  }
+
+  @Override
+  public void initialize(){
+    Logger.commandInit(this);
+    super.initialize();
+  }
+  
+  @Override
+  public void end(boolean interrupted){
+    super.end(interrupted);
+    Logger.commandEnd(this, interrupted);
   }
 }

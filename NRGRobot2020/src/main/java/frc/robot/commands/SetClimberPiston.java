@@ -5,12 +5,13 @@ import frc.robot.subsystems.ClimberPiston;
 import frc.robot.subsystems.ClimberPiston.State;
 import frc.robot.utilities.Logger;
 
+// This command isn't currently being used, but it might in the future.
 public class SetClimberPiston extends CommandBase {
-  // This command isn't currently being used, but it might in the future.
   private ClimberPiston climberPiston;
   private State state;
+
   /**
-   * Creates a new SetClimberWinch.
+   * Creates a new SetClimberWinch command.
    */
   public SetClimberPiston(ClimberPiston climberPiston, State state) {
     this.climberPiston = climberPiston;
@@ -33,7 +34,7 @@ public class SetClimberPiston extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Logger.commandEnd(this);
+    Logger.commandEnd(this, interrupted);
   }
 
   // Returns true when the command should end.

@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Drive;
+import frc.robot.utilities.Logger;
 
 public class AutoTurnToHeading extends CommandBase {
   
@@ -47,7 +48,7 @@ public class AutoTurnToHeading extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    System.out.println("TurnToHeading init Desired=" + desiredHeading + " Current=" + this.drive.getHeadingContinuous());
+    Logger.commandInit(this, "desired: " + desiredHeading + " current:" + this.drive.getHeadingContinuous());
     // this gives in the angle into the command and intializes the command and gives
     // in the tolerance
     drive.turnToHeadingInit(this.desiredHeading, tolerance);
@@ -64,8 +65,8 @@ public class AutoTurnToHeading extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    System.out.println("TurnToHeading end Current=" + this.drive.getHeadingContinuous());
     drive.turnToHeadingEnd(); // terminates the turn
+    Logger.commandEnd(this, interrupted, "current: " + this.drive.getHeadingContinuous());
   }
 
   // Checks whether the robot is on target 
