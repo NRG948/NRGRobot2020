@@ -101,8 +101,8 @@ public class RobotContainer {
   private JoystickButton xboxLeftBumper = new JoystickButton(xboxController, 5);
   private JoystickButton xboxRightBumper = new JoystickButton(xboxController, 6);
   private JoystickButton xboxBackButton = new JoystickButton(xboxController, 7);
-  private JoystickButton xboxButton9 = new JoystickButton(xboxController, 9);
-  private JoystickButton xboxButton10 = new JoystickButton(xboxController, 10);
+  private JoystickButton xboxLeftThumbstickButton = new JoystickButton(xboxController, 9);
+  private JoystickButton xboxRightThumbstickButton = new JoystickButton(xboxController, 10);
   // D-pad left/right - turret rotate
   // D-pad up/down - hood up/down
   // Xbox right trigger - manual shooter rpm
@@ -218,8 +218,8 @@ public class RobotContainer {
     // xboxRightBumper.whenPressed(shootFromTrenchNear);
     // xboxRightBumper.whenPressed(shootFromTrenchFar);
     xboxBackButton.whenPressed(manualTurret);
-    xboxButton9.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
-    xboxButton10.whenPressed( () -> subsystems.ballCounter.addToBallCount(1));
+    xboxLeftThumbstickButton.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
+    xboxRightThumbstickButton.whenPressed( () -> subsystems.ballCounter.addToBallCount(1));
 
     /*
      * Left joystick button mappings.
