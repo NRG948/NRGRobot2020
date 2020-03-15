@@ -221,24 +221,35 @@ public class RobotContainer {
     xboxButton9.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
     xboxButton10.whenPressed( () -> subsystems.ballCounter.addToBallCount(1));
 
-     /*
-     * Joystick button mappings.
+    /*
+     * Left joystick button mappings.
      */
     leftJoyButton1.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
-    rightJoyButton1.whenPressed( () -> subsystems.gearbox.toggleGears());
-    rightJoyButton10.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
-    rightJoyButton11.whenPressed( () -> resetSensors());
-    leftJoyButton8.whenPressed( () -> subsystems.limelightVision.toggleLed());
-    rightJoyButton3.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
-    rightJoyButton6.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
-    rightJoyButton5.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
     leftJoyButton2.whenPressed(interruptAll);
-    rightJoyButton4.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
-        .andThen(new SetHoodPosition(subsystems.hood, 2)));
-    rightJoyButton4.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
     leftJoyButton3.whenPressed(new ToggleClimberPiston(subsystems.climberPiston));
+
+    // Holding left joystick button 4 retracts the climber arm and winches the robot up.
     leftJoyButton4.whenHeld(new InstantCommand(() -> subsystems.climberPiston.setState(ClimberPiston.State.RETRACT))
       .andThen(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.4)));
+
+    leftJoyButton8.whenPressed( () -> subsystems.limelightVision.toggleLed());
+
+    /*
+     * Right joystick button mappings.
+     */
+    rightJoyButton1.whenPressed( () -> subsystems.gearbox.toggleGears());
+    rightJoyButton3.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
+
+    // Holding right joystick button 4 lowers the hood to its initial position and then returns it to
+    // the current position when released.
+    rightJoyButton4.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
+      .andThen(new SetHoodPosition(subsystems.hood, 2)));
+    rightJoyButton4.whenReleased( () -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
+
+    rightJoyButton5.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
+    rightJoyButton6.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
+    rightJoyButton10.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
+    rightJoyButton11.whenPressed( () -> resetSensors());
   }
   
   /**
