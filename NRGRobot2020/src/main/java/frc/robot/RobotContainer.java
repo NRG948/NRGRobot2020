@@ -341,26 +341,33 @@ public class RobotContainer {
     autoTab.add("PrepareForMatch", pForMatch);
   }
 
+  /**
+   * Returns the delay, in seconds, before starting the autonomous command sequence.
+   */
   private float getInitialDelay(){
-    InitialDelay delay  = autoDelay.getSelected();
-    if(delay == InitialDelay.DELAY_0){
+    InitialDelay delay = autoDelay.getSelected();
+
+    if (delay == InitialDelay.DELAY_0) {
       return 0;
-    }
-    else if(delay == InitialDelay.DELAY_2){
+    } else if (delay == InitialDelay.DELAY_2) {
       return 2;
-    }
-    else{
+    } else {
       return 5;
     }
   }
 
+  /**
+   * Returns the distance, in meters, to drive in the simple "roll-forward" autonomous
+   * command sequences.
+   */
   private double getRollForwardDistance(){
     RollForwardDistance distance = autoRollForward.getSelected();
-    if(distance == RollForwardDistance.DISTANCE_1){
+
+    if (distance == RollForwardDistance.DISTANCE_1) {
       return 1.0;
-    } else if(distance == RollForwardDistance.DISTANCE_2) {
+    } else if (distance == RollForwardDistance.DISTANCE_2) {
       return 2.0;
-    } else{
+    } else {
       return 3.0;
     }
   }
@@ -399,6 +406,9 @@ public class RobotContainer {
     }    
   }
 
+  /**
+   * Resets the robot sensors to initial values.
+   */
   public void resetSensors() {
     subsystems.drive.resetHeading();
     subsystems.drive.resetOdometry(new Pose2d(0,0, new Rotation2d()));
