@@ -52,14 +52,18 @@ import frc.robot.commands.SetHoodPosition;
 import frc.robot.commands.SetStartPosition;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AcquireNumberOfBalls;
+import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.AutoFeeder;
+import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.commands.AutoTurret;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.subsystems.ClimberPiston;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.AcquirerPistons.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -89,6 +93,10 @@ public class RobotContainer {
   private JoystickButton rightJoyButton4 = new JoystickButton(rightJoystick, 4);
   private JoystickButton rightJoyButton5 = new JoystickButton(rightJoystick, 5);
   private JoystickButton rightJoyButton6 = new JoystickButton(rightJoystick, 6);
+
+  //Regina's poor attempt to have the robot move in a square
+  private JoystickButton rightJoyButton9 = new JoystickButton(rightJoystick, 9);
+
   private JoystickButton rightJoyButton10 = new JoystickButton(rightJoystick, 10);
   private JoystickButton rightJoyButton11 = new JoystickButton(rightJoystick, 11);
 
@@ -248,6 +256,16 @@ public class RobotContainer {
 
     rightJoyButton5.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
     rightJoyButton6.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
+
+    //Regina's attempt to have the robot move in a square
+    rightJoyButton9.whenPressed(new AutoDriveOnHeading(subsystems.drive).withMaxPower(0.5).forMeters(1).
+    andThen(new AutoTurnToHeading(subsystems.drive).withMaxPower(0.35).toHeading(90)).
+    andThen(new AutoDriveOnHeading(subsystems.drive).withMaxPower(0.5).forMeters(1)).
+    andThen(new AutoTurnToHeading(subsystems.drive).withMaxPower(0.35).toHeading(90)).
+    andThen(new AutoDriveOnHeading(subsystems.drive).withMaxPower(0.5).forMeters(1)).
+    andThen(new AutoTurnToHeading(subsystems.drive).withMaxPower(0.35).toHeading(90)).
+    andThen(new AutoDriveOnHeading(subsystems.drive).withMaxPower(0.5).forMeters(1)));
+    
     rightJoyButton10.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
     rightJoyButton11.whenPressed( () -> resetSensors());
   }
