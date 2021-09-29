@@ -51,22 +51,21 @@ import frc.robot.commandSequences.StopAutoShootSequence;
 import frc.robot.commandSequences.Test;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.SetHoodPosition;
-import frc.robot.commands.SetLimelightHorizontalSkew;
 import frc.robot.commands.SetStartPosition;
-import frc.robot.commands.StopTurretAnglePID;
 import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.AcquireNumberOfBalls;
+import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.AutoFeeder;
+import frc.robot.commands.AutoTurnToHeading;
 import frc.robot.commands.AutoTurret;
-import frc.robot.commands.Delay;
-import frc.robot.commands.DisableShooterRPM;
 import frc.robot.utilities.NRGPreferences;
 import frc.robot.subsystems.ClimberPiston;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.AcquirerPistons.State;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.StartEndCommand;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -77,6 +76,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
  * commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
+
+  private static final String RASPBERRY_PI_PROCESSED_VIDEO_STREAM_URL = "http://frcvision.local:1182/stream.mjpg";
+  private static final String LIMELIGHT_VIDEO_STREAM_URL = "http://limelight.local:5800/stream.mjpg";
 
   // Joysticks and JoystickButtons
   private final Joystick leftJoystick = new Joystick(0);
@@ -107,8 +109,8 @@ public class RobotContainer {
   private JoystickButton xboxLeftBumper = new JoystickButton(xboxController, 5);
   private JoystickButton xboxRightBumper = new JoystickButton(xboxController, 6);
   private JoystickButton xboxBackButton = new JoystickButton(xboxController, 7);
-  private JoystickButton xboxButton9 = new JoystickButton(xboxController, 9);
-  private JoystickButton xboxButton10 = new JoystickButton(xboxController, 10);
+  private JoystickButton xboxLeftThumbstickButton = new JoystickButton(xboxController, 9);
+  private JoystickButton xboxRightThumbstickButton = new JoystickButton(xboxController, 10);
   // D-pad left/right - turret rotate
   // D-pad up/down - hood up/down
   // Xbox right trigger - manual shooter rpm
@@ -140,6 +142,7 @@ public class RobotContainer {
   // Autonomous chooser
   private SendableChooser<InitialAutoPath> autoPathChooser;
   private SendableChooser<InitialDelay> autoDelay;
+  private SendableChooser<RollForwardDistance> autoRollForward;
 
   private enum InitialAutoPath {
     INITIATION_LINE_TO_LEFT_TRENCH, 
@@ -150,6 +153,10 @@ public class RobotContainer {
 
   private enum InitialDelay {
     DELAY_0, DELAY_2, DELAY_5
+  }
+
+  private enum RollForwardDistance {
+    DISTANCE_1, DISTANCE_2, DISTANCE_3
   }
 
   /**
@@ -220,30 +227,39 @@ public class RobotContainer {
     }));
     xboxRightBumper.whenReleased(stopAutoShootSequence);
     xboxBackButton.whenPressed(manualTurret);
-    rightJoyButton7.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
-    xboxButton10.whenPressed( () -> subsystems.ballCounter.addToBallCount(1));
+    xboxLeftThumbstickButton.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
+    xboxRightThumbstickButton.whenPressed( () -> subsystems.ballCounter.addToBallCount(1));
 
-     /*
-     * Joystick button mappings.
+    /*
+     * Left joystick button mappings.
      */
     leftJoyButton1.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
-    rightJoyButton1.whenPressed( () -> subsystems.gearbox.toggleGears());
-    rightJoyButton10.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
-    rightJoyButton11.whenPressed( () -> resetSensors());
-    leftJoyButton8.whenPressed( () -> subsystems.limelightVision.toggleLed());
-    rightJoyButton3.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
-    rightJoyButton6.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
-    rightJoyButton5.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
     leftJoyButton2.whenPressed(interruptAll);
-    rightJoyButton4.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
-        .andThen(new SetHoodPosition(subsystems.hood, 2)));
-    rightJoyButton4.whenReleased(() -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
     leftJoyButton3.whenPressed(new ToggleClimberPiston(subsystems.climberPiston));
+
+    // Holding left joystick button 4 retracts the climber arm and winches the robot up.
     leftJoyButton4.whenHeld(new InstantCommand(() -> subsystems.climberPiston.setState(ClimberPiston.State.RETRACT))
       .andThen(new TurnClimberWinch(subsystems.climberWinch).withMaxPower(0.4)));
 
+    leftJoyButton8.whenPressed( () -> subsystems.limelightVision.toggleLed());
 
-    //rightJoyButton9.whenPressed(new AutoDriveOnHeading(subsystems.drive).withMaxPower(0.5).forMeters(0.25));
+    /*
+     * Right joystick button mappings.
+     */
+    rightJoyButton1.whenPressed( () -> subsystems.gearbox.toggleGears());
+    rightJoyButton3.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
+
+    // Holding right joystick button 4 lowers the hood to its initial position and then returns it to
+    // the current position when released.
+    rightJoyButton4.whenPressed(new InstantCommand(() -> { originalHoodPosition = subsystems.hood.getPosition(); })
+      .andThen(new SetHoodPosition(subsystems.hood, 2)));
+    rightJoyButton4.whenReleased( () -> new SetHoodPosition(subsystems.hood, originalHoodPosition).schedule());
+
+    rightJoyButton5.whenPressed(new DriveToFuelCell(subsystems.drive, subsystems.raspPi));
+    rightJoyButton6.whenPressed(new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
+    
+    rightJoyButton10.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
+    rightJoyButton11.whenPressed( () -> resetSensors());
   }
   
   /**
@@ -254,36 +270,48 @@ public class RobotContainer {
     CameraServer cs = CameraServer.getInstance();
 
     // Initialize the video sources and create a switched camera.
-    HttpCamera processedVideo = new HttpCamera("Processed", "http://frcvision.local:1182/stream.mjpg");
+    HttpCamera processedVideo = new HttpCamera("Processed", RASPBERRY_PI_PROCESSED_VIDEO_STREAM_URL);
     processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
-    HttpCamera limelightVideo = new HttpCamera("limelight", "http://limelight.local:5800/stream.mjpg");
+    HttpCamera limelightVideo = new HttpCamera("limelight", LIMELIGHT_VIDEO_STREAM_URL);
     limelightVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
     MjpegServer switchedCamera = cs.addSwitchedCamera("Switched");
     switchedCamera.setSource(processedVideo);
 
-    
+    // Create a layout for useful robot status items the driver needs.
+    ShuffleboardLayout statusLayout = driverTab.getLayout("Status", BuiltInLayouts.kGrid)
+      .withPosition(0, 0)
+      .withSize(2, 1);
+
+    statusLayout.addNumber("Ball Count", () -> subsystems.ballCounter.getBallCount());
+    statusLayout.addBoolean("Compressor", () -> !compressor.enabled());
+
     // Create a layout and add buttons to select the source of the switched camera.
-    ShuffleboardLayout videoToggleLayout = driverTab.getLayout("Video Toggle", BuiltInLayouts.kList).withPosition(0,0).withSize(2, 2);
-    videoToggleLayout.add("Processed", new InstantCommand(() -> switchedCamera.setSource(processedVideo)));
+    ShuffleboardLayout videoToggleLayout = driverTab.getLayout("Video Toggle", BuiltInLayouts.kList)
+      .withPosition(0, 1)
+      .withSize(2, 2);
+
+      videoToggleLayout.add("Processed", new InstantCommand(() -> switchedCamera.setSource(processedVideo)));
     videoToggleLayout.add("limelight", new InstantCommand(() -> switchedCamera.setSource(limelightVideo)));  
 
-    // Add the switched camera to the Shuffleboard tab.
-    HttpCamera switchedVideo = new HttpCamera("Switched", "http://localhost/stream.mjpg");
-    driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream).withPosition(2, 0).withSize(4, 3);
+    // Add the switched camera to the Shuffleboard tab. (Use the Raspberry Pi processed video stream URL
+    // since that is the default video stream.)
+    HttpCamera switchedVideo = new HttpCamera("Switched", RASPBERRY_PI_PROCESSED_VIDEO_STREAM_URL);
+    driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream)
+      .withPosition(2, 0)
+      .withSize(4, 3);
     
     // TODO Remove temporary buttons to test drive to feeder.
-    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList).withPosition(6, 0).withSize(2, 2);
+    ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList)
+      .withPosition(6, 0)
+      .withSize(2, 2);
+
     loadingStationLayout.add("Drive to right feeder", new AutoDriveToLoadingStation(
         subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(22)));
     loadingStationLayout.add("Drive to left feeder", new AutoDriveToLoadingStation(
       subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(-22)));
     loadingStationLayout.add("Drive to center feeder", new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
-
-    ShuffleboardLayout layout = driverTab.getLayout("Ball counter",  BuiltInLayouts.kList).withPosition(0, 2)
-    .withSize(2, 1);  
-    layout.addNumber("Ball Count", () -> subsystems.ballCounter.getBallCount());
   }
 
   /**
@@ -293,38 +321,64 @@ public class RobotContainer {
     ShuffleboardTab autoTab = Shuffleboard.getTab("Autonomous");
 
     // Create a list layout and add the autonomous selection widgets
-    ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList).withPosition(0, 0).withSize(6, 4);
+    ShuffleboardLayout autoLayout = autoTab.getLayout("Autonomous", BuiltInLayouts.kList)
+      .withPosition(0, 0)
+      .withSize(6, 4);
 
     autoPathChooser = new SendableChooser<InitialAutoPath>();
-    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
-    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH.name(), InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
-    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR.name(), InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR);
-    autoPathChooser.addOption(InitialAutoPath.INITIATION_LINE_ROLL_FORWARD.name(), InitialAutoPath.INITIATION_LINE_ROLL_FORWARD);
-    autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    autoPathChooser.addOption("Left Trench", InitialAutoPath.INITIATION_LINE_TO_LEFT_TRENCH);
+    autoPathChooser.addOption("Right Trench", InitialAutoPath.INITIATION_LINE_TO_RIGHT_TRENCH);
+    autoPathChooser.addOption("Shield Generator", InitialAutoPath.INITIATION_LINE_TO_SHIELD_GENERATOR);
+    autoPathChooser.addOption("Roll Forward", InitialAutoPath.INITIATION_LINE_ROLL_FORWARD);
+    autoLayout.add("Initiation Line Path", autoPathChooser).withWidget(BuiltInWidgets.kComboBoxChooser);
     
     // Add an optional delay before Autonomous movement
     autoDelay = new SendableChooser<InitialDelay>();
     autoDelay.addOption("0 sec", InitialDelay.DELAY_0);
     autoDelay.addOption("2 sec", InitialDelay.DELAY_2);
     autoDelay.addOption("5 sec", InitialDelay.DELAY_5);
-    autoLayout.add("Delay before movement", autoDelay).withWidget(BuiltInWidgets.kSplitButtonChooser);
+    autoLayout.add("Delay before movement", autoDelay).withWidget(BuiltInWidgets.kComboBoxChooser);
     // autoLayout.add("Delay before movement", autoDelay).withWidget(BuiltInWidgets.kNumberBar);
 
-    
+    //Selectable options for the Roll Forward auto routine. 
+    autoRollForward = new SendableChooser<>();
+    autoRollForward.addOption("1m", RollForwardDistance.DISTANCE_1);
+    autoRollForward.addOption("2m", RollForwardDistance.DISTANCE_2);
+    autoRollForward.addOption("3m", RollForwardDistance.DISTANCE_3);
+    autoLayout.add("Distance to Roll Forward", autoRollForward).withWidget(BuiltInWidgets.kComboBoxChooser);
+
     PrepareForMatch pForMatch = new PrepareForMatch(subsystems.hood, subsystems.turret, subsystems.acquirerPiston);
     autoTab.add("PrepareForMatch", pForMatch);
   }
 
+  /**
+   * Returns the delay, in seconds, before starting the autonomous command sequence.
+   */
   private float getInitialDelay(){
-    InitialDelay delay  = autoDelay.getSelected();
-    if(delay == InitialDelay.DELAY_0){
+    InitialDelay delay = autoDelay.getSelected();
+
+    if (delay == InitialDelay.DELAY_0) {
       return 0;
-    }
-    else if(delay == InitialDelay.DELAY_2){
+    } else if (delay == InitialDelay.DELAY_2) {
       return 2;
-    }
-    else{
+    } else {
       return 5;
+    }
+  }
+
+  /**
+   * Returns the distance, in meters, to drive in the simple "roll-forward" autonomous
+   * command sequences.
+   */
+  private double getRollForwardDistance(){
+    RollForwardDistance distance = autoRollForward.getSelected();
+
+    if (distance == RollForwardDistance.DISTANCE_1) {
+      return 1.0;
+    } else if (distance == RollForwardDistance.DISTANCE_2) {
+      return 2.0;
+    } else {
+      return 3.0;
     }
   }
 
@@ -335,30 +389,36 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     resetSensors();
-    return new Test(subsystems);
-    // InitialAutoPath path = autoPathChooser.getSelected();
-    // float delay  = getInitialDelay();
-    // switch (path) {
-    //   case INITIATION_LINE_TO_RIGHT_TRENCH:
-    //     return new SetStartPosition(subsystems.drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
-    //       .andThen(new InitiationLineToRightTrenchAuto(subsystems, delay));
 
-    //   case INITIATION_LINE_TO_LEFT_TRENCH:
-    //     return new SetStartPosition(subsystems.drive, InitiationLineToLeftTrenchAuto.INITIAL_POSITION)
-    //       .andThen(new InitiationLineToLeftTrenchAuto(subsystems, delay));
+    InitialAutoPath path = autoPathChooser.getSelected();
+    float delay = getInitialDelay();
+    double distance = getRollForwardDistance();
 
-    //   case INITIATION_LINE_TO_SHIELD_GENERATOR:
-    //     return new SetStartPosition(subsystems.drive, InitiationLineToShieldGeneratorAuto.INITIAL_POSITION)
-    //       .andThen(new InitiationLineToShieldGeneratorAuto(subsystems, delay));
+    switch (path) {
+      case INITIATION_LINE_TO_RIGHT_TRENCH:
+        return new SetStartPosition(subsystems.drive, InitiationLineToRightTrenchAuto.INITIAL_POSITION)
+          .andThen(new InitiationLineToRightTrenchAuto(subsystems, delay));
 
-    //   case INITIATION_LINE_ROLL_FORWARD:
-    //     return new SetStartPosition(subsystems.drive, InitiationLineRollForward.INITIAL_POSITION)
-    //       .andThen(new InitiationLineRollForward(subsystems, delay));
-    //   default:
-    //     // TODO move off of Initiation Line
-    //     return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
+      case INITIATION_LINE_TO_LEFT_TRENCH:
+        return new SetStartPosition(subsystems.drive, InitiationLineToLeftTrenchAuto.INITIAL_POSITION)
+          .andThen(new InitiationLineToLeftTrenchAuto(subsystems, delay));
+
+      case INITIATION_LINE_TO_SHIELD_GENERATOR:
+        return new SetStartPosition(subsystems.drive, InitiationLineToShieldGeneratorAuto.INITIAL_POSITION)
+          .andThen(new InitiationLineToShieldGeneratorAuto(subsystems, delay));
+
+      case INITIATION_LINE_ROLL_FORWARD:
+        return new SetStartPosition(subsystems.drive, InitiationLineRollForward.INITIAL_POSITION)
+          .andThen(new InitiationLineRollForward(subsystems, delay, distance));
+
+      default:
+        return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
+    }
     }    
 
+  /**
+   * Resets the robot sensors to initial values.
+   */
   public void resetSensors() {
     subsystems.drive.resetHeading();
     subsystems.drive.resetOdometry(new Pose2d(0,0, new Rotation2d()));

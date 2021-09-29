@@ -12,7 +12,6 @@ import frc.robot.commands.AcquireNumberOfBalls;
 import frc.robot.commands.AutoFeeder;
 import frc.robot.commands.Delay;
 import frc.robot.commands.FollowWaypoints;
-import frc.robot.commands.MaintainShooterRPM;
 import frc.robot.commands.SetAcquirerState;
 import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.subsystems.AcquirerPistons.State;

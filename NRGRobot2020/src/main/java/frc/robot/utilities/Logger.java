@@ -15,6 +15,9 @@ public class Logger {
 
     public static void autoStarted() {
         System.out.println("\n<<<<<<<<<<<<<<<<<<< Auto Mode >>>>>>>>>>>>>>>>>>>>\n");
+        System.out.println("\n" + DriverStation.getInstance().getEventName() + " " + DriverStation.getInstance().getMatchType().name() + 
+                           "\nMatch Number: " + DriverStation.getInstance().getMatchNumber() + 
+                           "\nAlliance Color/Position: " + DriverStation.getInstance().getAlliance().name() + DriverStation.getInstance().getLocation());
         beginAuto = System.nanoTime();
     }
 
