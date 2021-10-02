@@ -209,15 +209,15 @@ public class RobotContainer {
     // Holding x button activates AutoDriveToFuelcellsSequence
     xboxButtonX.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND)
       .alongWith(new TurnTurretToAngle(subsystems.turret, 77), new DriveToFuelCell(subsystems.drive, subsystems.raspPi)));
-    xboxButtonX.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
-      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
+    xboxButtonX.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder)
+      .alongWith(new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
     xboxButtonX.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
 
     // Holding x button activates AcquirerSequence
     xboxButtonY.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND)
       .alongWith(new TurnTurretToAngle(subsystems.turret, 77)));
-    xboxButtonY.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).alongWith(
-      new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
+    xboxButtonY.whenHeld(new AutoFeeder(subsystems.ballCounter, subsystems.feeder).
+      alongWith(new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
     xboxButtonY.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
     xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret).usingLimelight());
     xboxRightBumper.whenHeld(new InstantCommand(() -> {
@@ -294,7 +294,7 @@ public class RobotContainer {
       .withPosition(0, 1)
       .withSize(2, 2);
 
-      videoToggleLayout.add("Processed", new InstantCommand(() -> switchedCamera.setSource(processedVideo)));
+    videoToggleLayout.add("Processed", new InstantCommand(() -> switchedCamera.setSource(processedVideo)));
     videoToggleLayout.add("limelight", new InstantCommand(() -> switchedCamera.setSource(limelightVideo)));  
 
     // Add the switched camera to the Shuffleboard tab. (Use the Raspberry Pi processed video stream URL
@@ -310,7 +310,7 @@ public class RobotContainer {
       .withSize(2, 2);
 
     loadingStationLayout.add("Drive to right feeder", new AutoDriveToLoadingStation(
-        subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(22)));
+      subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(22)));
     loadingStationLayout.add("Drive to left feeder", new AutoDriveToLoadingStation(
       subsystems.raspPi, subsystems.drive, Units.inchesToMeters(-11), Units.inchesToMeters(-22)));
     loadingStationLayout.add("Drive to center feeder", new AutoDriveToLoadingStation(subsystems.raspPi, subsystems.drive, 0.0, 0.0));
@@ -416,7 +416,7 @@ public class RobotContainer {
       default:
         return new SetStartPosition(subsystems.drive, new Pose2d(0.0, 0.0, new Rotation2d(0)));
     }
-    }    
+  }    
 
   /**
    * Resets the robot sensors to initial values.
