@@ -203,7 +203,10 @@ public class RobotContainer {
     /*
      * Xbox controller button mappings
      */
-    xboxButtonA.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
+    // xboxButtonA.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
+    xboxButtonA.whenHeld(shootFromTrenchFar);
+    xboxButtonA.whenReleased(stopAutoShootSequence);
+
     xboxButtonB.whenPressed(new MaintainShooterRPM(subsystems.shooterRPM));
     
     // Holding x button activates AutoDriveToFuelcellsSequence
@@ -220,11 +223,12 @@ public class RobotContainer {
       new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withAbsoluteCount(4)));
     xboxButtonY.whenReleased(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT));
     xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret).usingLimelight());
-    xboxRightBumper.whenHeld(new InstantCommand(() -> {
-      if(this.xboxController.getTriggerAxis(Hand.kRight) >= .3)
-        shootFromTrenchNear.execute();
-      shootFromInitiation.execute();
-    }));
+    xboxRightBumper.whileHeld(shootFromInitiation);
+    // xboxRightBumper.whenHeld(new InstantCommand(() -> {
+    //   if(this.xboxController.getTriggerAxis(Hand.kRight) >= .3)
+    //     shootFromTrenchNear.execute();
+    //   shootFromInitiation.execute();
+    // }));
     xboxRightBumper.whenReleased(stopAutoShootSequence);
     xboxBackButton.whenPressed(manualTurret);
     xboxLeftThumbstickButton.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
