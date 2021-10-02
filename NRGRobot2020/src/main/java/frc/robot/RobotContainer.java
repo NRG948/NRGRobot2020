@@ -235,6 +235,8 @@ public class RobotContainer {
      */
     leftJoyButton1.whenHeld(new ManualDriveStraight(subsystems.drive, leftJoystick));
     leftJoyButton2.whenPressed(interruptAll);
+
+    // Toggles Climber arm, First stage of climb sequence.
     leftJoyButton3.whenPressed(new ToggleClimberPiston(subsystems.climberPiston));
 
     // Holding left joystick button 4 retracts the climber arm and winches the robot up.
