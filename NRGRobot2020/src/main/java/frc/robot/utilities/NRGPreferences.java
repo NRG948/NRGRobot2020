@@ -173,7 +173,7 @@ public class NRGPreferences {
   
     // Shooter RPM preferences
     public static final NumberPrefs WAIT_FOR_RPM_OFFSET = new NumberPrefs("WaitForRpmOffset", 100.0);
-    public static final NumberPrefs SHOOTER_RPM_INITIATION =  new NumberPrefs("ShooterRpmInitiation", 3400);
+    public static final NumberPrefs SHOOTER_RPM_INITIATION =  new NumberPrefs("ShooterRpmInitiation", 3200);
     public static final NumberPrefs SHOOTER_RPM_TRENCH_NEAR =  new NumberPrefs("ShooterRpmTrenchNear", 3550);
     public static final NumberPrefs SHOOTER_RPM_TRENCH_FAR =  new NumberPrefs("ShooterRpmTrenchFar", 3730);
     public static final NumberPrefs SHOOTER_TEST_RPM = new NumberPrefs("ShooterTestRPM", 4000);
