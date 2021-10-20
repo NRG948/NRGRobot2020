@@ -109,6 +109,7 @@ public class RobotContainer {
   private JoystickButton xboxLeftBumper = new JoystickButton(xboxController, 5);
   private JoystickButton xboxRightBumper = new JoystickButton(xboxController, 6);
   private JoystickButton xboxBackButton = new JoystickButton(xboxController, 7);
+  private JoystickButton xboxStartButton = new JoystickButton(xboxController, 8);
   private JoystickButton xboxLeftThumbstickButton = new JoystickButton(xboxController, 9);
   private JoystickButton xboxRightThumbstickButton = new JoystickButton(xboxController, 10);
   // D-pad left/right - turret rotate
@@ -129,7 +130,7 @@ public class RobotContainer {
   private final ManualHood manualHood = new ManualHood(subsystems.hood, xboxController);
   private final ManualShooter manualShooter = new ManualShooter(subsystems.shooterRPM, xboxController);
   private final AutoShootSequence shootFromInitiation = new AutoShootSequence(subsystems, SHOOTER_RPM_INITIATION.getValue(),  HOOD_POSITION_INITIATION.getValue(),   0.0);
-  private final AutoShootSequence shootFromTrenchNear = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_NEAR.getValue(), HOOD_POSITION_TRENCH_NEAR.getValue(), -1.5);
+  private final AutoShootSequence shootFromTrenchNear = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_NEAR.getValue(), /*HOOD_POSITION_TRENCH_NEAR.getValue()*/ 90.0, -1.5);
   private final AutoShootSequence shootFromTrenchFar  = new AutoShootSequence(subsystems, SHOOTER_RPM_TRENCH_FAR.getValue(),  HOOD_POSITION_TRENCH_FAR.getValue(), -1.0);
   private final CommandBase stopAutoShootSequence = new StopAutoShootSequence(subsystems);
 
@@ -204,7 +205,7 @@ public class RobotContainer {
      * Xbox controller button mappings
      */
     // xboxButtonA.whenPressed(new ToggleAcquirerPiston(subsystems.acquirerPiston));
-    xboxButtonA.whenHeld(shootFromTrenchFar);
+    xboxButtonA.whenHeld(shootFromTrenchNear);
     xboxButtonA.whenReleased(stopAutoShootSequence);
 
     xboxButtonB.whenPressed(new MaintainShooterRPM(subsystems.shooterRPM));
@@ -231,8 +232,12 @@ public class RobotContainer {
     // }));
     xboxRightBumper.whenReleased(stopAutoShootSequence);
     xboxBackButton.whenPressed(manualTurret);
+    xboxStartButton.whenPressed(new SetAcquirerState(subsystems.acquirerPiston, State.RETRACT)
+      .alongWith(new TurnTurretToAngle(subsystems.turret, 10.0),
+                 new SetHoodPosition(subsystems.hood, 2.0)));
     xboxLeftThumbstickButton.whenPressed( () -> subsystems.ballCounter.addToBallCount(-1));
     xboxRightThumbstickButton.whenPressed( () -> subsystems.ballCounter.addToBallCount(1));
+
 
     /*
      * Left joystick button mappings.
@@ -288,14 +293,14 @@ public class RobotContainer {
     // Create a layout for useful robot status items the driver needs.
     ShuffleboardLayout statusLayout = driverTab.getLayout("Status", BuiltInLayouts.kGrid)
       .withPosition(0, 0)
-      .withSize(2, 1);
+      .withSize(2, 2);
 
     statusLayout.addNumber("Ball Count", () -> subsystems.ballCounter.getBallCount());
     statusLayout.addBoolean("Compressor", () -> !compressor.enabled());
 
     // Create a layout and add buttons to select the source of the switched camera.
     ShuffleboardLayout videoToggleLayout = driverTab.getLayout("Video Toggle", BuiltInLayouts.kList)
-      .withPosition(0, 1)
+      .withPosition(0, 2)
       .withSize(2, 2);
 
     videoToggleLayout.add("Processed", new InstantCommand(() -> switchedCamera.setSource(processedVideo)));
@@ -306,7 +311,7 @@ public class RobotContainer {
     HttpCamera switchedVideo = new HttpCamera("Switched", RASPBERRY_PI_PROCESSED_VIDEO_STREAM_URL);
     driverTab.add("Switched Video", switchedVideo).withWidget(BuiltInWidgets.kCameraStream)
       .withPosition(2, 0)
-      .withSize(4, 3);
+      .withSize(3, 3);
     
     // TODO Remove temporary buttons to test drive to feeder.
     ShuffleboardLayout loadingStationLayout = driverTab.getLayout("Loading Station Picker", BuiltInLayouts.kList)

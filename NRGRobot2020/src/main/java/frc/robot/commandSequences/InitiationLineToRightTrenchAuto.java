@@ -65,7 +65,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
         .alongWith(new SetAcquirerState(subsystems.acquirerPiston, State.EXTEND),
                    new SetRaspberryPiPipeline(subsystems.raspPi, PipelineRunner.FUEL_CELL),
                    new TurnTurretToAngle(subsystems.turret, 50),
-                   new SetHoodPosition(subsystems.hood, 72),
+                   new SetHoodPosition(subsystems.hood, 90),
                    new AutoFeeder(subsystems.ballCounter, subsystems.feeder)),
       /* Start on the initiation line, centered in line with the balls on our
        * alliance's trench (A) and move toward the first ball (B). At the same time,
@@ -78,7 +78,7 @@ public class InitiationLineToRightTrenchAuto extends SequentialCommandGroup {
                           false)
         .alongWith(new AcquireNumberOfBalls(subsystems.acquirer, subsystems.ballCounter).withRelativeCount(1).withTimeout(3)),
       // Shoot all four balls.
-      new AutoShootSequence(subsystems, 3550, 72, -1.5),
+      new AutoShootSequence(subsystems, 3550, 90, -1.5),
       // Wait for fourth ball to clear the shooter
       new Delay(0.3),
       // Stop the AutoShootSequence

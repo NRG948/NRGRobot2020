@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.RobotSubsystems;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.commands.Delay;
+import frc.robot.commands.TurnTurretToAngle;
 import frc.robot.utilities.Logger;
 
 /**
@@ -43,7 +44,10 @@ public class InitiationLineRollForward extends SequentialCommandGroup {
   public InitiationLineRollForward(RobotSubsystems subsystems, float delay, double distance) {
     // Start anywhere on the initiation line, move forward one meter.
     super(new Delay(delay),
-          new AutoDriveOnHeading(subsystems.drive).withMaxPower(0.5).forMeters(distance));
+          new AutoDriveOnHeading(subsystems.drive).withMaxPower(0.5).forMeters(distance)
+          // .alongWith(new TurnTurretToAngle(subsystems.turret, 130)),
+          // new AutoShootSequence(subsystems, 3550, 72, -1)
+          );
   }
 
   @Override
