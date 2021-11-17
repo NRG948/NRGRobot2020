@@ -42,7 +42,7 @@ public class Drive extends SubsystemBase {
   private WPI_VictorSPX rightMotor2 = new WPI_VictorSPX(DriveConstants.kRightMotor2Port);
   private WPI_VictorSPX leftMotor1 = new WPI_VictorSPX(DriveConstants.kLeftMotor1Port);
   private WPI_VictorSPX leftMotor2 = new WPI_VictorSPX(DriveConstants.kLeftMotor2Port);
-
+  private boolean isAcquirerFront = true;
   // The motors on the left side of the drive.
   private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(leftMotor1, leftMotor2);
 
@@ -372,6 +372,14 @@ public class Drive extends SubsystemBase {
   public void turnToHeadingEnd() {
     this.diffDrive.stopMotor();
     this.turnPIDController = null;
+  }
+
+  public void invertIsAcquirerFront() {
+    isAcquirerFront = !isAcquirerFront;
+  }
+
+  public boolean getIsAcquirerFront() {
+    return isAcquirerFront;
   }
 
   /**

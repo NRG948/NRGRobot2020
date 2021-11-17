@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 /**
  * An example command that uses an example subsystem.
@@ -41,7 +42,8 @@ public class ManualDrive extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    boolean isAcquirerFront = NRGPreferences.DRIVE_ACQUIRER_IS_FRONT.getValue();
+    boolean isAcquirerFront = m_drive.getIsAcquirerFront();
+    // NRGPreferences.DRIVE_ACQUIRER_IS_FRONT.getValue();
 
     if (NRGPreferences.DRIVE_USE_XBOX_CONTROL.getValue()) {
       double y = m_xboxController.getY(Hand.kLeft) * (isAcquirerFront ? -1.0 : 1.0);

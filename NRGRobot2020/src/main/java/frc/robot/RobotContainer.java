@@ -92,6 +92,7 @@ public class RobotContainer {
   private JoystickButton leftJoyButton9 = new JoystickButton(leftJoystick, 9);
 
   private JoystickButton rightJoyButton1 = new JoystickButton(rightJoystick, 1);
+  private JoystickButton rightJoyButton2 = new JoystickButton(rightJoystick, 2);
   private JoystickButton rightJoyButton3 = new JoystickButton(rightJoystick, 3);
   private JoystickButton rightJoyButton4 = new JoystickButton(rightJoystick, 4);
   private JoystickButton rightJoyButton5 = new JoystickButton(rightJoystick, 5);
@@ -258,6 +259,9 @@ public class RobotContainer {
      * Right joystick button mappings.
      */
     rightJoyButton1.whenPressed( () -> subsystems.gearbox.toggleGears());
+    rightJoyButton2.whenPressed( new InstantCommand(() -> {
+      subsystems.drive.invertIsAcquirerFront();
+    }));
     rightJoyButton3.whenPressed(new AutoDriveToFuelCell(subsystems, 1));
 
     // Holding right joystick button 4 lowers the hood to its initial position and then returns it to
