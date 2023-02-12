@@ -7,24 +7,24 @@ import static frc.robot.utilities.NRGPreferences.SHOOTER_RPM_INITIATION;
 import static frc.robot.utilities.NRGPreferences.SHOOTER_RPM_TRENCH_NEAR;
 import static frc.robot.utilities.NRGPreferences.SHOOTER_RPM_TRENCH_FAR;
 
-import edu.wpi.cscore.HttpCamera;
-import edu.wpi.cscore.MjpegServer;
-import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.cscore.HttpCamera;
+import edu.wpi.first.cscore.MjpegServer;
+import edu.wpi.first.cscore.VideoSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.math.util.Units;
 import frc.robot.commands.ManualDriveStraight;
 import frc.robot.commands.ManualFeeder;
 import frc.robot.commands.ManualHood;
@@ -121,7 +121,7 @@ public class RobotContainer {
 
   // Create subsystems
   private final RobotSubsystems subsystems = new RobotSubsystems();
-  private final Compressor compressor = new Compressor();
+  //private final Compressor compressor = new Compressor(); //commented out everything compressor related
 
   // Commands
   private final ManualDrive manualDrive = new ManualDrive(subsystems.drive, leftJoystick, rightJoystick, xboxController);
@@ -192,7 +192,7 @@ public class RobotContainer {
     subsystems.shooterRPM.addShuffleBoardTab();
     subsystems.limelightVision.addShuffleboardTab();
     
-    compressor.start();
+    //compressor.start(); //screw compressors, we don't need them
   }
 
   /**
@@ -227,7 +227,7 @@ public class RobotContainer {
     xboxLeftBumper.whenPressed(new AutoTurret(subsystems.turret).usingLimelight());
     xboxRightBumper.whileHeld(shootFromInitiation);
     // xboxRightBumper.whenHeld(new InstantCommand(() -> {
-    //   if(this.xboxController.getTriggerAxis(Hand.kRight) >= .3)
+    //   if(this.xboxController.getRightTriggerAxis() >= .3)
     //     shootFromTrenchNear.execute();
     //   shootFromInitiation.execute();
     // }));
@@ -282,8 +282,7 @@ public class RobotContainer {
    */
   private void addDriverShuffleboardTab() {
     ShuffleboardTab driverTab = Shuffleboard.getTab("Driver");
-    CameraServer cs = CameraServer.getInstance();
-
+    // CameraServer cs = CameraServer.getInstance() //got removed in 2022
     // Initialize the video sources and create a switched camera.
     HttpCamera processedVideo = new HttpCamera("Processed", RASPBERRY_PI_PROCESSED_VIDEO_STREAM_URL);
     processedVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
@@ -291,7 +290,7 @@ public class RobotContainer {
     HttpCamera limelightVideo = new HttpCamera("limelight", LIMELIGHT_VIDEO_STREAM_URL);
     limelightVideo.setConnectionStrategy(VideoSource.ConnectionStrategy.kKeepOpen);
 
-    MjpegServer switchedCamera = cs.addSwitchedCamera("Switched");
+    final MjpegServer switchedCamera= CameraServer.addSwitchedCamera("Switched");
     switchedCamera.setSource(processedVideo);
 
     // Create a layout for useful robot status items the driver needs.
@@ -300,7 +299,7 @@ public class RobotContainer {
       .withSize(2, 2);
 
     statusLayout.addNumber("Ball Count", () -> subsystems.ballCounter.getBallCount());
-    statusLayout.addBoolean("Compressor", () -> !compressor.enabled());
+    //statusLayout.addBoolean("Compressor", () -> !compressor.enabled()); //no more compressor
 
     // Create a layout and add buttons to select the source of the switched camera.
     ShuffleboardLayout videoToggleLayout = driverTab.getLayout("Video Toggle", BuiltInLayouts.kList)

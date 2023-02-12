@@ -2,20 +2,21 @@ package frc.robot.subsystems;
 
 import java.util.List;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+//import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
-import edu.wpi.first.wpilibj.SlewRateLimiter;
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
-import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
+import edu.wpi.first.wpilibj.motorcontrol.PWMVictorSPX;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -25,7 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpiutil.math.MathUtil;
+import edu.wpi.first.math.MathUtil;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.AutoDriveOnHeading;
 import frc.robot.utilities.NRGPreferences;
@@ -39,28 +40,26 @@ public class Drive extends SubsystemBase {
    */
 
   //Slew rate filter
-  SlewRateLimiter filter = new SlewRateLimiter(0.5);
+  //SlewRateLimiter leftFilter = new SlewRateLimiter(2);
+  //SlewRateLimiter rightFilter = new SlewRateLimiter(2);
+
   // Gyro Declaration
   private AHRS navx = new AHRS(SPI.Port.kMXP);
   // Motor Declaration
-  private WPI_VictorSPX rightMotor1 = new WPI_VictorSPX(DriveConstants.kRightMotor1Port);
-  private WPI_VictorSPX rightMotor2 = new WPI_VictorSPX(DriveConstants.kRightMotor2Port);
-  private WPI_VictorSPX leftMotor1 = new WPI_VictorSPX(DriveConstants.kLeftMotor1Port);
-  private WPI_VictorSPX leftMotor2 = new WPI_VictorSPX(DriveConstants.kLeftMotor2Port);
+  private PWMVictorSPX rightMotor1 = new PWMVictorSPX(DriveConstants.kRightMotor1Port);
+  private PWMVictorSPX rightMotor2 = new PWMVictorSPX(DriveConstants.kRightMotor2Port);
+  private PWMVictorSPX leftMotor1 = new PWMVictorSPX(DriveConstants.kLeftMotor1Port);
+  private PWMVictorSPX leftMotor2 = new PWMVictorSPX(DriveConstants.kLeftMotor2Port);
   private boolean isAcquirerFront = true;
   // The motors on the left side of the drive.
-  private final SpeedControllerGroup leftMotors = new SpeedControllerGroup(leftMotor1, leftMotor2);
-  
-
+  private final MotorControllerGroup leftMotors = new MotorControllerGroup(leftMotor1, leftMotor2);
+ 
   // The motors on the right side of the drive.
-  private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(rightMotor1, rightMotor2);
+  // private final SpeedControllerGroup rightMotors = new SpeedControllerGroup(rightMotor1, rightMotor2);
+  private final MotorControllerGroup rightMotors = new MotorControllerGroup(rightMotor1, rightMotor2);
 
   // The robot's drivez
   private final DifferentialDrive diffDrive = new DifferentialDrive(leftMotors, rightMotors);
-
-  // The odometry (position-tracker)
-   private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()),
-      new Pose2d(0.0, 0.0, new Rotation2d()));
 
   // The left-side drive encoder
   private final Encoder leftEncoder = new Encoder(DriveConstants.kLeftEncoderPorts[0],
@@ -69,6 +68,10 @@ public class Drive extends SubsystemBase {
   // The right-side drive encoder
   private final Encoder rightEncoder = new Encoder(DriveConstants.kRightEncoderPorts[0],
       DriveConstants.kRightEncoderPorts[1], DriveConstants.kRightEncoderReversed);
+
+    // The odometry (position-tracker)
+   private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getHeading()), leftEncoder.getDistance(), rightEncoder.getDistance(),
+   new Pose2d(0.0, 0.0, new Rotation2d()));
  
   // Variables for DriveDistance
   private double currentHeading = 0;
@@ -84,7 +87,7 @@ public class Drive extends SubsystemBase {
     leftEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     rightEncoder.setDistancePerPulse(DriveConstants.kEncoderDistancePerPulse);
     leftMotors.setInverted(false);
-    rightMotors.setInverted(false);
+    rightMotors.setInverted(true);
     resetHeading();
     resetEncoders();
   }
@@ -99,7 +102,8 @@ public class Drive extends SubsystemBase {
    * @param squareInputs squares motor inputs if true
    */
   public void tankDrive(double leftPower, double rightPower, boolean squareInputs) {
-    diffDrive.tankDrive(leftPower, rightPower, squareInputs);
+    diffDrive.tankDrive(leftPower,
+    rightPower, squareInputs);
   }
 
 
@@ -204,7 +208,7 @@ public class Drive extends SubsystemBase {
    */
   public void resetOdometry(Pose2d pose) {
     resetEncoders();
-    odometry.resetPosition(pose, pose.getRotation());
+    odometry.resetPosition(pose.getRotation(), leftEncoder.getDistance(), rightEncoder.getDistance(), pose);
   }
 
   /**
@@ -456,10 +460,10 @@ public class Drive extends SubsystemBase {
   }
 
   public class MotorEncoderPair implements IMotorEncoderPair {
-    private WPI_VictorSPX motor;
+    private PWMVictorSPX motor;
     private Encoder encoder;
 
-    public MotorEncoderPair(WPI_VictorSPX motor, Encoder encoder){
+    public MotorEncoderPair(PWMVictorSPX motor, Encoder encoder){
       this.motor = motor;
       this.encoder = encoder;
     }
